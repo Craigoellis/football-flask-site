@@ -941,9 +941,9 @@ def probability_rankings():
     )
 
 @app.route('/value_bets')
-def fetch_value_bets():
+def value_bets():
     with open("/mnt/data/value_bets_cache.json", "r") as f:
-        return json.load(f)
+        return render_template("value_bets.html", value_bets=json.load(f))
 
     table_data = []
     for bet in value_bets_data:
