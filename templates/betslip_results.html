@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block title %}Betslip Results{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='betslip_results.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="betslip-container">
+    <h1>Betslip Results</h1>
+
+    {% if betslips %}
+        {% for betslip in betslips %}
+            <div class="betslip-card">
+                <ul>
+                    {% for selection in betslip.selections %}
+                        <li class="bet-card">
+                            <div class="bet-info">
+                                <div class="bet-details">
+                                    <a class="fixture-name" href="{{ url_for('game_details', fixture_id=selection.fixture_id) }}" target="_blank">
+                                        {{ selection.fixture_name }}
+                                    </a>
+
+                                </div>
+
+                                <div class="bet-title">
+    {% if selection.market.name == 'ft_result' %}
+        {% if selection.bet == 'home' %}
+            FT Home Win
+        {% elif selection.bet == 'draw' %}
+            FT Draw
+        {% elif selection.bet == 'away' %}
+            FT Away Win
+        {% endif %}
+    {% elif selection.market.name == 'ht_result' %}
+        {% if selection.bet == 'home' %}
+            HT Home Win
+        {% elif selection.bet == 'draw' %}
+            HT Draw
+        {% elif selection.bet == 'away' %}
+            HT Away Win
+        {% endif %}
+    {% elif selection.market.name == 'double_chance' %}
+        {% if selection.bet == 'home_draw' %}
+            Home or Draw Double Chance
+        {% elif selection.bet == 'draw_away' %}
+            Draw or Away Double Chance
+        {% elif selection.bet == 'home_away' %}
+            Home or Away Double Chance
+        {% endif %}
+    {% elif selection.market.name == 'o0_goals' %}
+        {% if selection.bet == 'over_05' %}
+            Over 0.5 Goals
+        {% elif selection.bet == 'under_05' %}
+            Under 0.5 Goals
+        {% endif %}
+    {% elif selection.market.name == 'o1_goals' %}
+        {% if selection.bet == 'over_15' %}
+            Over 1.5 Goals
+        {% elif selection.bet == 'under_15' %}
+            Under 1.5 Goals
+        {% endif %}
+    {% elif selection.market.name == 'o2_goals' %}
+        {% if selection.bet == 'over_25' %}
+            Over 2.5 Goals
+        {% elif selection.bet == 'under_25' %}
+            Under 2.5 Goals
+        {% endif %}
+    {% elif selection.market.name == 'o3_goals' %}
+        {% if selection.bet == 'over_35' %}
+            Over 3.5 Goals
+        {% elif selection.bet == 'under_35' %}
+            Under 3.5 Goals
+        {% endif %}
+    {% elif selection.market.name == 'home_o0_goals' %}
+        {% if selection.bet == 'over_05' %}
+            Home Over 0.5 Goals
+        {% elif selection.bet == 'under_05' %}
+            Home Under 0.5 Goals
+        {% endif %}
+    {% elif selection.market.name == 'home_o1_goals' %}
+        {% if selection.bet == 'over_15' %}
+            Home Over 1.5 Goals
+        {% elif selection.bet == 'under_15' %}
+            Home Under 1.5 Goals
+        {% endif %}
+    {% elif selection.market.name == 'home_o2_goals' %}
+        {% if selection.bet == 'over_25' %}
+            Home Over 2.5 Goals
+        {% elif selection.bet == 'under_25' %}
+            Home Under 2.5 Goals
+        {% endif %}
+    {% elif selection.market.name == 'away_o0_goals' %}
+        {% if selection.bet == 'over_05' %}
+            Away Over 0.5 Goals
+        {% elif selection.bet == 'under_05' %}
+            Away Under 0.5 Goals
+        {% endif %}
+    {% elif selection.market.name == 'away_o1_goals' %}
+        {% if selection.bet == 'over_15' %}
+            Away Over 1.5 Goals
+        {% elif selection.bet == 'under_15' %}
+            Away Under 1.5 Goals
+        {% endif %}
+    {% elif selection.market.name == 'away_o2_goals' %}
+        {% if selection.bet == 'over_25' %}
+            Away Over 2.5 Goals
+        {% elif selection.bet == 'under_25' %}
+            Away Under 2.5 Goals
+        {% endif %}
+    {% elif selection.market.name == 'btts' %}
+        {% if selection.bet == 'yes' %}
+            Both Teams To Score Yes
+        {% elif selection.bet == 'no' %}
+            Both Teams To Score No
+        {% endif %}
+    {% elif selection.market.name == 'o7_corners' %}
+        {% if selection.bet == 'yes' or selection.bet == 'over_75' %}
+            Over 7.5 Corners
+        {% elif selection.bet == 'no' or selection.bet == 'under_75' %}
+            Under 7.5 Corners
+        {% endif %}
+    {% elif selection.market.name == 'o8_corners' %}
+        {% if selection.bet == 'yes' or selection.bet == 'over_85' %}
+            Over 8.5 Corners
+        {% elif selection.bet == 'no' or selection.bet == 'under_85' %}
+            Under 8.5 Corners
+        {% endif %}
+    {% elif selection.market.name == 'o9_corners' %}
+        {% if selection.bet == 'yes' or selection.bet == 'over_95' %}
+            Over 9.5 Corners
+        {% elif selection.bet == 'no' or selection.bet == 'under_95' %}
+            Under 9.5 Corners
+        {% endif %}
+    {% elif selection.market.name == 'o10_corners' %}
+        {% if selection.bet == 'yes' or selection.bet == 'over_105' %}
+            Over 10.5 Corners
+        {% elif selection.bet == 'no' or selection.bet == 'under_105' %}
+            Under 10.5 Corners
+        {% endif %}
+    {% else %}
+        {{ selection.market.title }} | Bet: {{ selection.bet }}
+    {% endif %}
+</div>
+
+                                <div class="bet-details">
+                                    {{ selection.ko_human | custom_date }} / 
+                                    {{ selection.competition_country }} - {{ selection.competition_name }}
+                                </div>
+                            </div>
+                            <div class="bet-odds-container">
+                                <span class="bet-probability">
+                                    {{ selection.probability }}% ({{ selection.implied_odds }})&nbsp;&nbsp;
+                                </span>
+                                <span class="actual-odds">{{ selection.odds }}</span>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="summary-line">
+                    Combined Probability {{ betslip.true_combined_probability }} ({{ betslip.implied_odds_combined }}) |
+                    Value <span class="value-percentage">{{ betslip.value_percentage }}</span> |
+                    Actual Odds <span class="summary-actual-odds">{{ betslip.total_odds }}</span> |
+                    Stake (10% Kelly):
+                    {% set raw_prob = betslip.true_combined_probability|string %}
+                    {% set p = raw_prob.replace('%', '') | float / 100 %}
+                    {% set q = 1 - p %}
+                    {% set b = betslip.total_odds | float - 1 %}
+                    {% set full_kelly = ((b * p) - q) / b %}
+                    {% set kelly_fraction = full_kelly if full_kelly > 0 else 0 %}
+                    <strong>{{ "%.2f"|format(kelly_fraction * 100 * 0.1) }}</strong>
+                </div>                
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-betslip">No results found.</p>
+    {% endif %}
+
+    <a href="{{ url_for('betslip_generator') }}" class="back-link">Back to Betslip Generator</a>
+</div>
+{% endblock %}

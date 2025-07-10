@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}My Football Site{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='fixtures.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='pinnacle.css') }}">
+    {% block extra_styles %}{% endblock %}
+    <style>
+        /* Navigation Bar Styling */
+        .navbar {
+            width: 100%;
+            height: 50px;
+            background-color: #007BFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 999;
+        }
+        .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 30px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        .nav-links a:hover {
+            color: #ddd;
+        }
+
+        /* Push content below navbar */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 60px 0 0 0; /* Push down content */
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        .main-content {
+            max-width: none;  /* This allows it to stretch fully */
+            margin: auto;
+            padding: 30px 15px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<div class="navbar nav-links">
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('fixtures_page') }}">Fixtures</a>
+    <a href="{{ url_for('value_bets') }}">Value Bets</a>
+    <a href="{{ url_for('betslip_generator') }}">Betslip Generator</a> <!-- ✅ New Link Added -->
+    <a href="{{ url_for('probability_rankings') }}?date={{ now.strftime('%Y-%m-%d') }}">Probability Rankings</a>
+    <a href="{{ url_for('pinnacle_comparisons') }}">Pinnacle Comparison</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

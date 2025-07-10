@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Probability Rankings{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 20px;">
+    <h2>Probability Rankings for {{ selected_date }}</h2>
+
+    <!-- Date Tabs -->
+    <div style="margin-bottom: 20px;">
+        {% for offset in range(7) %}
+            {% set target_date = (now + timedelta(days=offset)).strftime('%Y-%m-%d') %}
+            {% set label = 'Today' if offset == 0 else (now + timedelta(days=offset)).strftime('%a %d %b') %}
+            <a href="{{ url_for('probability_rankings') }}?date={{ target_date }}&market={{ selected_market }}{% if odds_filter %}&odds=on{% endif %}{% if value_filter %}&value=on{% endif %}"
+               style="margin: 3px; padding: 6px 12px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                {{ label }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- Market & Filter Form -->
+    <form method="get" action="/probability-rankings" style="margin-top: 10px;">
+        <input type="hidden" name="date" value="{{ selected_date }}">
+
+        <label for="market">Select Market:</label>
+        <select name="market" id="market" style="padding: 5px;" onchange="this.form.submit()">
+            {% for market in available_markets %}
+                <option value="{{ market }}" {% if market == selected_market %}selected{% endif %}>
+                    {{ market_labels.get(market, market.replace('_', ' ').title()) }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label style="margin-left: 20px;">
+            <input type="checkbox" name="odds" onchange="this.form.submit()" {% if odds_filter %}checked{% endif %}>
+            Odds Available
+        </label>
+
+        <label style="margin-left: 20px;">
+            <input type="checkbox" name="value" onchange="this.form.submit()" {% if value_filter %}checked{% endif %}>
+            Value Only
+        </label>
+    </form>
+</div>
+
+<!-- Results Table -->
+{% if market_rows %}
+<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; text-align: center; border-collapse: collapse;">
+    <thead style="background-color: #007bff; color: white;">
+        <tr>
+            <th>Kickoff</th>
+            <th>Fixture</th>
+            <th>League</th>
+            <th>Probability (%)</th>
+            <th>Implied Odds</th>
+            <th>Actual Odds</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in market_rows %}
+        <tr>
+            <td>{{ row.kickoff }}</td>
+            <td>
+                <a href="{{ url_for('game_details', fixture_id=row.fixture_id) }}" target="_blank">
+                    {{ row.fixture_name }}
+                </a>
+            </td>
+            <td>{{ row.country }} - {{ row.league }}</td>
+            <td>{{ row.probability }}%</td>
+            <td>{{ row.implied_odds }}</td>
+            <td>{{ row.actual_odds }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="text-align: center;">No data available for this market on {{ selected_date }}.</p>
+{% endif %}
+{% endblock %}

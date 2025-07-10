@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Pinnacle Comparison{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='pinnacle.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="pinnacle-container">
+    <h1>Pinnacle Comparison</h1>
+    
+    <div style="margin-bottom: 15px;">
+        <label>
+            <input type="checkbox" id="valueOnlyToggle" onchange="toggleValueOnly()"> Value Only
+        </label>
+    </div>
+    
+    {% if comparisons %}
+        <table class="pinnacle-table">
+            <thead>
+                <tr>
+                    <th>Competition</th>
+                    <th>Predictability</th>
+                    <th>Fixture</th>
+                    <th>Kick Off</th>
+                    <th>Market</th>
+                    <th>Probability (%)</th>
+                    <th>Implied Odds</th>
+                    <th onclick="sortTableByPinnacleOdds()">Pinnacle Odds</th>
+                    <th>Bookmaker</th>
+                    <th onclick="sortTableByBookmakerOdds()">Bookmaker Odds</th>
+                    <th onclick="sortTableByOddsDifference()">Odds Difference (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in comparisons %}
+                    <tr>
+                        <td>{{ item.competition_country }} — {{ item.competition_name }}</td>
+                        <td>{{ item.predictability | capitalize }}</td>
+                        <td>
+                            <a href="{{ url_for('game_details', fixture_id=item.fixture_id) }}" target="_blank">
+                                {{ item.fixture }}
+                            </a>
+                        </td>
+                        <td>{{ item.kickoff | format_kickoff }}</td>
+                        <td>{{ item.market }}</td>
+                        <td>{{ item.probability }}%</td> 
+                        <td>{{ item.implied_odds }}</td>
+                        <td>{{ item.pinnacle_odds }}</td>
+                        <td>{{ item.bookmaker }}</td>
+                        <td style="font-weight: bold; color: green;">{{ item.bookmaker_odds }}</td>
+                        <td>{{ item.odds_difference }}%</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="margin-top: 30px;">No comparisons found where bookmakers beat Pinnacle odds.</p>
+    {% endif %}
+</div>
+
+<script>
+function sortTableByOddsDifference() {
+    const table = document.querySelector(".pinnacle-table tbody");
+    const rows = Array.from(table.rows);
+
+    const sortedRows = rows.sort((a, b) => {
+        const aVal = parseFloat(a.cells[10].innerText.replace('%', '').trim());
+        const bVal = parseFloat(b.cells[10].innerText.replace('%', '').trim());
+        return bVal - aVal;  // descending
+    });
+
+    while (table.firstChild) {
+        table.removeChild(table.firstChild);
+    }
+    sortedRows.forEach(row => table.appendChild(row));
+}
+
+function sortTableByPinnacleOdds() {
+    const table = document.querySelector(".pinnacle-table tbody");
+    const rows = Array.from(table.rows);
+
+    const sortedRows = rows.sort((a, b) => {
+        const aVal = parseFloat(a.cells[7].innerText.trim());
+        const bVal = parseFloat(b.cells[7].innerText.trim());
+        return bVal - aVal;  // descending
+    });
+
+    while (table.firstChild) {
+        table.removeChild(table.firstChild);
+    }
+    sortedRows.forEach(row => table.appendChild(row));
+}
+
+function sortTableByBookmakerOdds() {
+    const table = document.querySelector(".pinnacle-table tbody");
+    const rows = Array.from(table.rows);
+
+    const sortedRows = rows.sort((a, b) => {
+        const aVal = parseFloat(a.cells[9].innerText.trim());
+        const bVal = parseFloat(b.cells[9].innerText.trim());
+        return bVal - aVal;  // descending
+    });
+
+    while (table.firstChild) {
+        table.removeChild(table.firstChild);
+    }
+    sortedRows.forEach(row => table.appendChild(row));
+}
+
+function toggleValueOnly() {
+    const checkbox = document.getElementById("valueOnlyToggle");
+    const showValueOnly = checkbox.checked;
+    const rows = document.querySelectorAll(".pinnacle-table tbody tr");
+
+    rows.forEach(row => {
+        const implied = parseFloat(row.cells[6].innerText.trim());   // Implied Odds
+        const actual = parseFloat(row.cells[9].innerText.trim());    // Bookmaker Odds
+
+        const isValue = actual > implied;
+        row.style.display = (showValueOnly && !isValue) ? "none" : "";
+    });
+}
+</script>
+
+{% endblock %}

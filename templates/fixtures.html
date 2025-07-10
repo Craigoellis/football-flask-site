@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Fixtures - {{ selected_date }}{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='fixtures.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    
+    <div class="fixtures-container">
+        <!-- Date Tabs -->
+        <div class="tabs">
+            {% for date, display_date in dates %}
+                <a href="/fixtures/{{ date }}">{{ 'Today' if date == today_date else display_date }}</a>
+            {% endfor %}
+
+        </div>
+
+        <!-- Fixtures Grouped by Country and League -->
+        {% if fixtures %}
+            {% for country, leagues in fixtures.items() %}
+                <details>
+                    <summary>{{ country }}</summary>
+                    <ul>
+                        {% for league, games in leagues.items() %}
+                            <details>
+                                <summary>{{ league }}</summary>
+                                <ul>
+                                    {% for game in games %}
+                                        <li>
+                                            <a href="{{ url_for('game_details', fixture_id=game.fixture_id) }}">
+                                                {{ game.fixture_name }} - {{ game.unix | datetimeformat }}
+                                            </a>
+                                        </li>
+
+                                    {% endfor %}
+                                </ul>
+                            </details>
+                        {% endfor %}
+                    </ul>
+                </details>
+            {% endfor %}
+        {% else %}
+            <p>No fixtures available for this date.</p>
+        {% endif %}
+
+        <a href="/">Back to Home</a>
+    </div>
+
+{% endblock %}

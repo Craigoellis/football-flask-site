@@ -1,0 +1,137 @@
+/* General Table Styling */
+.game-details-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    text-align: center;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 15px;
+}
+
+/* Section Header Row (e.g., Market Result, Over/Under Goals) */
+.game-details-container .section-header {
+    background-color: #007BFF;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 12px;
+    text-align: center;
+}
+
+/* Column Headers */
+.game-details-container th {
+    background-color: #007BFF;
+    color: white;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Table Data Cells */
+.game-details-container td {
+    padding: 10px;
+    font-size: 15px;
+    color: #333;
+    text-align: center;
+}
+
+/* Borders */
+.game-details-container table,
+.game-details-container th,
+.game-details-container td {
+    border: 1px solid #ddd;
+}
+
+/* Layout Container */
+.game-details-flex-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+/* Left column: Team Stats */
+.game-details-left {
+    flex: 1;
+}
+
+/* Right column: Probability Tables (stacked vertically) */
+.game-details-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Bookmaker Dropdown Styling */
+#bookmaker-select {
+    padding: 6px 10px;
+    font-size: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+/* Responsive Adjustment */
+@media (max-width: 768px) {
+    .game-details-container table {
+        font-size: 15px;
+    }
+
+    .game-details-flex-container {
+        flex-direction: column;
+    }
+}
+
+/* Simulation Results Container */
+.simulation-container {
+    max-width: 800px;
+    margin: 0 auto 40px auto;
+    padding: 20px 30px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+    font-size: 15px;
+}
+
+.simulation-container h5 {
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #007BFF;
+}
+
+.simulation-container .row {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.simulation-container .col-md-6 {
+    padding: 0 15px;
+}
+
+.simulation-container .text-start {
+    text-align: left !important;
+}
+
+.simulation-container .mt-3 p {
+    margin: 5px 0;
+}
+
+.simulation-container .mt-4 h6 {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #007BFF;
+}
+
+.simulation-container #topScorelines {
+    background-color: #f9f9f9;
+    padding: 10px 15px;
+    border-radius: 6px;
+    width: fit-content;
+}

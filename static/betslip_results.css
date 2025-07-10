@@ -1,0 +1,158 @@
+/* General Page Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    margin: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+}
+
+/* Navigation Bar */
+.navbar {
+    background-color: #333;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.navbar a {
+    color: #ffffff;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar a:hover {
+    text-decoration: underline;
+}
+
+/* Container for Betslips */
+.betslip-container {
+    max-width: 800px;
+    margin: auto;
+}
+
+/* Individual Betslip Card */
+.betslip-card {
+    background-color: #ffffff;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Individual Bet Entry */
+.bet-card {
+    display: flex;
+    justify-content: space-between;
+    background-color: #e7f3ff;
+    padding: 15px;
+    margin: 10px auto;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    align-items: center;
+    max-width: 95%;
+}
+
+/* Left Side (Fixture Info) */
+.bet-info {
+    display: flex;
+    flex-direction: column;
+    color: #444;
+    width: 70%;
+    text-align: left;
+}
+
+.fixture-name {
+    font-size: 20px;
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 5px;
+}
+
+.bet-title {
+    font-size: 16px;
+    color: #333;
+}
+
+.bet-details {
+    margin-top: 5px;
+    color: #666;
+    font-size: 14px;
+}
+
+/* Right Side (Odds and Probabilities) */
+.bet-odds-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 30%;
+}
+
+.bet-probability {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 16px;
+}
+
+.actual-odds {
+    color: #000;
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: 8px;
+}
+
+/* Summary Section */
+.total-odds {
+    text-align: right;
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.summary-line {
+    margin-top: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+.summary-actual-odds {
+    color: #000;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.value-percentage {
+    color: #ff5733;
+    font-weight: bold;
+}
+
+/* Back Link */
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* No Betslip Found Message */
+.no-betslip {
+    text-align: center;
+    color: #dc3545;
+    font-size: 18px;
+}

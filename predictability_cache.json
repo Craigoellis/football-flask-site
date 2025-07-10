@@ -1,0 +1,433 @@
+{
+    "timestamp": "2025-07-10T17:19:18.709913",
+    "data": {
+        "Australia": {
+            "1391": {
+                "name": "Capital Territory NPL 2",
+                "predictability": "high"
+            },
+            "215": {
+                "name": "Npl Tasmania",
+                "predictability": "high"
+            },
+            "525": {
+                "name": "Queensland NPL Women",
+                "predictability": "high"
+            },
+            "1060": {
+                "name": "Queensland Premier League 2",
+                "predictability": "good"
+            },
+            "1227": {
+                "name": "Capital Territory NPL Youth League",
+                "predictability": "poor"
+            },
+            "1358": {
+                "name": "New South Wales NPL 3",
+                "predictability": "good"
+            },
+            "223": {
+                "name": "Western Australia State League 1",
+                "predictability": "poor"
+            },
+            "1263": {
+                "name": "Victoria NPL Women",
+                "predictability": "good"
+            },
+            "222": {
+                "name": "Npl Western Australia",
+                "predictability": "good"
+            },
+            "1346": {
+                "name": "New South Wales NPL 2",
+                "predictability": "poor"
+            },
+            "145": {
+                "name": "Victoria Premier League 2",
+                "predictability": "good"
+            },
+            "1299": {
+                "name": "Northern NSW Reserve League",
+                "predictability": "poor"
+            },
+            "139": {
+                "name": "Victoria NPL Youth League",
+                "predictability": "poor"
+            },
+            "1389": {
+                "name": "Western Australia NPL Youth League",
+                "predictability": "poor"
+            },
+            "1300": {
+                "name": "Queensland NPL Youth League",
+                "predictability": "medium"
+            },
+            "216": {
+                "name": "Capital Territory",
+                "predictability": "poor"
+            },
+            "5": {
+                "name": "Npl Queensland",
+                "predictability": "medium"
+            },
+            "634": {
+                "name": "Queensland Premier League",
+                "predictability": "high"
+            },
+            "9": {
+                "name": "Northern Territory Premier League",
+                "predictability": "poor"
+            },
+            "971": {
+                "name": "New South Wales NPL Youth League",
+                "predictability": "high"
+            },
+            "142": {
+                "name": "New South Wales",
+                "predictability": "high"
+            },
+            "132": {
+                "name": "Northern Nsw",
+                "predictability": "high"
+            },
+            "146": {
+                "name": "Brisbane Premier League",
+                "predictability": "poor"
+            },
+            "1390": {
+                "name": "Queensland PL Youth",
+                "predictability": "high"
+            },
+            "1287": {
+                "name": "Tasmania Women's Super League",
+                "predictability": "high"
+            },
+            "1322": {
+                "name": "Victoria NPL 3",
+                "predictability": "poor"
+            },
+            "1430": {
+                "name": "Tasmania Southern Championship",
+                "predictability": "high"
+            },
+            "1285": {
+                "name": "New South Wales NPL Women",
+                "predictability": "high"
+            }
+        },
+        "Peru": {
+            "28": {
+                "name": "Primera Division",
+                "predictability": "poor"
+            }
+        },
+        "Norway": {
+            "294": {
+                "name": "Eliteserien",
+                "predictability": "high"
+            },
+            "1212": {
+                "name": "3. Division - Group 3",
+                "predictability": "medium"
+            },
+            "1211": {
+                "name": "3. Division - Group 2",
+                "predictability": "high"
+            }
+        },
+        "Finland": {
+            "96": {
+                "name": "Veikkausliiga",
+                "predictability": "high"
+            },
+            "2063": {
+                "name": "Ykk\u00f6nen",
+                "predictability": "high"
+            },
+            "97": {
+                "name": "Ykk\u00f6sliiga",
+                "predictability": "good"
+            }
+        },
+        "Sweden": {
+            "255": {
+                "name": "Allsvenskan",
+                "predictability": "medium"
+            }
+        },
+        "Ecuador": {
+            "40": {
+                "name": "Liga Pro",
+                "predictability": "medium"
+            },
+            "208": {
+                "name": "Liga Pro Serie B",
+                "predictability": "medium"
+            },
+            "1309": {
+                "name": "Copa Ecuador",
+                "predictability": "poor"
+            }
+        },
+        "South Korea": {
+            "78": {
+                "name": "K League 2",
+                "predictability": "high"
+            },
+            "230": {
+                "name": "K League 1",
+                "predictability": "medium"
+            }
+        },
+        "Iceland": {
+            "190": {
+                "name": "Inkasso-Deildin",
+                "predictability": "poor"
+            },
+            "57": {
+                "name": "3. Deild",
+                "predictability": "poor"
+            },
+            "46": {
+                "name": "4. Deild",
+                "predictability": "poor"
+            },
+            "59": {
+                "name": "Pepsideild",
+                "predictability": "high"
+            }
+        },
+        "Brazil": {
+            "115": {
+                "name": "Serie A",
+                "predictability": "high"
+            },
+            "206": {
+                "name": "Serie B",
+                "predictability": "poor"
+            },
+            "207": {
+                "name": "Serie C",
+                "predictability": "poor"
+            },
+            "680": {
+                "name": "Paulista U20",
+                "predictability": "good"
+            },
+            "930": {
+                "name": "Mineiro U20",
+                "predictability": "poor"
+            },
+            "1783": {
+                "name": "Brasileiro Women U20",
+                "predictability": "high"
+            },
+            "540": {
+                "name": "Brasileiro U20",
+                "predictability": "good"
+            },
+            "1395": {
+                "name": "Goiano 2",
+                "predictability": "poor"
+            },
+            "1010": {
+                "name": "Gaucho 2",
+                "predictability": "high"
+            }
+        },
+        "United States": {
+            "927": {
+                "name": "USL League Two",
+                "predictability": "medium"
+            },
+            "71": {
+                "name": "USL Championship",
+                "predictability": "poor"
+            },
+            "1215": {
+                "name": "MLS Next Pro",
+                "predictability": "poor"
+            },
+            "68": {
+                "name": "Major League Soccer",
+                "predictability": "medium"
+            }
+        },
+        "Chile": {
+            "306": {
+                "name": "Primera Division",
+                "predictability": "medium"
+            },
+            "293": {
+                "name": "Primera B",
+                "predictability": "poor"
+            },
+            "966": {
+                "name": "Chilean Cup",
+                "predictability": "poor"
+            }
+        },
+        "Mexico": {
+            "2": {
+                "name": "Liga MX",
+                "predictability": "high"
+            },
+            "1": {
+                "name": "Liga Mx Women",
+                "predictability": "high"
+            }
+        },
+        "Japan": {
+            "228": {
+                "name": "J2-League",
+                "predictability": "poor"
+            },
+            "218": {
+                "name": "J3-League",
+                "predictability": "poor"
+            }
+        },
+        "Argentina": {
+            "750": {
+                "name": "Primera B Nacional",
+                "predictability": "medium"
+            },
+            "699": {
+                "name": "Liga Profesional de F\u00fatbol",
+                "predictability": "poor"
+            }
+        },
+        "Romania": {
+            "159": {
+                "name": "Liga 1",
+                "predictability": "medium"
+            }
+        },
+        "Scotland": {
+            "592": {
+                "name": "League Cup",
+                "predictability": "medium"
+            }
+        },
+        "Colombia": {
+            "317": {
+                "name": "Liga BetPlay",
+                "predictability": "medium"
+            }
+        },
+        "Europe": {
+            "462": {
+                "name": "UEFA Women's EURO",
+                "predictability": "high"
+            },
+            "32": {
+                "name": "Europa League",
+                "predictability": "poor"
+            },
+            "976": {
+                "name": "Europa Conference League",
+                "predictability": "high"
+            }
+        },
+        "Paraguay": {
+            "308": {
+                "name": "Division Intermedia",
+                "predictability": "high"
+            }
+        },
+        "South America": {
+            "1294": {
+                "name": "Copa America Women",
+                "predictability": "high"
+            },
+            "696": {
+                "name": "Copa Sudamericana",
+                "predictability": "medium"
+            }
+        },
+        "Canada": {
+            "69": {
+                "name": "Premier League",
+                "predictability": "high"
+            }
+        },
+        "Republic of Ireland": {
+            "202": {
+                "name": "First Division",
+                "predictability": "good"
+            },
+            "201": {
+                "name": "Premier Division",
+                "predictability": "medium"
+            }
+        },
+        "China": {
+            "428": {
+                "name": "League One",
+                "predictability": "poor"
+            }
+        },
+        "Bolivia": {
+            "758": {
+                "name": "Liga De Futbol Prof",
+                "predictability": "high"
+            }
+        },
+        "Estonia": {
+            "292": {
+                "name": "Meistriliiga",
+                "predictability": "high"
+            },
+            "254": {
+                "name": "Esiliiga B",
+                "predictability": "high"
+            }
+        },
+        "World": {
+            "1130": {
+                "name": "Club Friendlies 3",
+                "predictability": "good"
+            },
+            "1312": {
+                "name": "EAFF E-1 Football Championship",
+                "predictability": "high"
+            }
+        },
+        "Bhutan": {
+            "749": {
+                "name": "Bhutan Premier League",
+                "predictability": "high"
+            }
+        },
+        "New Zealand": {
+            "574": {
+                "name": "Regional Leagues",
+                "predictability": "poor"
+            }
+        },
+        "Africa": {
+            "1291": {
+                "name": "Africa Women Cup of Nations",
+                "predictability": "poor"
+            }
+        },
+        "Lithuania": {
+            "30": {
+                "name": "A Lyga",
+                "predictability": "medium"
+            }
+        },
+        "Venezuela": {
+            "2102": {
+                "name": "Copa Venezuela",
+                "predictability": "high"
+            }
+        },
+        "Northern Ireland": {
+            "936": {
+                "name": "Championship Women",
+                "predictability": "high"
+            }
+        }
+    }
+}

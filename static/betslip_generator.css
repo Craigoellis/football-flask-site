@@ -1,0 +1,237 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+.betslip-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.betslip-container h1 {
+    text-align: center;
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.betslip-container .settings input,
+.betslip-container .probability-container input[type="number"],
+#max_betslips,
+#target_odds,
+#items_per_slip {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f7f7f7;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.betslip-container .market-group {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.betslip-container .market-name {
+    flex-grow: 1;
+    font-size: 18px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.betslip-container .probability-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+}
+
+.betslip-container .probability-container input[type="number"] {
+    width: 50px;
+    padding: 4px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.betslip-container .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 20px;
+    vertical-align: middle;
+}
+
+.betslip-container .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.betslip-container .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 10px;
+}
+
+.betslip-container .slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.betslip-container input:checked + .slider {
+    background-color: #4CAF50;
+}
+
+.betslip-container input:checked + .slider:before {
+    transform: translateX(14px);
+}
+
+.betslip-container .form-footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.betslip-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.betslip-container button:hover {
+    background-color: #0056b3;
+}
+
+.betslip-container .country-section {
+    margin-bottom: 20px;
+}
+
+.betslip-container .country-section label {
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    align-items: center;
+}
+
+.betslip-container .arrow {
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+}
+
+.betslip-container .arrow.rotate {
+    transform: rotate(180deg);
+}
+
+.betslip-container .league-dropdown {
+    margin-left: 20px;
+    padding-left: 10px;
+    border-left: 2px solid #ddd;
+    display: none;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.betslip-container .league-dropdown label {
+    display: block;
+    font-size: 16px;
+    color: #555;
+    padding: 5px 0;
+}
+
+.betslip-container .country-checkbox,
+.betslip-container .league-checkbox {
+    margin-right: 10px;
+}
+
+.betslip-container .country-checkbox:checked + label,
+.betslip-container .league-checkbox:checked + label {
+    color: #007bff;
+}
+
+.betslip-container .country-section label:hover,
+.betslip-container .league-dropdown label:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+.betslip-container .predictability-indicator {
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.betslip-container .predictability-filters {
+    margin-top: 10px;
+}
+
+.betslip-container .predictability-filters h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.betslip-container .predictability-filters .predictability-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 10px;
+    font-size: 16px;
+}
+
+.betslip-container .predictability-filters input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    position: relative;
+    top: 0;
+}
+
+.betslip-container .predictability-filters label {
+    margin: 0;
+    cursor: pointer;
+    line-height: 1.5;
+}
+
+.betslip-container .predictability-bullet {
+    font-size: 16px;
+    font-weight: bold;
+}

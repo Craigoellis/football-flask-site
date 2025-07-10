@@ -1,0 +1,47 @@
+/* Container */
+.pinnacle-container {
+    width: 100%;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+/* Table */
+.pinnacle-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    text-align: center;
+}
+
+.pinnacle-table thead {
+    background-color: #007BFF;
+    color: white;
+}
+
+.pinnacle-table th,
+.pinnacle-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+}
+
+.pinnacle-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.pinnacle-table tbody tr:hover {
+    background-color: #eef4ff;
+}
+
+.pinnacle-table a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.pinnacle-table a:hover {
+    text-decoration: underline;
+}

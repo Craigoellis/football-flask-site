@@ -1,0 +1,135 @@
+/* General Page Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+/* Page Title */
+h1 {
+    text-align: center;
+    color: #333;
+    margin-top: 20px;
+}
+
+/* Fixtures Content Container */
+.fixtures-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Date Tabs Navigation */
+.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+    width: 100vw;
+    max-width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0 10px;
+}
+
+.tabs a {
+    text-decoration: none;
+    color: white;
+    background-color: #007BFF;
+    padding: 10px 16px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    min-width: 100px;
+    text-align: center;
+}
+
+.tabs a:hover {
+    background-color: #0056b3;
+}
+
+/* Country Dropdown Styling */
+details[open] > summary {
+    background-color: #007BFF;
+    color: white;
+}
+
+details summary {
+    background-color: #007BFF;
+    color: white;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid #007BFF;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+details summary:hover {
+    background-color: #0056b3;
+}
+
+/* League Dropdown Styling */
+details details summary {
+    background-color: #cce5ff;
+    color: #333;
+    font-size: 16px;
+    border-color: #007BFF;
+    text-align: center;
+}
+
+details details summary:hover {
+    background-color: #b3d7ff;
+}
+
+/* Fixture List Styling */
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+li {
+    background-color: white;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #007BFF;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+li:hover {
+    background-color: #f1f1f1;
+}
+
+li a {
+    text-decoration: none;
+    color: #007BFF;
+}
+
+li a:hover {
+    text-decoration: underline;
+}
+
+/* Back to Home Link */
+a[href="/"] {
+    display: block;
+    text-align: center;
+    margin: 30px 0;
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+}
+
+a[href="/"]:hover {
+    color: #0056b3;
+}

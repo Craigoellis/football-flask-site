@@ -1,0 +1,677 @@
+{% extends "base.html" %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='betslip_generator.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="betslip-container">
+    <h1>Betslip Generator</h1>
+
+        <form method="POST" action="/generate_betslip">
+            <!-- Existing inputs for settings -->
+            <div class="settings">
+                <label for="target_odds">Target Odds</label>
+                <input type="number" step="0.1" id="target_odds" name="target_odds" value="2" min="1">
+
+                <label for="items_per_slip">Items per Slip</label>
+                <input type="number" id="items_per_slip" name="items_per_slip" value="2" min="1">
+
+                <label>Odds per Item</label>
+                <div class="probability-range">
+                    <input type="number" step="0.1" name="odds_per_item_min" value="1.3" min="1" placeholder="Min">
+                    <input type="number" step="0.1" name="odds_per_item_max" value="1.8" min="1" placeholder="Max">
+                </div>
+
+                <label for="time_duration">Time Duration (in hours)</label>
+                <input type="number" id="time_duration" name="time_duration" value="24" min="1" placeholder="Enter hours">
+
+                <label for="max_betslips">Max Number of Betslips</label>
+                <input type="number" id="max_betslips" name="max_betslips" value="10" min="1" max="50" placeholder="Enter max slips">
+
+<div class="predictability-filters">
+    <h3>Filter by Predictability</h3>
+    <div class="predictability-item">
+        <input type="checkbox" class="predictability-checkbox" data-predictability="high">
+        <label for="high">High</label>
+        <span class="predictability-bullet" style="color: green;">●</span>
+    </div>
+    <div class="predictability-item">
+        <input type="checkbox" class="predictability-checkbox" data-predictability="good">
+        <label for="good">Good</label>
+        <span class="predictability-bullet" style="color: yellow;">●</span>
+    </div>
+    <div class="predictability-item">
+        <input type="checkbox" class="predictability-checkbox" data-predictability="medium">
+        <label for="medium">Medium</label>
+        <span class="predictability-bullet" style="color: orange;">●</span>
+    </div>
+    <div class="predictability-item">
+        <input type="checkbox" class="predictability-checkbox" data-predictability="poor">
+        <label for="poor">Poor</label>
+        <span class="predictability-bullet" style="color: red;">●</span>
+    </div>
+</div>
+
+
+                <label style="display: flex; align-items: center; margin-top: 10px;">
+                    <input type="checkbox" name="value_bets_only" value="true" style="margin-right: 8px;">
+                    Value Bets Only
+                </label>
+            </div>
+
+            <!-- Market - Home Win -->
+            <div class="market-group">
+                <span class="market-name">Home Win</span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[ft_result|home]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[ft_result|home]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="ft_result|home">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Draw -->
+            <div class="market-group">
+                <span class="market-name">Draw</span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[ft_result|draw]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[ft_result|draw]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="ft_result|draw">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Away Win -->
+            <div class="market-group">
+                <span class="market-name">Away Win</span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[ft_result|away]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[ft_result|away]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="ft_result|away">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+<!-- Market - Double Chance Home/Draw -->
+<div class="market-group">
+    <span class="market-name">Double Chance Home/Draw</span>
+    <div class="probability-container">
+        <input type="number" name="probability_min[double_chance|home_draw]" placeholder="Min %" min="0" max="100">
+        <input type="number" name="probability_max[double_chance|home_draw]" placeholder="Max %" min="0" max="100">
+    </div>
+    <label class="toggle-switch">
+        <input type="checkbox" name="markets" value="double_chance|home_draw">
+        <span class="slider"></span>
+    </label>
+</div>
+
+<!-- Market - Double Chance Home/Away -->
+<div class="market-group">
+    <span class="market-name">Double Chance Home/Away</span>
+    <div class="probability-container">
+        <input type="number" name="probability_min[double_chance|home_away]" placeholder="Min %" min="0" max="100">
+        <input type="number" name="probability_max[double_chance|home_away]" placeholder="Max %" min="0" max="100">
+    </div>
+    <label class="toggle-switch">
+        <input type="checkbox" name="markets" value="double_chance|home_away">
+        <span class="slider"></span>
+    </label>
+</div>
+
+<!-- Market - Double Chance Draw/Away -->
+<div class="market-group">
+    <span class="market-name">Double Chance Draw/Away</span>
+    <div class="probability-container">
+        <input type="number" name="probability_min[double_chance|draw_away]" placeholder="Min %" min="0" max="100">
+        <input type="number" name="probability_max[double_chance|draw_away]" placeholder="Max %" min="0" max="100">
+    </div>
+    <label class="toggle-switch">
+        <input type="checkbox" name="markets" value="double_chance|draw_away">
+        <span class="slider"></span>
+    </label>
+</div>
+
+            <!-- Market - Over 1.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Over 1.5 Goals</span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[o1_goals|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[o1_goals|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="o1_goals|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Over 2.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Over 2.5 Goals</span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[o2_goals|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[o2_goals|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="o2_goals|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Over 3.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Over 3.5 Goals</span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[o3_goals|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[o3_goals|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="o3_goals|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Under 1.5 Goals -->
+            <div class="market-group">
+    <span class="market-name">Under 1.5 Goals</span>
+    <div class="probability-container">
+        <input type="number" name="probability_min[o1_goals|no]" placeholder="Min %" min="0" max="100">
+        <input type="number" name="probability_max[o1_goals|no]" placeholder="Max %" min="0" max="100">
+    </div>
+    <label class="toggle-switch">
+        <input type="checkbox" name="markets" value="o1_goals|no">
+        <span class="slider"></span>
+    </label>
+</div>
+
+            <!-- Market - Under 2.5 Goals -->
+            <div class="market-group">
+    <span class="market-name">Under 2.5 Goals</span>
+    <div class="probability-container">
+        <input type="number" name="probability_min[o2_goals|no]" placeholder="Min %" min="0" max="100">
+        <input type="number" name="probability_max[o2_goals|no]" placeholder="Max %" min="0" max="100">
+    </div>
+    <label class="toggle-switch">
+        <input type="checkbox" name="markets" value="o2_goals|no">
+        <span class="slider"></span>
+    </label>
+</div>
+
+            <!-- Market - Under 3.5 Goals -->
+            <div class="market-group">
+    <span class="market-name">Under 3.5 Goals</span>
+    <div class="probability-container">
+        <input type="number" name="probability_min[o3_goals|no]" placeholder="Min %" min="0" max="100">
+        <input type="number" name="probability_max[o3_goals|no]" placeholder="Max %" min="0" max="100">
+    </div>
+    <label class="toggle-switch">
+        <input type="checkbox" name="markets" value="o3_goals|no">
+        <span class="slider"></span>
+    </label>
+</div>
+
+            <!-- Market - Both Teams To Score Yes -->
+            <div class="market-group">
+                <span class="market-name">Both Teams To Score Yes</span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[btts|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[btts|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="btts|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Both Teams To Score No -->
+            <div class="market-group">
+                <span class="market-name">Both Teams To Score No</span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[btts|no]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[btts|no]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="btts|no">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - HT Home Win -->
+            <div class="market-group">
+                <span class="market-name">HT Home Win</span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[ht_result|home]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[ht_result|home]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="ht_result|home">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - HT Away Win -->
+            <div class="market-group">
+                <span class="market-name">HT Away Win</span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[ht_result|away]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[ht_result|away]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="ht_result|away">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - HT Draw -->
+            <div class="market-group">
+                <span class="market-name">HT Draw </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[ht_result|draw]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[ht_result|draw]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="ht_result|draw">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Over 7.5 Corners -->
+            <div class="market-group">
+                <span class="market-name">Over 7.5 Corners </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[o7_corners|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[o7_corners|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="o7_corners|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Over 8.5 Corners -->
+            <div class="market-group">
+                <span class="market-name">Over 8.5 Corners </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[o8_corners|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[o8_corners|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="o8_corners|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Over 9.5 Corners -->
+            <div class="market-group">
+                <span class="market-name">Over 9.5 Corners </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[o9_corners|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[o9_corners|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="o9_corners|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Over 10.5 Corners -->
+            <div class="market-group">
+                <span class="market-name">Over 10.5 Corners </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[o10_corners|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[o10_corners|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="o10_corners|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Under 7.5 Corners -->
+            <div class="market-group">
+                <span class="market-name">Under 7.5 Corners </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[o7_corners|no]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[o7_corners|no]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="o7_corners|no">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Under 8.5 Corners -->
+            <div class="market-group">
+                <span class="market-name">Under 8.5 Corners </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[o8_corners|no]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[o8_corners|no]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="o8_corners|no">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Under 9.5 Corners -->
+            <div class="market-group">
+                <span class="market-name">Under 9.5 Corners </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[o9_corners|no]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[o9_corners|no]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="o9_corners|no">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Under 10.5 Corners -->
+            <div class="market-group">
+                <span class="market-name">Under 10.5 Corners </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[o10_corners|no]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[o10_corners|no]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="o10_corners|no">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Home Over 0.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Home Over 0.5 Goals </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[home_o0_goals|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[home_o0_goals|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="home_o0_goals|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Home Over 1.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Home Over 1.5 Goals </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[home_o1_goals|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[home_o1_goals|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="home_o1_goals|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Home Over 2.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Home Over 2.5 Goals </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[home_o2_goals|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[home_o2_goals|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="home_o2_goals|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Home Under 0.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Home Under 0.5 Goals </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[home_o0_goals|no]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[home_o0_goals|no]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="home_o0_goals|no">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Home Under 1.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Home Under 1.5 Goals </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[home_o1_goals|no]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[home_o1_goals|no]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="home_o1_goals|no">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Home Under 2.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Home Under 2.5 Goals </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[home_o2_goals|no]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[home_o2_goals|no]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="home_o2_goals|no">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Away Over 0.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Away Over 0.5 Goals </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[away_o0_goals|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[away_o0_goals|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="away_o0_goals|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Away Over 1.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Away Over 1.5 Goals </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[away_o1_goals|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[away_o1_goals|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="away_o1_goals|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Away Over 2.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Away Over 2.5 Goals </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[away_o2_goals|yes]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[away_o2_goals|yes]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="away_o2_goals|yes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Away Under 0.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Away Under 0.5 Goals </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[away_o0_goals|no]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[away_o0_goals|no]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="away_o0_goals|no">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Away Under 1.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Away Under 1.5 Goals </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[away_o1_goals|no]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[away_o1_goals|no]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="away_o1_goals|no">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Market - Away Under 2.5 Goals -->
+            <div class="market-group">
+                <span class="market-name">Away Under 2.5 Goals </span>
+                <div class="probability-container">
+                    <input type="number" name="probability_min[away_o2_goals|no]" placeholder="Min %" min="0" max="100">
+                    <input type="number" name="probability_max[away_o2_goals|no]" placeholder="Max %" min="0" max="100">
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" name="markets" value="away_o2_goals|no">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+<div>
+    <h2>Competitions</h2>
+    {% for country, leagues in grouped_competitions.items() %}
+    <div class="country-section">
+        <label onclick="toggleDropdown('{{ country|replace(' ', '_') }}')">
+            <input type="checkbox" class="country-checkbox" data-country="{{ country }}">
+            <strong>{{ country }}</strong>
+            <span class="arrow">&#9660;</span> <!-- Arrow symbol (downward) -->
+        </label>
+        <div id="{{ country|replace(' ', '_') }}" class="league-dropdown">
+            {% for competition_id, competition in leagues.items() %}
+            <label>
+                <input type="checkbox" class="league-checkbox" 
+                       data-country="{{ country }}" 
+                       data-predictability="{{ competition['predictability']|lower }}" 
+                       name="competitions" 
+                       value="{{ competition_id }}">
+                {{ competition['name'] }}
+                <!-- Add colored bullet point based on predictability -->
+<span class="predictability-indicator" 
+      style="color: 
+             {% if competition['predictability']|lower|trim == 'high' %}green
+             {% elif competition['predictability']|lower|trim == 'good' %}yellow
+             {% elif competition['predictability']|lower|trim == 'medium' %}orange
+             {% elif competition['predictability']|lower|trim == 'poor' %}red
+             {% else %}gray{% endif %};">
+    ●
+</span>
+            </label>
+            <br>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+            <div class="form-footer">
+                <button type="submit">Generate Betslip</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- JavaScript for checkbox functionality -->
+<script>
+    // Handle predictability filter changes
+    document.querySelectorAll('.predictability-checkbox').forEach(predictabilityCheckbox => {
+        predictabilityCheckbox.addEventListener('change', function() {
+            const selectedPredictability = this.dataset.predictability; // Get the predictability level
+            const leagueCheckboxes = document.querySelectorAll(`.league-checkbox[data-predictability="${selectedPredictability}"]`);
+
+            // Debugging: Log predictability and matching checkboxes
+            console.log(`Selected predictability: ${selectedPredictability}`);
+            console.log(`Matching league checkboxes:`, leagueCheckboxes);
+
+            // Check if any league checkboxes are found
+            if (leagueCheckboxes.length === 0) {
+                console.warn(`No leagues found with predictability: ${selectedPredictability}`);
+                return;
+            }
+
+            // Tick or untick all leagues with the selected predictability
+            leagueCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked; // Match the state of the predictability checkbox
+            });
+
+            // Update country checkboxes if all leagues in a country are selected
+            const countries = Array.from(new Set([...leagueCheckboxes].map(checkbox => checkbox.dataset.country)));
+            countries.forEach(country => {
+                const countryCheckbox = document.querySelector(`.country-checkbox[data-country="${country}"]`);
+                const allLeagues = document.querySelectorAll(`.league-checkbox[data-country="${country}"]`);
+                const allChecked = Array.from(allLeagues).every(checkbox => checkbox.checked);
+                const anyChecked = Array.from(allLeagues).some(checkbox => checkbox.checked);
+
+                countryCheckbox.checked = allChecked;
+                countryCheckbox.indeterminate = !allChecked && anyChecked; // Set indeterminate state
+            });
+        });
+    });
+
+    // Handle country checkbox changes: tick/untick all leagues under the country
+    document.querySelectorAll('.country-checkbox').forEach(countryCheckbox => {
+        countryCheckbox.addEventListener('change', function() {
+            const country = this.dataset.country;
+            const leagueCheckboxes = document.querySelectorAll(`.league-checkbox[data-country="${country}"]`);
+
+            // Set all league checkboxes to match the state of the country checkbox
+            leagueCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+    });
+
+    // Handle league checkbox changes: update the country checkbox if all leagues are checked
+    document.querySelectorAll('.league-checkbox').forEach(leagueCheckbox => {
+        leagueCheckbox.addEventListener('change', function() {
+            const country = this.dataset.country;
+            const countryCheckbox = document.querySelector(`.country-checkbox[data-country="${country}"]`);
+            const leagueCheckboxes = document.querySelectorAll(`.league-checkbox[data-country="${country}"]`);
+
+            // If all league checkboxes are checked, mark the country checkbox as checked
+            const allChecked = Array.from(leagueCheckboxes).every(checkbox => checkbox.checked);
+            const anyChecked = Array.from(leagueCheckboxes).some(checkbox => checkbox.checked);
+
+            countryCheckbox.checked = allChecked;
+            countryCheckbox.indeterminate = !allChecked && anyChecked; // Set indeterminate state
+        });
+    });
+
+    // Toggle the dropdown visibility and rotate the arrow when the country label is clicked
+    document.querySelectorAll('.country-section label').forEach(countryLabel => {
+        countryLabel.addEventListener('click', function(event) {
+            const checkbox = this.querySelector('.country-checkbox');
+
+            // Prevent toggling the checkbox state when clicking the label (only open/close dropdown)
+            if (event.target !== checkbox) {
+                event.preventDefault();
+
+                const dropdown = this.nextElementSibling; // The league dropdown
+                const arrow = this.querySelector('.arrow'); // The arrow icon
+
+                if (dropdown.style.display === "none" || dropdown.style.display === "") {
+                    dropdown.style.display = "block";  // Show the dropdown
+                    arrow.classList.add('rotate');    // Rotate the arrow
+                } else {
+                    dropdown.style.display = "none";  // Hide the dropdown
+                    arrow.classList.remove('rotate'); // Reset the arrow rotation
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock %}

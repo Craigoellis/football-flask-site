@@ -1,0 +1,803 @@
+{% extends 'base.html' %}
+
+{% block title %}Value Bets{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='value_bets.css') }}">
+{% endblock %}
+
+{% block content %}
+<h1 style="text-align: center;">Value Bets</h1>
+<p style="text-align: center;">This page displays value bets based on calculated probabilities and odds.</p>
+
+<!-- Filter Button to Open Popup (Centered) -->
+<div class="filter-button-wrapper">
+    <button onclick="openFilterPopup()" class="filter-button">Filter Options</button>
+</div>
+
+
+<!-- Popup Box for Filters -->
+<div id="filterPopup" class="filter-popup">
+    <h3>Select Bookmakers</h3>
+    <label><input type="checkbox" name="bookmaker" value="1xBet"> 1xBet</label><br>
+    <label><input type="checkbox" name="bookmaker" value="Bet365"> Bet365</label><br>
+    <label><input type="checkbox" name="bookmaker" value="WilliamHill"> WilliamHill</label><br>
+    <label><input type="checkbox" name="bookmaker" value="Betfair Exchange"> Betfair Exchange</label><br>
+    <label><input type="checkbox" name="bookmaker" value="Pinnacle"> Pinnacle</label><br>
+
+    <h3>Select Predictability</h3>
+    <label><input type="checkbox" name="predictability" value="High"> High</label><br>
+    <label><input type="checkbox" name="predictability" value="Good"> Good</label><br>
+    <label><input type="checkbox" name="predictability" value="Medium"> Medium</label><br>
+    <label><input type="checkbox" name="predictability" value="Poor"> Poor</label><br>
+
+    <h3>Exclude Options</h3>
+    <label><input type="checkbox" id="exclude_cups" name="exclude_cups"> Exclude Cup Games</label><br>
+    <label><input type="checkbox" id="exclude_friendlies" name="exclude_friendlies"> Exclude Friendlies</label><br>
+
+    <button type="button" class="collapsible">Home Win (FT Result)</button>
+    <div class="content">
+      <label><input type="checkbox" id="filter-home-win" checked> Include Home Win FT Result</label>
+      <div class="filter-settings">
+        <label>Min Probability (%): <input type="number" id="home-win-prob-min" value="0" min="0" max="100"></label>
+        <label>Max Probability (%): <input type="number" id="home-win-prob-max" value="100" min="0" max="100"></label>
+        <label>Min Latest Odds: <input type="number" id="home-win-odds-min" value="1.00" step="0.01"></label>
+        <label>Max Latest Odds: <input type="number" id="home-win-odds-max" value="10.00" step="0.01"></label>
+        <label>Min Value %: <input type="number" id="home-win-value-min" value="0" step="1"></label>
+        <label>Max Value %: <input type="number" id="home-win-value-max" value="100" step="1"></label>
+      </div>
+    </div>
+
+    <button type="button" class="collapsible">Draw (FT Result)</button>
+    <div class="content">
+      <label><input type="checkbox" id="filter-draw" checked> Include Draw FT Result</label>
+      <div class="filter-settings">
+        <label>Min Probability (%): <input type="number" id="draw-prob-min" value="0" min="0" max="100"></label>
+        <label>Max Probability (%): <input type="number" id="draw-prob-max" value="100" min="0" max="100"></label>
+        <label>Min Latest Odds: <input type="number" id="draw-odds-min" value="1.00" step="0.01"></label>
+        <label>Max Latest Odds: <input type="number" id="draw-odds-max" value="10.00" step="0.01"></label>
+        <label>Min Value %: <input type="number" id="draw-value-min" value="0" step="1"></label>
+        <label>Max Value %: <input type="number" id="draw-value-max" value="100" step="1"></label>
+      </div>
+    </div>
+
+    <button type="button" class="collapsible">Away Win (FT Result)</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-away-win" checked> Include Away Win FT Result</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="away-win-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="away-win-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="away-win-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="away-win-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="away-win-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="away-win-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- HT Result - Home Win -->
+<button type="button" class="collapsible">Home Win (HT Result)</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-home-win-ht" checked> Include Home Win HT Result</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="home-win-ht-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="home-win-ht-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="home-win-ht-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="home-win-ht-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="home-win-ht-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="home-win-ht-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- HT Result - Draw -->
+<button type="button" class="collapsible">Draw (HT Result)</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-draw-ht" checked> Include Draw HT Result</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="draw-ht-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="draw-ht-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="draw-ht-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="draw-ht-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="draw-ht-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="draw-ht-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- HT Result - Away Win -->
+<button type="button" class="collapsible">Away Win (HT Result)</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-away-win-ht" checked> Include Away Win HT Result</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="away-win-ht-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="away-win-ht-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="away-win-ht-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="away-win-ht-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="away-win-ht-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="away-win-ht-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- Over 1.5 Goals -->
+<button type="button" class="collapsible">Over 1.5 Goals</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-o15" checked> Include Over 1.5 Goals</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="o15-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="o15-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="o15-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="o15-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="o15-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="o15-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- Over 2.5 Goals -->
+<button type="button" class="collapsible">Over 2.5 Goals</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-o25" checked> Include Over 2.5 Goals</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="o25-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="o25-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="o25-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="o25-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="o25-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="o25-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- Over 3.5 Goals -->
+<button type="button" class="collapsible">Over 3.5 Goals</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-o35" checked> Include Over 3.5 Goals</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="o35-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="o35-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="o35-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="o35-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="o35-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="o35-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- Over 4.5 Goals -->
+<button type="button" class="collapsible">Over 4.5 Goals</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-o45" checked> Include Over 4.5 Goals</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="o45-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="o45-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="o45-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="o45-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="o45-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="o45-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- Under 1.5 Goals -->
+<button type="button" class="collapsible">Under 1.5 Goals</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-u15" checked> Include Under 1.5 Goals</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="u15-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="u15-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="u15-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="u15-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="u15-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="u15-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- Under 2.5 Goals -->
+<button type="button" class="collapsible">Under 2.5 Goals</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-u25" checked> Include Under 2.5 Goals</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="u25-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="u25-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="u25-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="u25-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="u25-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="u25-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- Under 3.5 Goals -->
+<button type="button" class="collapsible">Under 3.5 Goals</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-u35" checked> Include Under 3.5 Goals</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="u35-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="u35-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="u35-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="u35-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="u35-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="u35-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- Under 4.5 Goals -->
+<button type="button" class="collapsible">Under 4.5 Goals</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-u45" checked> Include Under 4.5 Goals</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="u45-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="u45-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="u45-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="u45-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="u45-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="u45-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- BTTS Yes -->
+<button type="button" class="collapsible">Both Teams To Score – Yes</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-btts" checked> Include BTTS Yes</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="btts-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="btts-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="btts-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="btts-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="btts-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="btts-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- Home Over 1.5 Goals -->
+<button type="button" class="collapsible">Home Over 1.5 Goals</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-home-o15" checked> Include Home Over 1.5 Goals</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="home-o15-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="home-o15-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="home-o15-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="home-o15-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="home-o15-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="home-o15-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- Away Over 1.5 Goals -->
+<button type="button" class="collapsible">Away Over 1.5 Goals</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-away-o15" checked> Include Away Over 1.5 Goals</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="away-o15-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="away-o15-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="away-o15-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="away-o15-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="away-o15-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="away-o15-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+<!-- Over 8.5 Corners -->
+<button type="button" class="collapsible">Over 8.5 Corners</button>
+<div class="content">
+  <label><input type="checkbox" id="filter-o85" checked> Include Over 8.5 Corners</label>
+  <div class="filter-settings">
+    <label>Min Probability (%): <input type="number" id="o85-prob-min" value="0" min="0" max="100"></label>
+    <label>Max Probability (%): <input type="number" id="o85-prob-max" value="100" min="0" max="100"></label>
+    <label>Min Latest Odds: <input type="number" id="o85-odds-min" value="1.00" step="0.01"></label>
+    <label>Max Latest Odds: <input type="number" id="o85-odds-max" value="10.00" step="0.01"></label>
+    <label>Min Value %: <input type="number" id="o85-value-min" value="0" step="1"></label>
+    <label>Max Value %: <input type="number" id="o85-value-max" value="100" step="1"></label>
+  </div>
+</div>
+
+    <br>
+    <button onclick="applyFilter()" class="apply-filter">Apply Filter</button>
+    <button onclick="closeFilterPopup()" class="close-filter">Close</button>
+</div>
+
+<!-- Table to display the value bets -->
+<div class="value-bets-container">
+    <table class="value-bets-table">
+        <thead>
+            <tr>
+                <th>Competition</th>
+                <th>Predictability</th>
+                <th>Fixture Name</th>
+                <th>Kickoff Time</th>
+                <th>Market Name</th>
+                <th onclick="sortTable(5)">Probability (%)</th>
+                <th onclick="sortTable(6)">Implied Odds</th>
+                <th>Bookmaker</th>
+                <th onclick="sortTable(8)">Latest Odds</th>
+                <th onclick="sortTable(9)">Value %</th>
+                <th>Stake (10% Kelly)</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for bet in value_bets %}
+    <tr>
+        <td>{{ bet.competition_country }} - {{ bet.competition_name }}</td>
+        <td>{{ bet.competition_predictability | default("Unknown") | capitalize }}</td>
+        <td>
+            <a href="{{ url_for('game_details', fixture_id=bet.fixture_id) }}" target="_blank" style="text-decoration: none; color: #007bff;">
+                {{ bet.home_name }} vs {{ bet.away_name }}
+            </a>
+        </td>
+        <td>{{ bet.ko_human }}</td>
+        <td>{{ market_name_mapping.get(bet.market, bet.market) }}</td>
+        <td>{{ bet.probability }}%</td>
+        <td>{{ bet.implied_odds }}</td>
+        <td>{{ bet.bookmaker }}</td>
+        <td>{{ bet.latest_odds }}</td>
+        <td>{{ bet.value_percentage }}</td>
+        <td>
+          {% set p = bet.probability / 100 %}
+          {% set q = 1 - p %}
+          {% set b = bet.latest_odds | float - 1 %}
+          {% set full_kelly = ((b * p) - q) / b %}
+          {% set kelly_fraction = full_kelly if full_kelly > 0 else 0 %}
+          {{ "%.2f"|format(kelly_fraction * 100 * 0.1) }}
+        </td>
+        </tr>        
+            {% endfor %}
+        </tbody>
+        </table>
+        </div>
+
+
+<!-- JavaScript -->
+<script>
+    const marketNameMapping = {{ market_name_mapping | tojson }};
+
+    let filtersInitialized = false;
+
+    function openFilterPopup() {
+        const popup = document.getElementById("filterPopup");
+        popup.style.display = "block";
+
+        if (!filtersInitialized) {
+            const marketCheckboxes = popup.querySelectorAll("input[type='checkbox'][id^='filter-']");
+            marketCheckboxes.forEach(cb => cb.checked = false);
+            filtersInitialized = true;
+        }
+    }
+
+    function closeFilterPopup() {
+        document.getElementById("filterPopup").style.display = "none";
+    }
+
+    function applyFilter() {
+        let selectedBookmakers = [];
+        document.querySelectorAll("input[name='bookmaker']:checked").forEach(checkbox => {
+            selectedBookmakers.push(checkbox.value);
+        });
+
+        let selectedPredictability = [];
+        document.querySelectorAll("input[name='predictability']:checked").forEach(checkbox => {
+            selectedPredictability.push(checkbox.value);
+        });
+
+
+        let excludeCups = document.getElementById("exclude_cups").checked;
+        let excludeFriendlies = document.getElementById("exclude_friendlies").checked;
+
+
+        // Home Win FT Result filter values
+        const includeHomeWin = document.getElementById("filter-home-win").checked;
+        const homeWinProbMin = parseFloat(document.getElementById("home-win-prob-min").value);
+        const homeWinProbMax = parseFloat(document.getElementById("home-win-prob-max").value);
+        const homeWinOddsMin = parseFloat(document.getElementById("home-win-odds-min").value);
+        const homeWinOddsMax = parseFloat(document.getElementById("home-win-odds-max").value);
+        const homeWinValueMin = parseFloat(document.getElementById("home-win-value-min").value);
+        const homeWinValueMax = parseFloat(document.getElementById("home-win-value-max").value);
+
+        // Draw FT Result filter values
+        const includeDraw = document.getElementById("filter-draw").checked;
+        const drawProbMin = parseFloat(document.getElementById("draw-prob-min").value);
+        const drawProbMax = parseFloat(document.getElementById("draw-prob-max").value);
+        const drawOddsMin = parseFloat(document.getElementById("draw-odds-min").value);
+        const drawOddsMax = parseFloat(document.getElementById("draw-odds-max").value);
+        const drawValueMin = parseFloat(document.getElementById("draw-value-min").value);
+        const drawValueMax = parseFloat(document.getElementById("draw-value-max").value);
+
+        // Away Win FT Result filter values
+        const includeAwayWin = document.getElementById("filter-away-win").checked;
+        const awayWinProbMin = parseFloat(document.getElementById("away-win-prob-min").value);
+        const awayWinProbMax = parseFloat(document.getElementById("away-win-prob-max").value);
+        const awayWinOddsMin = parseFloat(document.getElementById("away-win-odds-min").value);
+        const awayWinOddsMax = parseFloat(document.getElementById("away-win-odds-max").value);
+        const awayWinValueMin = parseFloat(document.getElementById("away-win-value-min").value);
+        const awayWinValueMax = parseFloat(document.getElementById("away-win-value-max").value);
+
+        // HT Home Win
+        const includeHomeWinHT = document.getElementById("filter-home-win-ht").checked;
+        const homeWinHTProbMin = parseFloat(document.getElementById("home-win-ht-prob-min").value);
+        const homeWinHTProbMax = parseFloat(document.getElementById("home-win-ht-prob-max").value);
+        const homeWinHTOddsMin = parseFloat(document.getElementById("home-win-ht-odds-min").value);
+        const homeWinHTOddsMax = parseFloat(document.getElementById("home-win-ht-odds-max").value);
+        const homeWinHTValueMin = parseFloat(document.getElementById("home-win-ht-value-min").value);
+        const homeWinHTValueMax = parseFloat(document.getElementById("home-win-ht-value-max").value);
+
+        // HT Draw
+        const includeDrawHT = document.getElementById("filter-draw-ht").checked;
+        const drawHTProbMin = parseFloat(document.getElementById("draw-ht-prob-min").value);
+        const drawHTProbMax = parseFloat(document.getElementById("draw-ht-prob-max").value);
+        const drawHTOddsMin = parseFloat(document.getElementById("draw-ht-odds-min").value);
+        const drawHTOddsMax = parseFloat(document.getElementById("draw-ht-odds-max").value);
+        const drawHTValueMin = parseFloat(document.getElementById("draw-ht-value-min").value);
+        const drawHTValueMax = parseFloat(document.getElementById("draw-ht-value-max").value);
+
+        // HT Away Win
+        const includeAwayWinHT = document.getElementById("filter-away-win-ht").checked;
+        const awayWinHTProbMin = parseFloat(document.getElementById("away-win-ht-prob-min").value);
+        const awayWinHTProbMax = parseFloat(document.getElementById("away-win-ht-prob-max").value);
+        const awayWinHTOddsMin = parseFloat(document.getElementById("away-win-ht-odds-min").value);
+        const awayWinHTOddsMax = parseFloat(document.getElementById("away-win-ht-odds-max").value);
+        const awayWinHTValueMin = parseFloat(document.getElementById("away-win-ht-value-min").value);
+        const awayWinHTValueMax = parseFloat(document.getElementById("away-win-ht-value-max").value);
+
+        // Over 1.5 Goals
+        const includeO15 = document.getElementById("filter-o15").checked;
+        const o15ProbMin = parseFloat(document.getElementById("o15-prob-min").value);
+        const o15ProbMax = parseFloat(document.getElementById("o15-prob-max").value);
+        const o15OddsMin = parseFloat(document.getElementById("o15-odds-min").value);
+        const o15OddsMax = parseFloat(document.getElementById("o15-odds-max").value);
+        const o15ValueMin = parseFloat(document.getElementById("o15-value-min").value);
+        const o15ValueMax = parseFloat(document.getElementById("o15-value-max").value);
+
+        // Over 2.5 Goals
+        const includeO25 = document.getElementById("filter-o25").checked;
+        const o25ProbMin = parseFloat(document.getElementById("o25-prob-min").value);
+        const o25ProbMax = parseFloat(document.getElementById("o25-prob-max").value);
+        const o25OddsMin = parseFloat(document.getElementById("o25-odds-min").value);
+        const o25OddsMax = parseFloat(document.getElementById("o25-odds-max").value);
+        const o25ValueMin = parseFloat(document.getElementById("o25-value-min").value);
+        const o25ValueMax = parseFloat(document.getElementById("o25-value-max").value);
+
+        // Over 3.5 Goals
+        const includeO35 = document.getElementById("filter-o35").checked;
+        const o35ProbMin = parseFloat(document.getElementById("o35-prob-min").value);
+        const o35ProbMax = parseFloat(document.getElementById("o35-prob-max").value);
+        const o35OddsMin = parseFloat(document.getElementById("o35-odds-min").value);
+        const o35OddsMax = parseFloat(document.getElementById("o35-odds-max").value);
+        const o35ValueMin = parseFloat(document.getElementById("o35-value-min").value);
+        const o35ValueMax = parseFloat(document.getElementById("o35-value-max").value);
+
+        // Over 4.5 Goals
+        const includeO45 = document.getElementById("filter-o45").checked;
+        const o45ProbMin = parseFloat(document.getElementById("o45-prob-min").value);
+        const o45ProbMax = parseFloat(document.getElementById("o45-prob-max").value);
+        const o45OddsMin = parseFloat(document.getElementById("o45-odds-min").value);
+        const o45OddsMax = parseFloat(document.getElementById("o45-odds-max").value);
+        const o45ValueMin = parseFloat(document.getElementById("o45-value-min").value);
+        const o45ValueMax = parseFloat(document.getElementById("o45-value-max").value);
+
+        // Under 1.5 Goals
+        const includeU15 = document.getElementById("filter-u15").checked;
+        const u15ProbMin = parseFloat(document.getElementById("u15-prob-min").value);
+        const u15ProbMax = parseFloat(document.getElementById("u15-prob-max").value);
+        const u15OddsMin = parseFloat(document.getElementById("u15-odds-min").value);
+        const u15OddsMax = parseFloat(document.getElementById("u15-odds-max").value);
+        const u15ValueMin = parseFloat(document.getElementById("u15-value-min").value);
+        const u15ValueMax = parseFloat(document.getElementById("u15-value-max").value);
+
+        // Under 2.5 Goals
+        const includeU25 = document.getElementById("filter-u25").checked;
+        const u25ProbMin = parseFloat(document.getElementById("u25-prob-min").value);
+        const u25ProbMax = parseFloat(document.getElementById("u25-prob-max").value);
+        const u25OddsMin = parseFloat(document.getElementById("u25-odds-min").value);
+        const u25OddsMax = parseFloat(document.getElementById("u25-odds-max").value);
+        const u25ValueMin = parseFloat(document.getElementById("u25-value-min").value);
+        const u25ValueMax = parseFloat(document.getElementById("u25-value-max").value);
+
+        // Under 3.5 Goals
+        const includeU35 = document.getElementById("filter-u35").checked;
+        const u35ProbMin = parseFloat(document.getElementById("u35-prob-min").value);
+        const u35ProbMax = parseFloat(document.getElementById("u35-prob-max").value);
+        const u35OddsMin = parseFloat(document.getElementById("u35-odds-min").value);
+        const u35OddsMax = parseFloat(document.getElementById("u35-odds-max").value);
+        const u35ValueMin = parseFloat(document.getElementById("u35-value-min").value);
+        const u35ValueMax = parseFloat(document.getElementById("u35-value-max").value);
+
+        // Under 4.5 Goals
+        const includeU45 = document.getElementById("filter-u45").checked;
+        const u45ProbMin = parseFloat(document.getElementById("u45-prob-min").value);
+        const u45ProbMax = parseFloat(document.getElementById("u45-prob-max").value);
+        const u45OddsMin = parseFloat(document.getElementById("u45-odds-min").value);
+        const u45OddsMax = parseFloat(document.getElementById("u45-odds-max").value);
+        const u45ValueMin = parseFloat(document.getElementById("u45-value-min").value);
+        const u45ValueMax = parseFloat(document.getElementById("u45-value-max").value);
+
+        // BTTS Yes
+        const includeBTTS = document.getElementById("filter-btts").checked;
+        const bttsProbMin = parseFloat(document.getElementById("btts-prob-min").value);
+        const bttsProbMax = parseFloat(document.getElementById("btts-prob-max").value);
+        const bttsOddsMin = parseFloat(document.getElementById("btts-odds-min").value);
+        const bttsOddsMax = parseFloat(document.getElementById("btts-odds-max").value);
+        const bttsValueMin = parseFloat(document.getElementById("btts-value-min").value);
+        const bttsValueMax = parseFloat(document.getElementById("btts-value-max").value);
+
+        // Home O1.5 Goals
+        const includeHomeO15 = document.getElementById("filter-home-o15").checked;
+        const homeO15ProbMin = parseFloat(document.getElementById("home-o15-prob-min").value);
+        const homeO15ProbMax = parseFloat(document.getElementById("home-o15-prob-max").value);
+        const homeO15OddsMin = parseFloat(document.getElementById("home-o15-odds-min").value);
+        const homeO15OddsMax = parseFloat(document.getElementById("home-o15-odds-max").value);
+        const homeO15ValueMin = parseFloat(document.getElementById("home-o15-value-min").value);
+        const homeO15ValueMax = parseFloat(document.getElementById("home-o15-value-max").value);
+
+        // Away O1.5 Goals
+        const includeAwayO15 = document.getElementById("filter-away-o15").checked;
+        const awayO15ProbMin = parseFloat(document.getElementById("away-o15-prob-min").value);
+        const awayO15ProbMax = parseFloat(document.getElementById("away-o15-prob-max").value);
+        const awayO15OddsMin = parseFloat(document.getElementById("away-o15-odds-min").value);
+        const awayO15OddsMax = parseFloat(document.getElementById("away-o15-odds-max").value);
+        const awayO15ValueMin = parseFloat(document.getElementById("away-o15-value-min").value);
+        const awayO15ValueMax = parseFloat(document.getElementById("away-o15-value-max").value);
+
+        // Over 8.5 Corners
+        const includeO85 = document.getElementById("filter-o85").checked;
+        const o85ProbMin = parseFloat(document.getElementById("o85-prob-min").value);
+        const o85ProbMax = parseFloat(document.getElementById("o85-prob-max").value);
+        const o85OddsMin = parseFloat(document.getElementById("o85-odds-min").value);
+        const o85OddsMax = parseFloat(document.getElementById("o85-odds-max").value);
+        const o85ValueMin = parseFloat(document.getElementById("o85-value-min").value);
+        const o85ValueMax = parseFloat(document.getElementById("o85-value-max").value);
+
+
+
+
+        fetch("/filter_value_bets", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                bookmakers: selectedBookmakers, 
+                predictability: selectedPredictability, 
+                exclude_cups: excludeCups,
+                exclude_friendlies: excludeFriendlies,
+
+                home_win_filters: {
+                    include: includeHomeWin,
+                    probability_min: homeWinProbMin,
+                    probability_max: homeWinProbMax,
+                    odds_min: homeWinOddsMin,
+                    odds_max: homeWinOddsMax,
+                    value_min: homeWinValueMin,
+                    value_max: homeWinValueMax
+                },
+
+                draw_filters: {
+                    include: includeDraw,
+                    probability_min: drawProbMin,
+                    probability_max: drawProbMax,
+                    odds_min: drawOddsMin,
+                    odds_max: drawOddsMax,
+                    value_min: drawValueMin,
+                    value_max: drawValueMax
+                },
+
+                away_win_filters: {
+                    include: includeAwayWin,
+                    probability_min: awayWinProbMin,
+                    probability_max: awayWinProbMax,
+                    odds_min: awayWinOddsMin,
+                    odds_max: awayWinOddsMax,
+                    value_min: awayWinValueMin,
+                    value_max: awayWinValueMax
+                },
+
+                home_win_ht_filters: {
+                    include: includeHomeWinHT,
+                    probability_min: homeWinHTProbMin,
+                    probability_max: homeWinHTProbMax,
+                    odds_min: homeWinHTOddsMin,
+                    odds_max: homeWinHTOddsMax,
+                    value_min: homeWinHTValueMin,
+                    value_max: homeWinHTValueMax
+                },
+                draw_ht_filters: {
+                    include: includeDrawHT,
+                    probability_min: drawHTProbMin,
+                    probability_max: drawHTProbMax,
+                    odds_min: drawHTOddsMin,
+                    odds_max: drawHTOddsMax,
+                    value_min: drawHTValueMin,
+                    value_max: drawHTValueMax
+                },
+                away_win_ht_filters: {
+                    include: includeAwayWinHT,
+                    probability_min: awayWinHTProbMin,
+                    probability_max: awayWinHTProbMax,
+                    odds_min: awayWinHTOddsMin,
+                    odds_max: awayWinHTOddsMax,
+                    value_min: awayWinHTValueMin,
+                    value_max: awayWinHTValueMax
+                },
+                o15_filters: {
+                    include: includeO15,
+                    probability_min: o15ProbMin,
+                    probability_max: o15ProbMax,
+                    odds_min: o15OddsMin,
+                    odds_max: o15OddsMax,
+                    value_min: o15ValueMin,
+                    value_max: o15ValueMax
+                },
+                o25_filters: {
+                    include: includeO25,
+                    probability_min: o25ProbMin,
+                    probability_max: o25ProbMax,
+                    odds_min: o25OddsMin,
+                    odds_max: o25OddsMax,
+                    value_min: o25ValueMin,
+                    value_max: o25ValueMax
+                },
+                o35_filters: {
+                    include: includeO35,
+                    probability_min: o35ProbMin,
+                    probability_max: o35ProbMax,
+                    odds_min: o35OddsMin,
+                    odds_max: o35OddsMax,
+                    value_min: o35ValueMin,
+                    value_max: o35ValueMax
+                },
+                o45_filters: {
+                    include: includeO45,
+                    probability_min: o45ProbMin,
+                    probability_max: o45ProbMax,
+                    odds_min: o45OddsMin,
+                    odds_max: o45OddsMax,
+                    value_min: o45ValueMin,
+                    value_max: o45ValueMax
+                },
+                u15_filters: {
+                    include: includeU15,
+                    probability_min: u15ProbMin,
+                    probability_max: u15ProbMax,
+                    odds_min: u15OddsMin,
+                    odds_max: u15OddsMax,
+                    value_min: u15ValueMin,
+                    value_max: u15ValueMax
+                },
+                u25_filters: {
+                    include: includeU25,
+                    probability_min: u25ProbMin,
+                    probability_max: u25ProbMax,
+                    odds_min: u25OddsMin,
+                    odds_max: u25OddsMax,
+                    value_min: u25ValueMin,
+                    value_max: u25ValueMax
+                },
+                u35_filters: {
+                    include: includeU35,
+                    probability_min: u35ProbMin,
+                    probability_max: u35ProbMax,
+                    odds_min: u35OddsMin,
+                    odds_max: u35OddsMax,
+                    value_min: u35ValueMin,
+                    value_max: u35ValueMax
+                },
+                u45_filters: {
+                    include: includeU45,
+                    probability_min: u45ProbMin,
+                    probability_max: u45ProbMax,
+                    odds_min: u45OddsMin,
+                    odds_max: u45OddsMax,
+                    value_min: u45ValueMin,
+                    value_max: u45ValueMax
+                },
+                btts_filters: {
+                    include: includeBTTS,
+                    probability_min: bttsProbMin,
+                    probability_max: bttsProbMax,
+                    odds_min: bttsOddsMin,
+                    odds_max: bttsOddsMax,
+                    value_min: bttsValueMin,
+                    value_max: bttsValueMax
+                },
+                home_o15_filters: {
+                    include: includeHomeO15,
+                    probability_min: homeO15ProbMin,
+                    probability_max: homeO15ProbMax,
+                    odds_min: homeO15OddsMin,
+                    odds_max: homeO15OddsMax,
+                    value_min: homeO15ValueMin,
+                    value_max: homeO15ValueMax
+                },
+                away_o15_filters: {
+                    include: includeAwayO15,
+                    probability_min: awayO15ProbMin,
+                    probability_max: awayO15ProbMax,
+                    odds_min: awayO15OddsMin,
+                    odds_max: awayO15OddsMax,
+                    value_min: awayO15ValueMin,
+                    value_max: awayO15ValueMax
+                },
+                o85_filters: {
+                    include: includeO85,
+                    probability_min: o85ProbMin,
+                    probability_max: o85ProbMax,
+                    odds_min: o85OddsMin,
+                    odds_max: o85OddsMax,
+                    value_min: o85ValueMin,
+                    value_max: o85ValueMax
+                }
+
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            updateTable(data);
+        });
+
+        closeFilterPopup();
+    }
+
+    function updateTable(valueBets) {
+    let tbody = document.querySelector("tbody");
+    tbody.innerHTML = "";
+
+    valueBets.forEach(bet => {
+        const fixtureLink = `<a href="/game/${bet.fixture_id}" target="_blank" style="text-decoration: none; color: #007bff;">${bet.home_name} vs ${bet.away_name}</a>`;
+
+        // Calculate 10% Kelly stake
+        const p = bet.probability / 100;
+        const q = 1 - p;
+        const b = parseFloat(bet.latest_odds) - 1;
+        const fullKelly = b > 0 ? ((b * p - q) / b) : 0;
+        const kellyFraction = fullKelly > 0 ? fullKelly : 0;
+        const stake = (kellyFraction * 100 * 0.1).toFixed(2);
+
+        let row = `<tr>
+            <td>${bet.competition_country} - ${bet.competition_name}</td>
+            <td>${bet.competition_predictability}</td>
+            <td>${fixtureLink}</td>
+            <td>${bet.ko_human}</td>
+            <td>${marketNameMapping && marketNameMapping[bet.market] ? marketNameMapping[bet.market] : bet.market}</td>
+            <td>${bet.probability}%</td>
+            <td>${bet.implied_odds}</td>
+            <td>${bet.bookmaker}</td>
+            <td>${bet.latest_odds}</td>
+            <td>${bet.value_percentage}</td>
+            <td>${stake}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+    });
+}
+
+    let sortDirections = {};
+    function sortTable(columnIndex) {
+        let table = document.querySelector("table");
+        let tbody = table.querySelector("tbody");
+        let rows = Array.from(tbody.querySelectorAll("tr"));
+
+        sortDirections[columnIndex] = !sortDirections[columnIndex];
+        let isAscending = sortDirections[columnIndex];
+
+        rows.sort((rowA, rowB) => {
+            let cellA = rowA.cells[columnIndex].innerText.trim();
+            let cellB = rowB.cells[columnIndex].innerText.trim();
+            let numA = parseFloat(cellA);
+            let numB = parseFloat(cellB);
+            if (!isNaN(numA) && !isNaN(numB)) {
+                return isAscending ? numA - numB : numB - numA;
+            }
+            return isAscending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+        });
+
+        tbody.innerHTML = "";
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
+    // Collapsible filter sections
+    document.addEventListener("DOMContentLoaded", () => {
+        const collapsibles = document.querySelectorAll(".collapsible");
+
+        collapsibles.forEach(button => {
+            button.addEventListener("click", () => {
+                button.classList.toggle("active");
+                const content = button.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}
