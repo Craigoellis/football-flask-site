@@ -20,7 +20,6 @@ HEADERS = {"Authorization": f"Bearer {API_TOKEN}"}
 # Fixtures API
 FIXTURES_API_URL = "https://data.oddalerts.com/api/probability/ft_result"
 FIXTURES_CACHE_FILE = '/data/fixtures_cache.json'
-cached_fixtures = {}
 
 # Value Bets API
 VALUE_BETS_API_URL = "https://data.oddalerts.com/api/value/upcoming"
@@ -829,6 +828,7 @@ def probability_rankings():
 
     with open(FIXTURES_CACHE_FILE, 'r') as f:
         fixtures_data = json.load(f)
+        
 
     fixture_lookup = {}
     for date, countries in fixtures_data.items():
