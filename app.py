@@ -24,7 +24,6 @@ FIXTURES_CACHE_FILE = '/data/fixtures_cache.json'
 # Value Bets API
 VALUE_BETS_API_URL = "https://data.oddalerts.com/api/value/upcoming"
 VALUE_BETS_CACHE_FILE = '/data/value_bets_cache.json'
-cached_value_bets = []
 
 # Season Stats API Cache
 SEASON_STATS_CACHE_FILE = '/data/season_stats_cache.json'
@@ -32,7 +31,6 @@ SEASON_STATS_CACHE_FILE = '/data/season_stats_cache.json'
 # Betslip Generator API and Cache
 BETSLIP_GENERATOR_URL = f"https://data.oddalerts.com/api/betslips?api_token={API_TOKEN}"
 PREDICTABILITY_CACHE_FILE = '/data/predictability_cache.json'
-predictability_cache = {}
 
 # Set the secret key (needed for session management and flash messages)
 app.secret_key = 'dev_secret_key'  # Replace 'dev_secret_key' with any string you like for local development
@@ -942,7 +940,9 @@ def probability_rankings():
 
 @app.route('/value_bets')
 def value_bets():
-    value_bets_data = fetch_value_bets()
+    # Load value bets from the mounted cache file
+    with open(VALUE_BETS_CACHE_FILE, 'r') as f:
+        value_bets_data = json.load(f)
 
     table_data = []
     for bet in value_bets_data:
@@ -969,7 +969,7 @@ def value_bets():
             "bookmaker": bookmaker_name,
             "latest_odds": latest_odds,
             "value_percentage": value_percentage,
-            "fixture_id": bet["id"]  # ✅ Add this line
+            "fixture_id": bet["id"]
         })
 
     return render_template('value_bets.html', value_bets=table_data, market_name_mapping=MARKET_NAME_MAPPING)
