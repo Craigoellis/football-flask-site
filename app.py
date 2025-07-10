@@ -681,12 +681,11 @@ def sort_fixtures_structure(fixtures_by_date):
         fixtures_by_date[date] = sorted_countries
     return fixtures_by_date
 
-from collections import defaultdict
-import json
-import os
-
-def fetch_fixtures_grouped_by_structure():
+def fetch_fixtures_grouped_by_structure(force_refresh=False):
     FIXTURES_CACHE_FILE = '/data/fixtures_cache.json'
+
+    if force_refresh or not os.path.exists(FIXTURES_CACHE_FILE):
+        return {}, []
 
     try:
         with open(FIXTURES_CACHE_FILE, 'r') as f:
@@ -698,8 +697,7 @@ def fetch_fixtures_grouped_by_structure():
 
     for fixture in fixtures_data:
         if not isinstance(fixture, dict):
-            continue  # ✅ Skip invalid entries that are not dictionaries
-
+            continue  # ✅ Ensure we skip malformed entries
         date = fixture.get('ko_date')
         country = fixture.get('competition', {}).get('country', 'Unknown Country')
         league = fixture.get('competition', {}).get('name', 'Unknown League')
