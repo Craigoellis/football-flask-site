@@ -6,7 +6,6 @@ import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from datetime import datetime, timedelta, timezone
-from collections import defaultdict
 
 print(f"Flask process PID: {os.getpid()}")
 
@@ -681,60 +680,24 @@ def sort_fixtures_structure(fixtures_by_date):
         fixtures_by_date[date] = sorted_countries
     return fixtures_by_date
 
-def fetch_fixtures_grouped_by_structure(force_refresh=False):
-    FIXTURES_CACHE_FILE = '/data/fixtures_cache.json'
-
-    if force_refresh or not os.path.exists(FIXTURES_CACHE_FILE):
-        return {}, []
-
-    try:
-        with open(FIXTURES_CACHE_FILE, 'r') as f:
-            fixtures_data = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        fixtures_data = []
-
-    fixtures_by_date = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
-
-    for fixture in fixtures_data:
-        if not isinstance(fixture, dict):
-            continue  # ✅ Ensure we skip malformed entries
-        date = fixture.get('ko_date')
-        country = fixture.get('competition', {}).get('country', 'Unknown Country')
-        league = fixture.get('competition', {}).get('name', 'Unknown League')
-        fixtures_by_date[date][country][league].append(fixture)
-
-    return fixtures_by_date, fixtures_data
-
 @app.route('/fixtures')
 def fixtures_page():
-    fixtures_by_date, _ = fetch_fixtures_grouped_by_structure()
-    fixtures_by_date = sort_fixtures_structure(fixtures_by_date)
+    fixtures_by_date, _ = fetch_fixtures_grouped_by_structure()  # ✅ Unpack the tuple correctly
+    fixtures_by_date = sort_fixtures_structure(fixtures_by_date)  # ✅ Now this works on the correct data
     dates = sorted(fixtures_by_date.keys())
     formatted_dates = [(date, datetime.strptime(date, '%Y-%m-%d').strftime('%a %d %b')) for date in dates]
     today_date = datetime.utcnow().strftime('%Y-%m-%d')
     fixtures = fixtures_by_date.get(today_date, {})
-    return render_template(
-        'fixtures.html',
-        fixtures=fixtures,
-        dates=formatted_dates,
-        selected_date=today_date,
-        today_date=today_date
-    )
+    return render_template('fixtures.html', fixtures=fixtures, dates=formatted_dates, selected_date=today_date, today_date=today_date)
 
 @app.route('/fixtures/<selected_date>')
 def fixtures_by_date(selected_date):
-    fixtures_by_date, _ = fetch_fixtures_grouped_by_structure()
+    fixtures_by_date, _ = fetch_fixtures_grouped_by_structure()  # ✅ Unpack correctly
     fixtures_by_date = sort_fixtures_structure(fixtures_by_date)
     dates = sorted(fixtures_by_date.keys())
     formatted_dates = [(date, datetime.strptime(date, '%Y-%m-%d').strftime('%a %d %b')) for date in dates]
     fixtures = fixtures_by_date.get(selected_date, {})
-    return render_template(
-        'fixtures.html',
-        fixtures=fixtures,
-        dates=formatted_dates,
-        selected_date=selected_date,
-        today_date=datetime.utcnow().strftime('%Y-%m-%d')
-    )
+    return render_template('fixtures.html', fixtures=fixtures, dates=formatted_dates, selected_date=selected_date, today_date=datetime.utcnow().strftime('%Y-%m-%d'))
 
 @app.template_filter('datetimeformat')
 def datetimeformat(value):
