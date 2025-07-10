@@ -940,6 +940,7 @@ def probability_rankings():
         market_labels=market_labels
     )
 
+@app.route('/value_bets')
 def fetch_value_bets():
     with open("/mnt/data/value_bets_cache.json", "r") as f:
         return json.load(f)
