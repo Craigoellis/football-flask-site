@@ -821,13 +821,13 @@ def probability_rankings():
     value_filter = request.args.get('value') == 'on'
 
     try:
-        with open('game_details_cache.json', 'r') as f:
+        with open('/data/game_details_cache.json', 'r') as f:
             game_details = json.load(f)
     except json.JSONDecodeError as e:
-        print("JSONDecodeError in game_details_cache.json:", e)
+        print("JSONDecodeError in /data/game_details_cache.json:", e)
         game_details = {}
 
-    with open('fixtures_cache.json', 'r') as f:
+    with open('/data/fixtures_cache.json', 'r') as f:
         fixtures_data = json.load(f)
 
     fixture_lookup = {}
@@ -1000,7 +1000,7 @@ def format_kickoff_filter(value):
 @app.route("/pinnacle")
 def pinnacle_comparisons():
 
-    with open("game_details_cache.json", "r") as f:
+    with open("/data/game_details_cache.json", "r") as f:
         game_data = json.load(f)
 
     print("Fixtures loaded:", list(game_data.keys()))
