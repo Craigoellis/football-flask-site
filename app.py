@@ -6,6 +6,7 @@ import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from datetime import datetime, timedelta, timezone
+from collections import defaultdict
 
 print(f"Flask process PID: {os.getpid()}")
 
@@ -681,6 +682,8 @@ def sort_fixtures_structure(fixtures_by_date):
     return fixtures_by_date
 
 from collections import defaultdict
+import json
+import os
 
 def fetch_fixtures_grouped_by_structure():
     FIXTURES_CACHE_FILE = '/data/fixtures_cache.json'
@@ -694,6 +697,9 @@ def fetch_fixtures_grouped_by_structure():
     fixtures_by_date = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
 
     for fixture in fixtures_data:
+        if not isinstance(fixture, dict):
+            continue  # ✅ Skip invalid entries that are not dictionaries
+
         date = fixture.get('ko_date')
         country = fixture.get('competition', {}).get('country', 'Unknown Country')
         league = fixture.get('competition', {}).get('name', 'Unknown League')
