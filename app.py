@@ -821,13 +821,13 @@ def probability_rankings():
     value_filter = request.args.get('value') == 'on'
 
     try:
-        with open('/mnt/data/game_details_cache.json', 'r') as f:
+        with open('/data/game_details_cache.json', 'r') as f:
             game_details = json.load(f)
     except json.JSONDecodeError as e:
         print("JSONDecodeError in game_details_cache.json:", e)
         game_details = {}
 
-    with open('/mnt/data/fixtures_cache.json', 'r') as f:
+    with open('/data/fixtures_cache.json', 'r') as f:
         fixtures_data = json.load(f)
 
     fixture_lookup = {}
@@ -942,7 +942,7 @@ def probability_rankings():
 
 @app.route('/value_bets')
 def value_bets():
-    with open("/mnt/data/value_bets_cache.json", "r") as f:
+    with open("/data/value_bets_cache.json", "r") as f:
         return render_template("value_bets.html", value_bets=json.load(f))
 
     table_data = []
