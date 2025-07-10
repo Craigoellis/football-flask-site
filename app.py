@@ -19,20 +19,20 @@ HEADERS = {"Authorization": f"Bearer {API_TOKEN}"}
 
 # Fixtures API
 FIXTURES_API_URL = "https://data.oddalerts.com/api/probability/ft_result"
-FIXTURES_CACHE_FILE = 'fixtures_cache.json'
+FIXTURES_CACHE_FILE = "/data/fixtures_cache.json"
 cached_fixtures = {}
 
 # Value Bets API
 VALUE_BETS_API_URL = "https://data.oddalerts.com/api/value/upcoming"
-VALUE_BETS_CACHE_FILE = 'value_bets_cache.json'
+VALUE_BETS_CACHE_FILE = "/data/value_bets_cache.json"
 cached_value_bets = []
 
 # Season Stats API Cache
-SEASON_STATS_CACHE_FILE = 'season_stats_cache.json'
+SEASON_STATS_CACHE_FILE = "/data/season_stats_cache.json"
 
 # Betslip Generator API and Cache
 BETSLIP_GENERATOR_URL = f"https://data.oddalerts.com/api/betslips?api_token={API_TOKEN}"
-PREDICTABILITY_CACHE_FILE = 'predictability_cache.json'
+PREDICTABILITY_CACHE_FILE = '/data/predictability_cache.json'
 predictability_cache = {}
 
 # Set the secret key (needed for session management and flash messages)
@@ -328,7 +328,7 @@ def fetch_season_stats(season_ids, api_token):
     return season_stats
 
 API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"
-GAME_DETAILS_CACHE_FILE = "game_details_cache.json"
+GAME_DETAILS_CACHE_FILE = "/data/game_details_cache.json"
 
 def fetch_and_cache_all_game_details():
     print(f"[CACHE] Refreshing Game Details Cache at {datetime.now().strftime('%H:%M:%S')}...")
