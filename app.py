@@ -1088,6 +1088,11 @@ def filter_value_bets():
     """Filters cached value bets based on selected bookmakers, predictability levels, markets, and exclusions."""
     try:
         request_data = request.get_json()
+
+        # ✅ Always load the most recent value bets from the cache file
+        with open(VALUE_BETS_CACHE_FILE, "r") as f:
+            filtered_bets = json.load(f)
+
         selected_bookmakers = request_data.get("bookmakers", [])
         selected_predictability = request_data.get("predictability", [])
         exclude_cups = request_data.get("exclude_cups", False)
