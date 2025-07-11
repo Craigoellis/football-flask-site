@@ -948,7 +948,14 @@ def probability_rankings():
 
 @app.route('/value_bets')
 def value_bets():
-    # Load value bets from the mounted cache file
+    # Read filter parameters from query string
+    selected_market = request.args.get('market')
+    selected_predictability = request.args.get('predictability')
+    selected_bookmaker = request.args.get('bookmaker')
+    min_prob = request.args.get('min_probability')
+    max_prob = request.args.get('max_probability')
+
+    # Load value bets from the cache file
     with open(VALUE_BETS_CACHE_FILE, 'r') as f:
         value_bets_data = json.load(f)
 
@@ -964,6 +971,21 @@ def value_bets():
             latest_odds = "N/A"
             value_percentage = "N/A"
 
+        probability = round(bet["probability"], 2) if bet["probability"] is not None else None
+        implied_odds = round(1 / (bet["probability"] / 100), 2) if bet["probability"] and bet["probability"] > 0 else "N/A"
+
+        # Apply server-side filters
+        if selected_market and bet["market"] != selected_market:
+            continue
+        if selected_predictability and bet["competition"]["predictability"] != selected_predictability:
+            continue
+        if selected_bookmaker and bookmaker_name != selected_bookmaker:
+            continue
+        if min_prob and (probability is None or probability < float(min_prob)):
+            continue
+        if max_prob and (probability is None or probability > float(max_prob)):
+            continue
+
         table_data.append({
             "market": bet["market"],
             "home_name": bet["home_name"],
@@ -972,15 +994,25 @@ def value_bets():
             "competition_country": bet["competition"]["country"],
             "competition_name": bet["competition"]["name"],
             "competition_predictability": bet["competition"]["predictability"],
-            "probability": round(bet["probability"], 2) if bet["probability"] is not None else "N/A",
-            "implied_odds": round(1 / (bet["probability"] / 100), 2) if bet["probability"] > 0 else "N/A",
+            "probability": probability if probability is not None else "N/A",
+            "implied_odds": implied_odds,
             "bookmaker": bookmaker_name,
             "latest_odds": latest_odds,
             "value_percentage": value_percentage,
             "fixture_id": bet["id"]
         })
 
-    return render_template('value_bets.html', value_bets=table_data, market_name_mapping=MARKET_NAME_MAPPING)
+    return render_template(
+        'value_bets.html',
+        value_bets=table_data,
+        market_name_mapping=MARKET_NAME_MAPPING,
+        selected_market=selected_market,
+        selected_predictability=selected_predictability,
+        selected_bookmaker=selected_bookmaker,
+        min_prob=min_prob,
+        max_prob=max_prob
+    )
+
 
 @app.template_filter("format_kickoff")
 def format_kickoff_filter(value):
