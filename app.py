@@ -57,7 +57,10 @@ if os.path.exists(PREDICTABILITY_CACHE_FILE):
         try:
             predictability_cache = json.load(f)
         except json.JSONDecodeError:
-            predictability_cache = {}
+            predictability_cache = {"timestamp": None, "data": {}}
+else:
+    predictability_cache = {"timestamp": None, "data": {}}
+
 
 if os.path.exists(SEASON_STATS_CACHE_FILE):
     with open(SEASON_STATS_CACHE_FILE, 'r') as f:
