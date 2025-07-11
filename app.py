@@ -6,6 +6,11 @@ import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from datetime import datetime, timedelta, timezone
+from dateutil import tz
+
+# Add this at the top if not already present
+from_zone = tz.gettz("UTC")
+to_zone = tz.gettz("Europe/London")
 
 print(f"Flask process PID: {os.getpid()}")
 
@@ -880,7 +885,7 @@ def probability_rankings():
                 results.append({
                     "fixture_id": fixture_id,
                     "fixture_name": info["name"],
-                    "kickoff": datetime.fromtimestamp(info["kickoff_unix"]).strftime('%H:%M'),
+                    "kickoff": datetime.utcfromtimestamp(info["kickoff_unix"]).replace(tzinfo=from_zone).astimezone(to_zone).strftime('%H:%M'),
                     "league": info["league"],
                     "country": info["country"],
                     "probability": probability,
