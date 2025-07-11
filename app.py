@@ -1092,6 +1092,8 @@ def filter_value_bets():
         # ✅ Always load the most recent value bets from the cache file
         with open(VALUE_BETS_CACHE_FILE, "r") as f:
             filtered_bets = json.load(f)
+        
+        print(f"Filter route cache loaded: {len(filtered_bets)} bets")
 
         selected_bookmakers = request_data.get("bookmakers", [])
         selected_predictability = request_data.get("predictability", [])
