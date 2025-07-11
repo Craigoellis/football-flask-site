@@ -1094,6 +1094,7 @@ def filter_value_bets():
             filtered_bets = json.load(f)
         
         print(f"Filter route cache loaded: {len(filtered_bets)} bets")
+        print(f"Bets after filtering by time: {len(filtered_bets)}")
 
         selected_bookmakers = request_data.get("bookmakers", [])
         selected_predictability = request_data.get("predictability", [])
