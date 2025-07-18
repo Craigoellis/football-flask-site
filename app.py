@@ -836,11 +836,10 @@ def probability_rankings():
         print("Error loading fixtures cache:", e)
         fixtures_data = {}
 
-    # Fallback: if no date provided, pick the latest available date in fixtures
+    # ✅ Fix: use today's date in London timezone if no date is provided
     if not selected_date:
-        all_dates = list(fixtures_data.keys())
-        all_dates.sort(reverse=True)  # sort newest first
-        selected_date = all_dates[0] if all_dates else None
+        today_london = datetime.now(pytz.utc).astimezone(london_tz).strftime('%Y-%m-%d')
+        selected_date = today_london
 
     fixture_lookup = {}
     for date, countries in fixtures_data.items():
