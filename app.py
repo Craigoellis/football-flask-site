@@ -820,6 +820,8 @@ def probability_rankings():
     odds_filter = request.args.get('odds') == 'on'
     value_filter = request.args.get('value') == 'on'
 
+    london_tz = pytz.timezone('Europe/London')
+
     try:
         with open(GAME_DETAILS_CACHE_FILE, 'r') as f:
             game_details = json.load(f)
@@ -829,7 +831,6 @@ def probability_rankings():
 
     with open(FIXTURES_CACHE_FILE, 'r') as f:
         fixtures_data = json.load(f)
-        
 
     fixture_lookup = {}
     for date, countries in fixtures_data.items():
@@ -837,7 +838,7 @@ def probability_rankings():
             for league, fixtures in leagues.items():
                 for fixture in fixtures:
                     fixture_id = str(fixture["fixture_id"])
-                    kick_off = datetime.fromtimestamp(fixture["unix"]).strftime('%Y-%m-%d')
+                    kick_off = datetime.fromtimestamp(fixture["unix"], pytz.utc).astimezone(london_tz).strftime('%Y-%m-%d')
                     fixture_lookup[fixture_id] = {
                         "name": fixture["fixture_name"],
                         "kick_off": kick_off,
@@ -855,7 +856,6 @@ def probability_rankings():
                 actual_odds = market_data.get("actual_odds")
                 implied_odds = market_data.get("implied_odds")
 
-                # Only apply actual odds filter to markets that are expected to have them
                 if odds_filter and selected_market not in [
                     "home_score_first", "draw_score_first", "away_score_first",
                     "home_win_ht", "draw_ht", "away_win_ht"
@@ -877,10 +877,12 @@ def probability_rankings():
                 except (ValueError, TypeError):
                     probability = 0
 
+                kickoff_time = datetime.fromtimestamp(info["kickoff_unix"], pytz.utc).astimezone(london_tz).strftime('%H:%M')
+
                 results.append({
                     "fixture_id": fixture_id,
                     "fixture_name": info["name"],
-                    "kickoff": datetime.fromtimestamp(info["kickoff_unix"]).strftime('%H:%M'),
+                    "kickoff": kickoff_time,
                     "league": info["league"],
                     "country": info["country"],
                     "probability": probability,
