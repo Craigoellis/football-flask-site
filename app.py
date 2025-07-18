@@ -829,8 +829,18 @@ def probability_rankings():
         print("JSONDecodeError in game_details_cache.json:", e)
         game_details = {}
 
-    with open(FIXTURES_CACHE_FILE, 'r') as f:
-        fixtures_data = json.load(f)
+    try:
+        with open(FIXTURES_CACHE_FILE, 'r') as f:
+            fixtures_data = json.load(f)
+    except Exception as e:
+        print("Error loading fixtures cache:", e)
+        fixtures_data = {}
+
+    # Fallback: if no date provided, pick the latest available date in fixtures
+    if not selected_date:
+        all_dates = list(fixtures_data.keys())
+        all_dates.sort(reverse=True)  # sort newest first
+        selected_date = all_dates[0] if all_dates else None
 
     fixture_lookup = {}
     for date, countries in fixtures_data.items():
@@ -891,6 +901,7 @@ def probability_rankings():
                 })
 
     results.sort(key=lambda x: x["probability"], reverse=True)
+
 
     available_markets = [
         "home_win", "draw", "away_win",
