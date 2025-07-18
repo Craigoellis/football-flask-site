@@ -668,7 +668,8 @@ def inject_now():
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    london_time = datetime.now(pytz.timezone('Europe/London')).strftime('%Y-%m-%d')
+    return render_template('home.html', current_date=london_time)
 
 def sort_fixtures_structure(fixtures_by_date):
     for date, countries in fixtures_by_date.items():
