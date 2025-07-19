@@ -1095,48 +1095,474 @@ def pinnacle_comparisons():
 
     return render_template("pinnacle.html", comparisons=comparisons)
 
+
 @app.route('/filter_value_bets', methods=['POST'])
 def filter_value_bets():
-    data = request.get_json()
-    if not data:
-        return jsonify([])
+    """Filters cached value bets based on selected bookmakers, predictability levels, markets, and exclusions."""
+    try:
+        request_data = request.get_json()
 
-    selected_bookmakers = data.get("bookmakers", [])
-    selected_predictability = data.get("predictability", [])
-    exclude_cups = data.get("exclude_cups", False)
-    exclude_friendlies = data.get("exclude_friendlies", False)
+        # ✅ Always load the most recent value bets from the cache file
+        with open(VALUE_BETS_CACHE_FILE, "r") as f:
+            filtered_bets = json.load(f)
+        
+        print(f"Filter route cache loaded: {len(filtered_bets)} bets")
+        print(f"Bets after filtering by time: {len(filtered_bets)}")
 
-    # Load from existing cache
-    cached_value_bets = load_json_cache(VALUE_BETS_CACHE_FILE)
-    filtered = []
+        selected_bookmakers = request_data.get("bookmakers", [])
+        selected_predictability = request_data.get("predictability", [])
+        exclude_cups = request_data.get("exclude_cups", False)
+        exclude_friendlies = request_data.get("exclude_friendlies", False)
 
-    for item in cached_value_bets:
-        # Skip cup/friendly games
-        competition_name = item.get("competition", "").lower()
-        if exclude_cups and "cup" in competition_name:
-            continue
-        if exclude_friendlies and "friendly" in competition_name:
-            continue
+        # Load home win FT filter settings
+        home_win_filters = request_data.get("home_win_filters", {})
+        include_home_win = home_win_filters.get("include", True)
+        home_win_prob_min = home_win_filters.get("probability_min", 0)
+        home_win_prob_max = home_win_filters.get("probability_max", 100)
+        home_win_odds_min = home_win_filters.get("odds_min", 1.00)
+        home_win_odds_max = home_win_filters.get("odds_max", 10.00)
+        home_win_value_min = home_win_filters.get("value_min", 0)
+        home_win_value_max = home_win_filters.get("value_max", 100)
 
-        # Bookmaker filter
-        if selected_bookmakers:
-            if not any(o.get("bookmaker_name") in selected_bookmakers for o in item.get("odds", [])):
+        # Load Draw FT filter settings
+        draw_filters = request_data.get("draw_filters", {})
+        include_draw = draw_filters.get("include", True)
+        draw_prob_min = draw_filters.get("probability_min", 0)
+        draw_prob_max = draw_filters.get("probability_max", 100)
+        draw_odds_min = draw_filters.get("odds_min", 1.00)
+        draw_odds_max = draw_filters.get("odds_max", 10.00)
+        draw_value_min = draw_filters.get("value_min", 0)
+        draw_value_max = draw_filters.get("value_max", 100)
+
+        # Load Away Win FT Filter settings
+        away_win_filters = request_data.get("away_win_filters", {})
+        include_away_win = away_win_filters.get("include", True)
+        away_win_prob_min = away_win_filters.get("probability_min", 0)
+        away_win_prob_max = away_win_filters.get("probability_max", 100)
+        away_win_odds_min = away_win_filters.get("odds_min", 1.00)
+        away_win_odds_max = away_win_filters.get("odds_max", 10.00)
+        away_win_value_min = away_win_filters.get("value_min", 0)
+        away_win_value_max = away_win_filters.get("value_max", 100)
+
+        home_win_ht_filters = request_data.get("home_win_ht_filters", {})
+        include_home_win_ht = home_win_ht_filters.get("include", True)
+        home_win_ht_prob_min = home_win_ht_filters.get("probability_min", 0)
+        home_win_ht_prob_max = home_win_ht_filters.get("probability_max", 100)
+        home_win_ht_odds_min = home_win_ht_filters.get("odds_min", 1.00)
+        home_win_ht_odds_max = home_win_ht_filters.get("odds_max", 10.00)
+        home_win_ht_value_min = home_win_ht_filters.get("value_min", 0)
+        home_win_ht_value_max = home_win_ht_filters.get("value_max", 100)
+
+        draw_ht_filters = request_data.get("draw_ht_filters", {})
+        include_draw_ht = draw_ht_filters.get("include", True)
+        draw_ht_prob_min = draw_ht_filters.get("probability_min", 0)
+        draw_ht_prob_max = draw_ht_filters.get("probability_max", 100)
+        draw_ht_odds_min = draw_ht_filters.get("odds_min", 1.00)
+        draw_ht_odds_max = draw_ht_filters.get("odds_max", 10.00)
+        draw_ht_value_min = draw_ht_filters.get("value_min", 0)
+        draw_ht_value_max = draw_ht_filters.get("value_max", 100)
+
+        away_win_ht_filters = request_data.get("away_win_ht_filters", {})
+        include_away_win_ht = away_win_ht_filters.get("include", True)
+        away_win_ht_prob_min = away_win_ht_filters.get("probability_min", 0)
+        away_win_ht_prob_max = away_win_ht_filters.get("probability_max", 100)
+        away_win_ht_odds_min = away_win_ht_filters.get("odds_min", 1.00)
+        away_win_ht_odds_max = away_win_ht_filters.get("odds_max", 10.00)
+        away_win_ht_value_min = away_win_ht_filters.get("value_min", 0)
+        away_win_ht_value_max = away_win_ht_filters.get("value_max", 100)
+
+        # Over 1.5 Goals
+        o15_filters = request_data.get("o15_filters", {})
+        include_o15 = o15_filters.get("include", True)
+        o15_prob_min = o15_filters.get("probability_min", 0)
+        o15_prob_max = o15_filters.get("probability_max", 100)
+        o15_odds_min = o15_filters.get("odds_min", 1.00)
+        o15_odds_max = o15_filters.get("odds_max", 10.00)
+        o15_value_min = o15_filters.get("value_min", 0)
+        o15_value_max = o15_filters.get("value_max", 100)
+
+        # Over 2.5 Goals
+        o25_filters = request_data.get("o25_filters", {})
+        include_o25 = o25_filters.get("include", True)
+        o25_prob_min = o25_filters.get("probability_min", 0)
+        o25_prob_max = o25_filters.get("probability_max", 100)
+        o25_odds_min = o25_filters.get("odds_min", 1.00)
+        o25_odds_max = o25_filters.get("odds_max", 10.00)
+        o25_value_min = o25_filters.get("value_min", 0)
+        o25_value_max = o25_filters.get("value_max", 100)
+
+        # Over 3.5 Goals
+        o35_filters = request_data.get("o35_filters", {})
+        include_o35 = o35_filters.get("include", True)
+        o35_prob_min = o35_filters.get("probability_min", 0)
+        o35_prob_max = o35_filters.get("probability_max", 100)
+        o35_odds_min = o35_filters.get("odds_min", 1.00)
+        o35_odds_max = o35_filters.get("odds_max", 10.00)
+        o35_value_min = o35_filters.get("value_min", 0)
+        o35_value_max = o35_filters.get("value_max", 100)
+
+        # Over 4.5 Goals
+        o45_filters = request_data.get("o45_filters", {})
+        include_o45 = o45_filters.get("include", True)
+        o45_prob_min = o45_filters.get("probability_min", 0)
+        o45_prob_max = o45_filters.get("probability_max", 100)
+        o45_odds_min = o45_filters.get("odds_min", 1.00)
+        o45_odds_max = o45_filters.get("odds_max", 10.00)
+        o45_value_min = o45_filters.get("value_min", 0)
+        o45_value_max = o45_filters.get("value_max", 100)
+
+        # Under 1.5 Goals
+        u15_filters = request_data.get("u15_filters", {})
+        include_u15 = u15_filters.get("include", True)
+        u15_prob_min = u15_filters.get("probability_min", 0)
+        u15_prob_max = u15_filters.get("probability_max", 100)
+        u15_odds_min = u15_filters.get("odds_min", 1.00)
+        u15_odds_max = u15_filters.get("odds_max", 10.00)
+        u15_value_min = u15_filters.get("value_min", 0)
+        u15_value_max = u15_filters.get("value_max", 100)
+
+        # Under 2.5 Goals
+        u25_filters = request_data.get("u25_filters", {})
+        include_u25 = u25_filters.get("include", True)
+        u25_prob_min = u25_filters.get("probability_min", 0)
+        u25_prob_max = u25_filters.get("probability_max", 100)
+        u25_odds_min = u25_filters.get("odds_min", 1.00)
+        u25_odds_max = u25_filters.get("odds_max", 10.00)
+        u25_value_min = u25_filters.get("value_min", 0)
+        u25_value_max = u25_filters.get("value_max", 100)
+
+        # Under 3.5 Goals
+        u35_filters = request_data.get("u35_filters", {})
+        include_u35 = u35_filters.get("include", True)
+        u35_prob_min = u35_filters.get("probability_min", 0)
+        u35_prob_max = u35_filters.get("probability_max", 100)
+        u35_odds_min = u35_filters.get("odds_min", 1.00)
+        u35_odds_max = u35_filters.get("odds_max", 10.00)
+        u35_value_min = u35_filters.get("value_min", 0)
+        u35_value_max = u35_filters.get("value_max", 100)
+
+        # Under 4.5 Goals
+        u45_filters = request_data.get("u45_filters", {})
+        include_u45 = u45_filters.get("include", True)
+        u45_prob_min = u45_filters.get("probability_min", 0)
+        u45_prob_max = u45_filters.get("probability_max", 100)
+        u45_odds_min = u45_filters.get("odds_min", 1.00)
+        u45_odds_max = u45_filters.get("odds_max", 10.00)
+        u45_value_min = u45_filters.get("value_min", 0)
+        u45_value_max = u45_filters.get("value_max", 100)
+
+        btts_filters = request_data.get("btts_filters", {})
+        include_btts = btts_filters.get("include", True)
+        btts_prob_min = btts_filters.get("probability_min", 0)
+        btts_prob_max = btts_filters.get("probability_max", 100)
+        btts_odds_min = btts_filters.get("odds_min", 1.00)
+        btts_odds_max = btts_filters.get("odds_max", 10.00)
+        btts_value_min = btts_filters.get("value_min", 0)
+        btts_value_max = btts_filters.get("value_max", 100)
+
+        home_o15_filters = request_data.get("home_o15_filters", {})
+        include_home_o15 = home_o15_filters.get("include", True)
+        home_o15_prob_min = home_o15_filters.get("probability_min", 0)
+        home_o15_prob_max = home_o15_filters.get("probability_max", 100)
+        home_o15_odds_min = home_o15_filters.get("odds_min", 1.00)
+        home_o15_odds_max = home_o15_filters.get("odds_max", 10.00)
+        home_o15_value_min = home_o15_filters.get("value_min", 0)
+        home_o15_value_max = home_o15_filters.get("value_max", 100)
+
+        away_o15_filters = request_data.get("away_o15_filters", {})
+        include_away_o15 = away_o15_filters.get("include", True)
+        away_o15_prob_min = away_o15_filters.get("probability_min", 0)
+        away_o15_prob_max = away_o15_filters.get("probability_max", 100)
+        away_o15_odds_min = away_o15_filters.get("odds_min", 1.00)
+        away_o15_odds_max = away_o15_filters.get("odds_max", 10.00)
+        away_o15_value_min = away_o15_filters.get("value_min", 0)
+        away_o15_value_max = away_o15_filters.get("value_max", 100)
+
+        o85_filters = request_data.get("o85_filters", {})
+        include_o85 = o85_filters.get("include", True)
+        o85_prob_min = o85_filters.get("probability_min", 0)
+        o85_prob_max = o85_filters.get("probability_max", 100)
+        o85_odds_min = o85_filters.get("odds_min", 1.00)
+        o85_odds_max = o85_filters.get("odds_max", 10.00)
+        o85_value_min = o85_filters.get("value_min", 0)
+        o85_value_max = o85_filters.get("value_max", 100)
+
+        if not selected_bookmakers and not selected_predictability and not selected_markets and not exclude_cups and not exclude_friendlies:
+            return jsonify([])  # Return empty list if no filters are applied
+
+        # Get cached data
+        value_bets_data = fetch_value_bets()
+
+        table_data = []
+        for bet in value_bets_data:
+            # Ensure "odds" key exists and has valid data
+            if "odds" not in bet or not isinstance(bet["odds"], list) or len(bet["odds"]) == 0:
+                continue  # Skip if no valid odds data
+
+            # Apply exclusion filters
+            if exclude_cups and bet["competition"].get("is_cup", False):
+                continue  # Skip cup games
+            if exclude_friendlies and bet["competition"].get("is_friendly", False):
+                continue  # Skip friendly games
+
+            # Filter odds based on selected bookmakers and remove negative values
+            filtered_odds = [odd for odd in bet["odds"] if "bookmaker_name" in odd and odd["bookmaker_name"] in selected_bookmakers and float(odd.get("value", 0)) >= 0]
+
+            # If no odds match the filter after removing negatives, skip this bet
+            if not filtered_odds:
                 continue
 
-        # Predictability filter
-        if selected_predictability and item.get("predictability") not in selected_predictability:
-            continue
+            # Find the bookmaker with the highest latest odds from selected bookmakers
+            best_odds = max(filtered_odds, key=lambda x: float(x.get("latest", 0)))
+            bookmaker_name = best_odds.get("bookmaker_name", "N/A")
+            latest_odds = float(best_odds.get("latest", 0))
+            value_percentage = float(best_odds.get("value", 0))
 
-        filtered.append(item)
+            # Get predictability, ensure it's always a string
+            predictability = str(bet["competition"].get("predictability", "Unknown")).capitalize()
 
-    return jsonify(filtered)
+            # Apply predictability filter if selected
+            if selected_predictability and predictability not in selected_predictability:
+                continue  # Skip if predictability doesn't match
 
-    
-@app.route('/api/value_bets')
-def api_value_bets():
-    cached_value_bets = load_json_cache(VALUE_BETS_CACHE_FILE)
-    return jsonify(cached_value_bets)
+            # Apply Home Win FT Result filters
+            if include_home_win and bet["market"] == "home_win_probability":
+                probability = bet.get("probability", 0)
+                if not (home_win_prob_min <= probability <= home_win_prob_max):
+                    continue
+                if not (home_win_odds_min <= latest_odds <= home_win_odds_max):
+                    continue
+                if not (home_win_value_min <= value_percentage <= home_win_value_max):
+                    continue
+            elif not include_home_win and bet["market"] == "home_win_probability":
+                continue  # Skip this market entirely if not included
 
+            # Apply Draw FT Result filters
+            if include_draw and bet["market"] == "draw_probability":
+                probability = bet.get("probability", 0)
+                if not (draw_prob_min <= probability <= draw_prob_max):
+                    continue
+                if not (draw_odds_min <= latest_odds <= draw_odds_max):
+                    continue
+                if not (draw_value_min <= value_percentage <= draw_value_max):
+                    continue
+            elif not include_draw and bet["market"] == "draw_probability":
+                continue  # Skip draw market entirely if not included
+
+            # Apply Away Win FT Result filters
+            if include_away_win and bet["market"] == "away_win_probability":
+                probability = bet.get("probability", 0)
+                if not (away_win_prob_min <= probability <= away_win_prob_max):
+                    continue
+                if not (away_win_odds_min <= latest_odds <= away_win_odds_max):
+                    continue
+                if not (away_win_value_min <= value_percentage <= away_win_value_max):
+                    continue
+            elif not include_away_win and bet["market"] == "away_win_probability":
+                continue  # Skip away win market entirely if not included
+
+            # HT Home Win
+            if include_home_win_ht and bet["market"] == "home_win_ht_probability":
+                probability = bet.get("probability", 0)
+                if not (home_win_ht_prob_min <= probability <= home_win_ht_prob_max):
+                    continue
+                if not (home_win_ht_odds_min <= latest_odds <= home_win_ht_odds_max):
+                    continue
+                if not (home_win_ht_value_min <= value_percentage <= home_win_ht_value_max):
+                    continue
+            elif not include_home_win_ht and bet["market"] == "home_win_ht_probability":
+                continue
+
+            # HT Draw
+            if include_draw_ht and bet["market"] == "draw_ht_probability":
+                probability = bet.get("probability", 0)
+                if not (draw_ht_prob_min <= probability <= draw_ht_prob_max):
+                    continue
+                if not (draw_ht_odds_min <= latest_odds <= draw_ht_odds_max):
+                    continue
+                if not (draw_ht_value_min <= value_percentage <= draw_ht_value_max):
+                    continue
+            elif not include_draw_ht and bet["market"] == "draw_ht_probability":
+                continue
+
+            # HT Away Win
+            if include_away_win_ht and bet["market"] == "away_win_ht_probability":
+                probability = bet.get("probability", 0)
+                if not (away_win_ht_prob_min <= probability <= away_win_ht_prob_max):
+                    continue
+                if not (away_win_ht_odds_min <= latest_odds <= away_win_ht_odds_max):
+                    continue
+                if not (away_win_ht_value_min <= value_percentage <= away_win_ht_value_max):
+                    continue
+            elif not include_away_win_ht and bet["market"] == "away_win_ht_probability":
+                continue
+
+            # Over 1.5 Goals
+            if include_o15 and bet["market"] == "o15_probability":
+                probability = bet.get("probability", 0)
+                if not (o15_prob_min <= probability <= o15_prob_max):
+                    continue
+                if not (o15_odds_min <= latest_odds <= o15_odds_max):
+                    continue
+                if not (o15_value_min <= value_percentage <= o15_value_max):
+                    continue
+            elif not include_o15 and bet["market"] == "o15_probability":
+                continue
+
+            # Over 2.5 Goals
+            if include_o25 and bet["market"] == "o25_probability":
+                probability = bet.get("probability", 0)
+                if not (o25_prob_min <= probability <= o25_prob_max):
+                    continue
+                if not (o25_odds_min <= latest_odds <= o25_odds_max):
+                    continue
+                if not (o25_value_min <= value_percentage <= o25_value_max):
+                    continue
+            elif not include_o25 and bet["market"] == "o25_probability":
+                continue
+
+            # Over 3.5 Goals
+            if include_o35 and bet["market"] == "o35_probability":
+                probability = bet.get("probability", 0)
+                if not (o35_prob_min <= probability <= o35_prob_max):
+                    continue
+                if not (o35_odds_min <= latest_odds <= o35_odds_max):
+                    continue
+                if not (o35_value_min <= value_percentage <= o35_value_max):
+                    continue
+            elif not include_o35 and bet["market"] == "o35_probability":
+                continue
+
+            # Over 4.5 Goals
+            if include_o45 and bet["market"] == "o45_probability":
+                probability = bet.get("probability", 0)
+                if not (o45_prob_min <= probability <= o45_prob_max):
+                    continue
+                if not (o45_odds_min <= latest_odds <= o45_odds_max):
+                    continue
+                if not (o45_value_min <= value_percentage <= o45_value_max):
+                    continue
+            elif not include_o45 and bet["market"] == "o45_probability":
+                continue
+
+            # Under 1.5 Goals
+            if include_u15 and bet["market"] == "u15_probability":
+                probability = bet.get("probability", 0)
+                if not (u15_prob_min <= probability <= u15_prob_max):
+                    continue
+                if not (u15_odds_min <= latest_odds <= u15_odds_max):
+                    continue
+                if not (u15_value_min <= value_percentage <= u15_value_max):
+                    continue
+            elif not include_u15 and bet["market"] == "u15_probability":
+                continue
+
+            # Under 2.5 Goals
+            if include_u25 and bet["market"] == "u25_probability":
+                probability = bet.get("probability", 0)
+                if not (u25_prob_min <= probability <= u25_prob_max):
+                    continue
+                if not (u25_odds_min <= latest_odds <= u25_odds_max):
+                    continue
+                if not (u25_value_min <= value_percentage <= u25_value_max):
+                    continue
+            elif not include_u25 and bet["market"] == "u25_probability":
+                continue
+
+            # Under 3.5 Goals
+            if include_u35 and bet["market"] == "u35_probability":
+                probability = bet.get("probability", 0)
+                if not (u35_prob_min <= probability <= u35_prob_max):
+                    continue
+                if not (u35_odds_min <= latest_odds <= u35_odds_max):
+                    continue
+                if not (u35_value_min <= value_percentage <= u35_value_max):
+                    continue
+            elif not include_u35 and bet["market"] == "u35_probability":
+                continue
+
+            # Under 4.5 Goals
+            if include_u45 and bet["market"] == "u45_probability":
+                probability = bet.get("probability", 0)
+                if not (u45_prob_min <= probability <= u45_prob_max):
+                    continue
+                if not (u45_odds_min <= latest_odds <= u45_odds_max):
+                    continue
+                if not (u45_value_min <= value_percentage <= u45_value_max):
+                    continue
+            elif not include_u45 and bet["market"] == "u45_probability":
+                continue
+
+            # BTTS
+            if include_btts and bet["market"] == "btts_probability":
+                probability = bet.get("probability", 0)
+                if not (btts_prob_min <= probability <= btts_prob_max):
+                    continue
+                if not (btts_odds_min <= latest_odds <= btts_odds_max):
+                    continue
+                if not (btts_value_min <= value_percentage <= btts_value_max):
+                    continue
+            elif not include_btts and bet["market"] == "btts_probability":
+                continue
+
+            # Home Over 1.5
+            if include_home_o15 and bet["market"] == "home_goals_15_probability":
+                probability = bet.get("probability", 0)
+                if not (home_o15_prob_min <= probability <= home_o15_prob_max):
+                    continue
+                if not (home_o15_odds_min <= latest_odds <= home_o15_odds_max):
+                    continue
+                if not (home_o15_value_min <= value_percentage <= home_o15_value_max):
+                    continue
+            elif not include_home_o15 and bet["market"] == "home_goals_15_probability":
+                continue
+
+            # Away Over 1.5
+            if include_away_o15 and bet["market"] == "away_goals_15_probability":
+                probability = bet.get("probability", 0)
+                if not (away_o15_prob_min <= probability <= away_o15_prob_max):
+                    continue
+                if not (away_o15_odds_min <= latest_odds <= away_o15_odds_max):
+                    continue
+                if not (away_o15_value_min <= value_percentage <= away_o15_value_max):
+                    continue
+            elif not include_away_o15 and bet["market"] == "away_goals_15_probability":
+                continue
+
+            # Over 8.5 Corners
+            if include_o85 and bet["market"] == "o85_corners_probability":
+                probability = bet.get("probability", 0)
+                if not (o85_prob_min <= probability <= o85_prob_max):
+                    continue
+                if not (o85_odds_min <= latest_odds <= o85_odds_max):
+                    continue
+                if not (o85_value_min <= value_percentage <= o85_value_max):
+                    continue
+            elif not include_o85 and bet["market"] == "o85_corners_probability":
+                continue
+
+            # Format data for table
+            table_data.append({
+                "market": bet["market"],
+                "home_name": bet["home_name"],
+                "away_name": bet["away_name"],
+                "ko_human": bet["ko_human"],
+                "competition_country": bet["competition"]["country"],
+                "competition_name": bet["competition"]["name"],
+                "competition_predictability": predictability,
+                "probability": round(bet["probability"], 2) if bet["probability"] is not None else "N/A",
+                "implied_odds": round(1 / (bet["probability"] / 100), 2) if bet["probability"] > 0 else "N/A",
+                "bookmaker": bookmaker_name,
+                "latest_odds": latest_odds,
+                "value_percentage": value_percentage,
+                "fixture_id": bet["id"]  # ✅ Add this line if not already present
+            })
+
+        return jsonify(table_data)
+
+    except Exception as e:
+        print(f"🚨 Error in /filter_value_bets: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/betslip_generator')
 def betslip_generator():
