@@ -361,19 +361,40 @@
     }
 
     function applyFilter() {
-        let selectedBookmakers = [];
-        document.querySelectorAll("input[name='bookmaker']:checked").forEach(checkbox => {
-            selectedBookmakers.push(checkbox.value);
-        });
+        fetch('/value-bets-data')
+            .then(response => response.json())
+            .then(data => {
+                let selectedBookmakers = [];
+                document.querySelectorAll("input[name='bookmaker']:checked").forEach(checkbox => {
+                    selectedBookmakers.push(checkbox.value);
+                });
 
-        let selectedPredictability = [];
-        document.querySelectorAll("input[name='predictability']:checked").forEach(checkbox => {
-            selectedPredictability.push(checkbox.value);
-        });
+                let selectedPredictability = [];
+                document.querySelectorAll("input[name='predictability']:checked").forEach(checkbox => {
+                    selectedPredictability.push(checkbox.value);
+                });
 
+                let excludeCups = document.getElementById("exclude_cups").checked;
+                let excludeFriendlies = document.getElementById("exclude_friendlies").checked;
 
-        let excludeCups = document.getElementById("exclude_cups").checked;
-        let excludeFriendlies = document.getElementById("exclude_friendlies").checked;
+                let filteredData = data.filter(item => {
+                    let bookmakerMatch = selectedBookmakers.length === 0 || selectedBookmakers.includes(item.bookmaker);
+                    let predictabilityMatch = selectedPredictability.length === 0 || selectedPredictability.includes(item.predictability);
+                    let isCup = item.competition.toLowerCase().includes("cup");
+                    let isFriendly = item.competition.toLowerCase().includes("friendly");
+                    let cupMatch = !excludeCups || !isCup;
+                    let friendlyMatch = !excludeFriendlies || !isFriendly;
+
+                    return bookmakerMatch && predictabilityMatch && cupMatch && friendlyMatch;
+                });
+
+                displayFilteredResults(filteredData);
+            })
+            .catch(error => {
+                console.error("Error fetching value bets data:", error);
+            });
+    }
+
 
 
         // Home Win FT Result filter values
