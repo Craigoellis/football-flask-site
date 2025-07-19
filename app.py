@@ -1095,10 +1095,6 @@ def pinnacle_comparisons():
 
     return render_template("pinnacle.html", comparisons=comparisons)
 
-@app.route('/value-bets-data')
-def value_bets_data():
-    return jsonify(cached_value_bets)
-
 
 @app.route('/filter_value_bets', methods=['POST'])
 def filter_value_bets():
