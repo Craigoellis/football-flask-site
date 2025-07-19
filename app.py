@@ -1563,6 +1563,12 @@ def filter_value_bets():
     except Exception as e:
         print(f"🚨 Error in /filter_value_bets: {e}")
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/api/value_bets')
+def api_value_bets():
+    cached_value_bets = load_json_cache(VALUE_BETS_CACHE_FILE)
+    return jsonify(cached_value_bets)
+
 
 @app.route('/betslip_generator')
 def betslip_generator():
