@@ -541,7 +541,7 @@
 
 
 
-        fetch("/filter_value_bets", {
+        fetch("/filter_value_bets?" + new Date().getTime(), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
