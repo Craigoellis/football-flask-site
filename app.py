@@ -224,6 +224,10 @@ def fetch_value_bets(force_refresh=False):
             break
 
     cached_value_bets = all_value_bets
+
+        # --- ADD THIS LINE BELOW! ---
+    print(f"Saving value bets to: {VALUE_BETS_CACHE_FILE}")
+
     with open(VALUE_BETS_CACHE_FILE, 'w') as f:
         json.dump(all_value_bets, f)
 
@@ -1103,6 +1107,7 @@ def filter_value_bets():
         request_data = request.get_json()
 
         # ✅ Always load the most recent value bets from the cache file
+        print(f"Loading value bets from: {VALUE_BETS_CACHE_FILE}")
         with open(VALUE_BETS_CACHE_FILE, "r") as f:
             filtered_bets = json.load(f)
         print(f"First bet in cache: {filtered_bets[0] if filtered_bets else 'EMPTY'}")
@@ -1705,8 +1710,8 @@ def custom_date(value):
 # Scheduler Setup
 # =========================
 scheduler = BackgroundScheduler()
-scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=1)
-scheduler.add_job(refresh_value_bets_cache, 'interval', minutes=10)
+scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=10)
+scheduler.add_job(refresh_value_bets_cache, 'interval', minutes=2)
 scheduler.start()
 
 if __name__ == '__main__':
