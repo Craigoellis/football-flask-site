@@ -584,92 +584,74 @@
 
     <!-- JavaScript for checkbox functionality -->
 <script>
-    // Handle predictability filter changes
-    document.querySelectorAll('.predictability-checkbox').forEach(predictabilityCheckbox => {
-        predictabilityCheckbox.addEventListener('change', function() {
-            const selectedPredictability = this.dataset.predictability; // Get the predictability level
-            const leagueCheckboxes = document.querySelectorAll(`.league-checkbox[data-predictability="${selectedPredictability}"]`);
+document.addEventListener('DOMContentLoaded', function() {
 
-            // Debugging: Log predictability and matching checkboxes
-            console.log(`Selected predictability: ${selectedPredictability}`);
-            console.log(`Matching league checkboxes:`, leagueCheckboxes);
-
-            // Check if any league checkboxes are found
-            if (leagueCheckboxes.length === 0) {
-                console.warn(`No leagues found with predictability: ${selectedPredictability}`);
-                return;
-            }
-
-            // Tick or untick all leagues with the selected predictability
-            leagueCheckboxes.forEach(checkbox => {
-                checkbox.checked = this.checked; // Match the state of the predictability checkbox
-            });
-
-            // Update country checkboxes if all leagues in a country are selected
-            const countries = Array.from(new Set([...leagueCheckboxes].map(checkbox => checkbox.dataset.country)));
-            countries.forEach(country => {
-                const countryCheckbox = document.querySelector(`.country-checkbox[data-country="${country}"]`);
-                const allLeagues = document.querySelectorAll(`.league-checkbox[data-country="${country}"]`);
-                const allChecked = Array.from(allLeagues).every(checkbox => checkbox.checked);
-                const anyChecked = Array.from(allLeagues).some(checkbox => checkbox.checked);
-
-                countryCheckbox.checked = allChecked;
-                countryCheckbox.indeterminate = !allChecked && anyChecked; // Set indeterminate state
-            });
-        });
-    });
-
-    // Handle country checkbox changes: tick/untick all leagues under the country
+function updateCountryCheckboxes() {
     document.querySelectorAll('.country-checkbox').forEach(countryCheckbox => {
-        countryCheckbox.addEventListener('change', function() {
-            const country = this.dataset.country;
-            const leagueCheckboxes = document.querySelectorAll(`.league-checkbox[data-country="${country}"]`);
-
-            // Set all league checkboxes to match the state of the country checkbox
-            leagueCheckboxes.forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
-        });
+        const country = countryCheckbox.dataset.country;
+        const leagueCheckboxes = document.querySelectorAll(`.league-checkbox[data-country="${country}"]`);
+        const allChecked = Array.from(leagueCheckboxes).every(cb => cb.checked);
+        const anyChecked = Array.from(leagueCheckboxes).some(cb => cb.checked);
+        countryCheckbox.checked = allChecked;
+        countryCheckbox.indeterminate = !allChecked && anyChecked;
     });
+}
 
-    // Handle league checkbox changes: update the country checkbox if all leagues are checked
-    document.querySelectorAll('.league-checkbox').forEach(leagueCheckbox => {
-        leagueCheckbox.addEventListener('change', function() {
-            const country = this.dataset.country;
-            const countryCheckbox = document.querySelector(`.country-checkbox[data-country="${country}"]`);
-            const leagueCheckboxes = document.querySelectorAll(`.league-checkbox[data-country="${country}"]`);
-
-            // If all league checkboxes are checked, mark the country checkbox as checked
-            const allChecked = Array.from(leagueCheckboxes).every(checkbox => checkbox.checked);
-            const anyChecked = Array.from(leagueCheckboxes).some(checkbox => checkbox.checked);
-
-            countryCheckbox.checked = allChecked;
-            countryCheckbox.indeterminate = !allChecked && anyChecked; // Set indeterminate state
+// Handle predictability filter changes
+document.querySelectorAll('.predictability-checkbox').forEach(predictabilityCheckbox => {
+    predictabilityCheckbox.addEventListener('change', function() {
+        const selectedPredictability = this.dataset.predictability;
+        const leagueCheckboxes = document.querySelectorAll(`.league-checkbox[data-predictability="${selectedPredictability}"]`);
+        leagueCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
         });
+        updateCountryCheckboxes();
     });
+});
 
-    // Toggle the dropdown visibility and rotate the arrow when the country label is clicked
-    document.querySelectorAll('.country-section label').forEach(countryLabel => {
-        countryLabel.addEventListener('click', function(event) {
-            const checkbox = this.querySelector('.country-checkbox');
+// Handle country checkbox changes: tick/untick all leagues under the country
+document.querySelectorAll('.country-checkbox').forEach(countryCheckbox => {
+    countryCheckbox.addEventListener('change', function() {
+        const country = this.dataset.country;
+        const leagueCheckboxes = document.querySelectorAll(`.league-checkbox[data-country="${country}"]`);
+        leagueCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+        updateCountryCheckboxes();
+    });
+});
 
-            // Prevent toggling the checkbox state when clicking the label (only open/close dropdown)
-            if (event.target !== checkbox) {
-                event.preventDefault();
+// Handle league checkbox changes: update the country checkbox if all leagues are checked
+document.querySelectorAll('.league-checkbox').forEach(leagueCheckbox => {
+    leagueCheckbox.addEventListener('change', function() {
+        updateCountryCheckboxes();
+    });
+});
 
-                const dropdown = this.nextElementSibling; // The league dropdown
-                const arrow = this.querySelector('.arrow'); // The arrow icon
+// Toggle the dropdown visibility and rotate the arrow when the country label is clicked
+document.querySelectorAll('.country-section label').forEach(countryLabel => {
+    countryLabel.addEventListener('click', function(event) {
+        const checkbox = this.querySelector('.country-checkbox');
+        // Prevent toggling the checkbox state when clicking the label (only open/close dropdown)
+        if (event.target !== checkbox) {
+            event.preventDefault();
 
-                if (dropdown.style.display === "none" || dropdown.style.display === "") {
-                    dropdown.style.display = "block";  // Show the dropdown
-                    arrow.classList.add('rotate');    // Rotate the arrow
-                } else {
-                    dropdown.style.display = "none";  // Hide the dropdown
-                    arrow.classList.remove('rotate'); // Reset the arrow rotation
-                }
+            const dropdown = this.nextElementSibling; // The league dropdown
+            const arrow = this.querySelector('.arrow'); // The arrow icon
+
+            if (dropdown.style.display === "none" || dropdown.style.display === "") {
+                dropdown.style.display = "block";  // Show the dropdown
+                arrow.classList.add('rotate');    // Rotate the arrow
+            } else {
+                dropdown.style.display = "none";  // Hide the dropdown
+                arrow.classList.remove('rotate'); // Reset the arrow rotation
             }
-        });
+        }
     });
+});
+
+}); // end DOMContentLoaded
 </script>
+
 
 {% endblock %}
