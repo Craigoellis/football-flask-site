@@ -543,7 +543,7 @@
 
 <div>
     <h2>Competitions</h2>
-    {% for country, leagues in grouped_competitions.items() %}
+    {% for country, leagues in grouped_competitions|dictsort %}
     <div class="country-section">
         <label onclick="toggleDropdown('{{ country|replace(' ', '_') }}')">
             <input type="checkbox" class="country-checkbox" data-country="{{ country }}">
