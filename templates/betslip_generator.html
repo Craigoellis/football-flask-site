@@ -559,16 +559,15 @@
                        name="competitions" 
                        value="{{ competition_id }}">
                 {{ competition['name'] }}
-                <!-- Add colored bullet point based on predictability -->
-<span class="predictability-indicator" 
-      style="color: 
-             {% if competition['predictability']|lower|trim == 'high' %}green
-             {% elif competition['predictability']|lower|trim == 'good' %}yellow
-             {% elif competition['predictability']|lower|trim == 'medium' %}orange
-             {% elif competition['predictability']|lower|trim == 'poor' %}red
-             {% else %}gray{% endif %};">
-    ●
-</span>
+                <span class="predictability-indicator"
+                    style="color:
+                        {% if competition['predictability']|lower|trim == 'high' %}green
+                        {% elif competition['predictability']|lower|trim == 'good' %}yellow
+                        {% elif competition['predictability']|lower|trim == 'medium' %}orange
+                        {% elif competition['predictability']|lower|trim == 'poor' %}red
+                        {% else %}gray{% endif %};">
+                    ●
+                </span>
             </label>
             <br>
             {% endfor %}
@@ -576,7 +575,6 @@
     </div>
     {% endfor %}
 </div>
-
 
             <div class="form-footer">
                 <button type="submit">Generate Betslip</button>
