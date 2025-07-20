@@ -551,7 +551,7 @@
             <span class="arrow">&#9660;</span> <!-- Arrow symbol (downward) -->
         </label>
         <div id="{{ country|replace(' ', '_') }}" class="league-dropdown">
-            {% for competition_id, competition in leagues.items() %}
+            {% for competition_id, competition in leagues.items()|sort(attribute='1.name') %}
             <label>
                 <input type="checkbox" class="league-checkbox" 
                        data-country="{{ country }}" 
