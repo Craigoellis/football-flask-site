@@ -1111,14 +1111,13 @@ def filter_value_bets():
         with open(VALUE_BETS_CACHE_FILE, "r") as f:
             filtered_bets = json.load(f)
         print(f"First bet in cache: {filtered_bets[0] if filtered_bets else 'EMPTY'}")
-        
         print(f"Filter route cache loaded: {len(filtered_bets)} bets")
-        print(f"Bets after filtering by time: {len(filtered_bets)}")
 
         selected_bookmakers = request_data.get("bookmakers", [])
         selected_predictability = request_data.get("predictability", [])
         exclude_cups = request_data.get("exclude_cups", False)
         exclude_friendlies = request_data.get("exclude_friendlies", False)
+        selected_markets = request_data.get("markets", [])
 
         # Load home win FT filter settings
         home_win_filters = request_data.get("home_win_filters", {})
@@ -1150,6 +1149,7 @@ def filter_value_bets():
         away_win_value_min = away_win_filters.get("value_min", 0)
         away_win_value_max = away_win_filters.get("value_max", 100)
 
+        # Half Time Home Win
         home_win_ht_filters = request_data.get("home_win_ht_filters", {})
         include_home_win_ht = home_win_ht_filters.get("include", True)
         home_win_ht_prob_min = home_win_ht_filters.get("probability_min", 0)
@@ -1159,6 +1159,7 @@ def filter_value_bets():
         home_win_ht_value_min = home_win_ht_filters.get("value_min", 0)
         home_win_ht_value_max = home_win_ht_filters.get("value_max", 100)
 
+        # Half Time Draw
         draw_ht_filters = request_data.get("draw_ht_filters", {})
         include_draw_ht = draw_ht_filters.get("include", True)
         draw_ht_prob_min = draw_ht_filters.get("probability_min", 0)
@@ -1168,6 +1169,7 @@ def filter_value_bets():
         draw_ht_value_min = draw_ht_filters.get("value_min", 0)
         draw_ht_value_max = draw_ht_filters.get("value_max", 100)
 
+        # Half Time Away Win
         away_win_ht_filters = request_data.get("away_win_ht_filters", {})
         include_away_win_ht = away_win_ht_filters.get("include", True)
         away_win_ht_prob_min = away_win_ht_filters.get("probability_min", 0)
@@ -1257,6 +1259,7 @@ def filter_value_bets():
         u45_value_min = u45_filters.get("value_min", 0)
         u45_value_max = u45_filters.get("value_max", 100)
 
+        # BTTS
         btts_filters = request_data.get("btts_filters", {})
         include_btts = btts_filters.get("include", True)
         btts_prob_min = btts_filters.get("probability_min", 0)
@@ -1266,6 +1269,7 @@ def filter_value_bets():
         btts_value_min = btts_filters.get("value_min", 0)
         btts_value_max = btts_filters.get("value_max", 100)
 
+        # Home Over 1.5 Goals
         home_o15_filters = request_data.get("home_o15_filters", {})
         include_home_o15 = home_o15_filters.get("include", True)
         home_o15_prob_min = home_o15_filters.get("probability_min", 0)
@@ -1275,6 +1279,7 @@ def filter_value_bets():
         home_o15_value_min = home_o15_filters.get("value_min", 0)
         home_o15_value_max = home_o15_filters.get("value_max", 100)
 
+        # Away Over 1.5 Goals
         away_o15_filters = request_data.get("away_o15_filters", {})
         include_away_o15 = away_o15_filters.get("include", True)
         away_o15_prob_min = away_o15_filters.get("probability_min", 0)
@@ -1284,6 +1289,7 @@ def filter_value_bets():
         away_o15_value_min = away_o15_filters.get("value_min", 0)
         away_o15_value_max = away_o15_filters.get("value_max", 100)
 
+        # Over 8.5 Corners
         o85_filters = request_data.get("o85_filters", {})
         include_o85 = o85_filters.get("include", True)
         o85_prob_min = o85_filters.get("probability_min", 0)
@@ -1293,6 +1299,7 @@ def filter_value_bets():
         o85_value_min = o85_filters.get("value_min", 0)
         o85_value_max = o85_filters.get("value_max", 100)
 
+        # Return empty if no filters at all
         if not selected_bookmakers and not selected_predictability and not selected_markets and not exclude_cups and not exclude_friendlies:
             return jsonify([])  # Return empty list if no filters are applied
 
@@ -1312,9 +1319,12 @@ def filter_value_bets():
                 continue  # Skip friendly games
 
             # Filter odds based on selected bookmakers and remove negative values
-            filtered_odds = [odd for odd in bet["odds"] if "bookmaker_name" in odd and odd["bookmaker_name"] in selected_bookmakers and float(odd.get("value", 0)) >= 0]
-
-            # If no odds match the filter after removing negatives, skip this bet
+            filtered_odds = [
+                odd for odd in bet["odds"]
+                if "bookmaker_name" in odd
+                and odd["bookmaker_name"] in selected_bookmakers
+                and float(odd.get("value", 0)) >= 0
+            ]
             if not filtered_odds:
                 continue
 
@@ -1324,14 +1334,11 @@ def filter_value_bets():
             latest_odds = float(best_odds.get("latest", 0))
             value_percentage = float(best_odds.get("value", 0))
 
-            # Get predictability, ensure it's always a string
             predictability = str(bet["competition"].get("predictability", "Unknown")).capitalize()
-
-            # Apply predictability filter if selected
             if selected_predictability and predictability not in selected_predictability:
-                continue  # Skip if predictability doesn't match
+                continue
 
-            # Apply Home Win FT Result filters
+            # Filtering per market
             if include_home_win and bet["market"] == "home_win_probability":
                 probability = bet.get("probability", 0)
                 if not (home_win_prob_min <= probability <= home_win_prob_max):
@@ -1341,9 +1348,8 @@ def filter_value_bets():
                 if not (home_win_value_min <= value_percentage <= home_win_value_max):
                     continue
             elif not include_home_win and bet["market"] == "home_win_probability":
-                continue  # Skip this market entirely if not included
+                continue
 
-            # Apply Draw FT Result filters
             if include_draw and bet["market"] == "draw_probability":
                 probability = bet.get("probability", 0)
                 if not (draw_prob_min <= probability <= draw_prob_max):
@@ -1353,9 +1359,8 @@ def filter_value_bets():
                 if not (draw_value_min <= value_percentage <= draw_value_max):
                     continue
             elif not include_draw and bet["market"] == "draw_probability":
-                continue  # Skip draw market entirely if not included
+                continue
 
-            # Apply Away Win FT Result filters
             if include_away_win and bet["market"] == "away_win_probability":
                 probability = bet.get("probability", 0)
                 if not (away_win_prob_min <= probability <= away_win_prob_max):
@@ -1365,7 +1370,7 @@ def filter_value_bets():
                 if not (away_win_value_min <= value_percentage <= away_win_value_max):
                     continue
             elif not include_away_win and bet["market"] == "away_win_probability":
-                continue  # Skip away win market entirely if not included
+                continue
 
             # HT Home Win
             if include_home_win_ht and bet["market"] == "home_win_ht_probability":
@@ -1561,14 +1566,22 @@ def filter_value_bets():
                 "bookmaker": bookmaker_name,
                 "latest_odds": latest_odds,
                 "value_percentage": value_percentage,
-                "fixture_id": bet["id"]  # ✅ Add this line if not already present
+                "fixture_id": bet["id"]
             })
 
+        # 🟢 Debug print statements at the end, just before returning:
+        print(f"[DEBUG] Returning {len(table_data)} bets in filter_value_bets")
+        if table_data:
+            print("[DEBUG] First bet returned:", table_data[0])
+        else:
+            print("[DEBUG] No bets returned")
         return jsonify(table_data)
 
     except Exception as e:
         print(f"🚨 Error in /filter_value_bets: {e}")
         return jsonify({"error": str(e)}), 500
+
+
 
 @app.route('/betslip_generator')
 def betslip_generator():
