@@ -1304,7 +1304,7 @@ def filter_value_bets():
             return jsonify([])  # Return empty list if no filters are applied
 
         # Get cached data
-        value_bets_data = fetch_value_bets()
+        value_bets_data = filtered_bets
 
         table_data = []
         for bet in value_bets_data:
