@@ -545,7 +545,7 @@
     <h2>Competitions</h2>
     {% for country, leagues in grouped_competitions|dictsort %}
     <div class="country-section">
-        <label onclick="toggleDropdown('{{ country|replace(' ', '_') }}')">
+        <label>
             <input type="checkbox" class="country-checkbox" data-country="{{ country }}">
             <strong>{{ country }}</strong>
             <span class="arrow">&#9660;</span> <!-- Arrow symbol (downward) -->
@@ -575,6 +575,7 @@
     </div>
     {% endfor %}
 </div>
+
 
             <div class="form-footer">
                 <button type="submit">Generate Betslip</button>
@@ -639,12 +640,14 @@ document.querySelectorAll('.country-section label').forEach(countryLabel => {
             const dropdown = this.nextElementSibling; // The league dropdown
             const arrow = this.querySelector('.arrow'); // The arrow icon
 
-            if (dropdown.style.display === "none" || dropdown.style.display === "") {
-                dropdown.style.display = "block";  // Show the dropdown
-                arrow.classList.add('rotate');    // Rotate the arrow
-            } else {
-                dropdown.style.display = "none";  // Hide the dropdown
-                arrow.classList.remove('rotate'); // Reset the arrow rotation
+            if (dropdown && arrow) { // Only run if both elements exist
+                if (dropdown.style.display === "none" || dropdown.style.display === "") {
+                    dropdown.style.display = "block";  // Show the dropdown
+                    arrow.classList.add('rotate');    // Rotate the arrow
+                } else {
+                    dropdown.style.display = "none";  // Hide the dropdown
+                    arrow.classList.remove('rotate'); // Reset the arrow rotation
+                }
             }
         }
     });
@@ -652,6 +655,5 @@ document.querySelectorAll('.country-section label').forEach(countryLabel => {
 
 }); // end DOMContentLoaded
 </script>
-
 
 {% endblock %}
