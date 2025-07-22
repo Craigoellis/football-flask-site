@@ -184,6 +184,12 @@ def refresh_fixtures_cache():
 
     print("[CACHE] Full Cache Refresh Completed Successfully.\n")
 
+@app.route('/debug/fixtures-cache')
+def debug_fixtures_cache():
+    from flask import jsonify
+    return jsonify(fixtures_cache)
+
+
 # =========================
 # Value Bets Fetch & Cache
 # =========================
