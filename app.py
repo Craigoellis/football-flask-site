@@ -264,6 +264,8 @@ def refresh_value_bets_cache():
 # Game Details
 # =========================
 
+game_details_cache = {}
+
 def fetch_season_stats(season_ids, api_token):
     cache_file = SEASON_STATS_CACHE_FILE
     cache_expiry_days = 3
@@ -621,13 +623,31 @@ def fetch_and_cache_all_game_details():
             print(f"[ERROR] Failed to fetch game details: {e}")
             break
 
-    with open(GAME_DETAILS_CACHE_FILE, "w") as f:
-        json.dump(combined_data, f)
+    # Overwrite both in-memory and disk cache
+    game_details_cache = combined_data
+    save_game_details_cache_to_disk()
 
     duration = round((time.time() - start_time) / 60, 2)
     print(f"[CACHE COMPLETE] Game details updated in {duration} minutes ✅")
     return combined_data
 
+def save_game_details_cache_to_disk():
+    os.makedirs(os.path.dirname(GAME_DETAILS_CACHE_FILE), exist_ok=True)
+    with open(GAME_DETAILS_CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump(game_details_cache, f, indent=2, ensure_ascii=False)
+
+def load_game_details_cache_from_disk():
+    global game_details_cache
+    if os.path.exists(GAME_DETAILS_CACHE_FILE):
+        with open(GAME_DETAILS_CACHE_FILE, "r", encoding="utf-8") as f:
+            try:
+                game_details_cache = json.load(f)
+            except json.JSONDecodeError:
+                game_details_cache = {}
+    else:
+        game_details_cache = {}
+
+load_game_details_cache_from_disk()
 
 def load_game_details_cache():
     if not os.path.exists(GAME_DETAILS_CACHE_FILE):
@@ -639,6 +659,12 @@ def load_game_details_cache():
             return data if data else fetch_and_cache_all_game_details()
         except json.JSONDecodeError:
             return fetch_and_cache_all_game_details()
+        
+@app.route('/debug/game-details-cache')
+def debug_game_details_cache():
+    from flask import jsonify
+    return jsonify(game_details_cache)
+
 
 # =========================
 # Betslip Generator
