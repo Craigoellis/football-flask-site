@@ -74,11 +74,14 @@ else:
 # =========================
 # Fixtures Fetch & Cache
 # =========================
-def fetch_fixtures_grouped_by_structure(force_refresh=False):
-    global cached_fixtures
 
-    if not force_refresh and cached_fixtures:
-        return cached_fixtures, set()
+fixtures_cache = {}  # <-- Only use this name globally
+
+def fetch_fixtures_grouped_by_structure(force_refresh=False):
+    global fixtures_cache
+
+    if not force_refresh and fixtures_cache:
+        return fixtures_cache, set()
 
     fixtures_by_date = {}
     url = FIXTURES_API_URL
@@ -110,14 +113,14 @@ def fetch_fixtures_grouped_by_structure(force_refresh=False):
                         "unix": unix_time,
                         "fixture_id": item.get('id'),
                         "season_id": item.get('season_id'),
-                        "competition_predictability": item.get('competition_predictability', 'Unknown'),  # ✅ Add here
-                        "competition_id": item.get('competition_id'),  # ✅ Add this line
-                        "home_id": item.get('home_id'),   # ✅ Add this
-                        "away_id": item.get('away_id'),    # ✅ Add this
+                        "competition_predictability": item.get('competition_predictability', 'Unknown'),
+                        "competition_id": item.get('competition_id'),
+                        "home_id": item.get('home_id'),
+                        "away_id": item.get('away_id'),
                         "home_position": item.get("home_position"),
                         "away_position": item.get("away_position"),
-                        "competition_country": country,            # ✅ ADD THIS
-                        "competition_name": league  
+                        "competition_country": country,
+                        "competition_name": league
                     })
 
             url = data.get('info', {}).get('next_page_url')
@@ -127,9 +130,8 @@ def fetch_fixtures_grouped_by_structure(force_refresh=False):
         except requests.RequestException:
             break
 
-    cached_fixtures = fixtures_by_date
-    with open(FIXTURES_CACHE_FILE, 'w') as f:
-        json.dump(fixtures_by_date, f)
+    fixtures_cache = fixtures_by_date
+    save_fixtures_cache_to_disk()  # <-- Always save to disk when updating cache
 
     unique_season_ids = set()
     for date_data in fixtures_by_date.values():
@@ -142,6 +144,21 @@ def fetch_fixtures_grouped_by_structure(force_refresh=False):
 
     print(f"[CACHE] Fetched {len(unique_season_ids)} unique season IDs.")
     return fixtures_by_date, unique_season_ids
+
+def save_fixtures_cache_to_disk():
+    os.makedirs(os.path.dirname(FIXTURES_CACHE_FILE), exist_ok=True)
+    with open(FIXTURES_CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump(fixtures_cache, f, indent=2, ensure_ascii=False)
+
+def load_fixtures_cache_from_disk():
+    global fixtures_cache
+    if os.path.exists(FIXTURES_CACHE_FILE):
+        with open(FIXTURES_CACHE_FILE, "r", encoding="utf-8") as f:
+            fixtures_cache = json.load(f)
+    else:
+        fixtures_cache = {}
+
+load_fixtures_cache_from_disk()
 
 def refresh_fixtures_cache():
     print("[CACHE] Starting full cache refresh...")
@@ -166,7 +183,6 @@ def refresh_fixtures_cache():
     print("[CACHE] Game Details Cache Updated.")
 
     print("[CACHE] Full Cache Refresh Completed Successfully.\n")
-
 
 # =========================
 # Value Bets Fetch & Cache
