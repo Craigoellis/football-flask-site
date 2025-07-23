@@ -358,9 +358,13 @@ def fetch_season_stats(season_ids, api_token):
 API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"
 GAME_DETAILS_CACHE_FILE = '/data/game_details_cache.json'
 
+game_details_cache = {}  # In-memory cache
+
+# You should have 'cached_fixtures' populated elsewhere in your script.
+
 def fetch_and_cache_all_game_details():
     print(f"[CACHE] Refreshing Game Details Cache at {datetime.now().strftime('%H:%M:%S')}...")
-    global cached_fixtures
+    global cached_fixtures, game_details_cache
 
     all_fixtures = {
         str(f.get("fixture_id"))
@@ -387,7 +391,9 @@ def fetch_and_cache_all_game_details():
     combined_data = {}
 
     def fetch_bookmaker_odds(bookmaker_id):
-        url = f"https://data.oddalerts.com/api/fixtures/upcoming?api_token={API_TOKEN}&include=odds&bookmaker={bookmaker_id}"
+        url = (
+            f"https://data.oddalerts.com/api/fixtures/upcoming?api_token={API_TOKEN}&include=odds&bookmaker={bookmaker_id}"
+        )
         odds_map = {}
         retries = 5
         wait = 5
@@ -473,7 +479,7 @@ def fetch_and_cache_all_game_details():
                     add_alt_odds(market_key, market_type, option_key, onexbet_odds, "onexbet_odds")
                     add_alt_odds(market_key, market_type, option_key, williamhill_odds, "williamhill_odds")
                     add_alt_odds(market_key, market_type, option_key, betfair_odds, "betfair_exchange_odds")
-                    
+
                 # Full-Time Result
                 for key in ["home_win", "draw", "away_win"]:
                     prob = probs.get(key)
@@ -647,6 +653,7 @@ def load_game_details_cache_from_disk():
     else:
         game_details_cache = {}
 
+# Load on startup
 load_game_details_cache_from_disk()
 
 def load_game_details_cache():
@@ -659,11 +666,11 @@ def load_game_details_cache():
             return data if data else fetch_and_cache_all_game_details()
         except json.JSONDecodeError:
             return fetch_and_cache_all_game_details()
-        
+
 @app.route('/debug/game-details-cache')
 def debug_game_details_cache():
-    from flask import jsonify
     return jsonify(game_details_cache)
+
 
 
 # =========================
