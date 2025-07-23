@@ -71,11 +71,10 @@ if os.path.exists(SEASON_STATS_CACHE_FILE):
 else:
     season_stats_cache = {}
 
-# =========================
-# Fixtures Fetch & Cache
-# =========================
-
+# ---- Global Cache ----
 fixtures_cache = {}  # <-- Only use this name globally
+
+# ---- Fetch & Cache Functions ----
 
 def fetch_fixtures_grouped_by_structure(force_refresh=False):
     global fixtures_cache
@@ -154,13 +153,18 @@ def load_fixtures_cache_from_disk():
     global fixtures_cache
     if os.path.exists(FIXTURES_CACHE_FILE):
         with open(FIXTURES_CACHE_FILE, "r", encoding="utf-8") as f:
-            fixtures_cache = json.load(f)
+            try:
+                fixtures_cache = json.load(f)
+            except json.JSONDecodeError:
+                fixtures_cache = {}
     else:
         fixtures_cache = {}
 
+# ---- Always load from disk at startup ----
 load_fixtures_cache_from_disk()
 
 def refresh_fixtures_cache():
+    global fixtures_cache  # <--- Make sure this is at the top!
     print("[CACHE] Starting full cache refresh...")
 
     # Step 1: Fetch Fixtures and Season IDs
@@ -168,8 +172,12 @@ def refresh_fixtures_cache():
     fixtures_data, unique_season_ids = fetch_fixtures_grouped_by_structure(force_refresh=True)
     print("[CACHE] Fixtures Cache Updated.")
 
-    # ✅ Step 1.5: Update Predictability Cache Immediately After Fixtures Are Updated
-    update_predictability_cache_from_fixtures(fixtures_data)
+    # ✅ Step 1.5: Update in-memory and disk cache
+    fixtures_cache = fixtures_data              # Overwrite global with fresh data
+    save_fixtures_cache_to_disk()               # Overwrite the JSON file
+
+    # ✅ Step 1.6: Update Predictability Cache Immediately After Fixtures Are Updated
+    update_predictability_cache_from_fixtures(fixtures_cache)
     print("[CACHE] Predictability Cache Updated from Fixtures.")
 
     # Step 2: Fetch Season Stats
@@ -184,10 +192,19 @@ def refresh_fixtures_cache():
 
     print("[CACHE] Full Cache Refresh Completed Successfully.\n")
 
+# ---- Debug Endpoint ----
+
 @app.route('/debug/fixtures-cache')
 def debug_fixtures_cache():
-    from flask import jsonify
-    return jsonify(fixtures_cache)
+    if os.path.exists(FIXTURES_CACHE_FILE):
+        with open(FIXTURES_CACHE_FILE, "r", encoding="utf-8") as f:
+            try:
+                data = json.load(f)
+                return jsonify(data)
+            except json.JSONDecodeError:
+                return jsonify({})
+    return jsonify({})
+
 
 
 # =========================
