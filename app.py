@@ -375,36 +375,14 @@ def fetch_season_stats(season_ids, api_token):
 API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"
 GAME_DETAILS_CACHE_FILE = '/data/game_details_cache.json'
 
-# ---- In-memory cache ----
-game_details_cache = {}
+game_details_cache = {}  # In-memory cache
 
-# ---- Load cache from disk at startup ----
-def load_game_details_cache_from_disk():
-    global game_details_cache
-    if os.path.exists(GAME_DETAILS_CACHE_FILE):
-        with open(GAME_DETAILS_CACHE_FILE, "r", encoding="utf-8") as f:
-            try:
-                game_details_cache = json.load(f)
-            except json.JSONDecodeError:
-                game_details_cache = {}
-    else:
-        game_details_cache = {}
+# You should have 'cached_fixtures' populated elsewhere in your script.
 
-load_game_details_cache_from_disk()
-
-# ---- Save cache to disk whenever updated ----
-def save_game_details_cache_to_disk():
-    os.makedirs(os.path.dirname(GAME_DETAILS_CACHE_FILE), exist_ok=True)
-    with open(GAME_DETAILS_CACHE_FILE, "w", encoding="utf-8") as f:
-        json.dump(game_details_cache, f, indent=2, ensure_ascii=False)
-
-# ---- Main function to fetch and cache all game details ----
 def fetch_and_cache_all_game_details():
-    global game_details_cache, cached_fixtures
-
     print(f"[CACHE] Refreshing Game Details Cache at {datetime.now().strftime('%H:%M:%S')}...")
+    global cached_fixtures, game_details_cache
 
-    # Get all fixture IDs from cached_fixtures
     all_fixtures = {
         str(f.get("fixture_id"))
         for date_fixtures in cached_fixtures.values()
@@ -417,9 +395,8 @@ def fetch_and_cache_all_game_details():
         print("No fixtures found to update game details.")
         return {}
 
-    # Always start with latest cache from disk
     if os.path.exists(GAME_DETAILS_CACHE_FILE):
-        with open(GAME_DETAILS_CACHE_FILE, "r", encoding="utf-8") as f:
+        with open(GAME_DETAILS_CACHE_FILE, "r") as f:
             try:
                 combined_data = json.load(f)
             except json.JSONDecodeError:
@@ -427,10 +404,9 @@ def fetch_and_cache_all_game_details():
     else:
         combined_data = {}
 
-    # Clear old cache so we only keep up-to-date fixtures
+    # ✅ Reset stale cache before fetching fresh data
     combined_data = {}
 
-    # Helper to fetch bookmaker odds
     def fetch_bookmaker_odds(bookmaker_id):
         url = (
             f"https://data.oddalerts.com/api/fixtures/upcoming?api_token={API_TOKEN}&include=odds&bookmaker={bookmaker_id}"
@@ -463,7 +439,6 @@ def fetch_and_cache_all_game_details():
             print(f"[ERROR] Failed to fetch Bookmaker {bookmaker_id} odds after multiple retries.")
         return odds_map
 
-    # Fetch all bookmaker odds for each market
     pinnacle_odds_map = fetch_bookmaker_odds(1)
     onexbet_odds_map = fetch_bookmaker_odds(3)
     williamhill_odds_map = fetch_bookmaker_odds(4)
@@ -488,8 +463,7 @@ def fetch_and_cache_all_game_details():
                     continue
 
                 market_data = combined_data.setdefault(fixture_id, {})
-
-                # ---- Add basic fixture fields from cached_fixtures ----
+                # ✅ Add fixture-level data from cached_fixtures
                 for date_fixtures in cached_fixtures.values():
                     for country_fixtures in date_fixtures.values():
                         for league_fixtures in country_fixtures.values():
@@ -502,8 +476,6 @@ def fetch_and_cache_all_game_details():
                                     ]:
                                         market_data[key] = game.get(key)
                                     break
-
-                # Odds and probability data
                 probs = item.get("probability", {})
                 odds = item.get("odds", {})
                 pinnacle_odds = pinnacle_odds_map.get(fixture_id, {})
@@ -668,13 +640,13 @@ def fetch_and_cache_all_game_details():
                         add_all_bookmaker_odds(market_under, "total_corners", odds_under_key)
 
             url = data.get("info", {}).get("next_page_url")
-            time.sleep(0.8)  # For API rate limiting
+            time.sleep(0.8)
 
         except requests.RequestException as e:
             print(f"[ERROR] Failed to fetch game details: {e}")
             break
 
-    # ---- Overwrite global in-memory cache and write to disk ----
+    # Overwrite both in-memory and disk cache
     game_details_cache = combined_data
     save_game_details_cache_to_disk()
 
@@ -682,18 +654,36 @@ def fetch_and_cache_all_game_details():
     print(f"[CACHE COMPLETE] Game details updated in {duration} minutes ✅")
     return combined_data
 
-# ---- Load cache if available, else fetch everything fresh ----
+def save_game_details_cache_to_disk():
+    os.makedirs(os.path.dirname(GAME_DETAILS_CACHE_FILE), exist_ok=True)
+    with open(GAME_DETAILS_CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump(game_details_cache, f, indent=2, ensure_ascii=False)
+
+def load_game_details_cache_from_disk():
+    global game_details_cache
+    if os.path.exists(GAME_DETAILS_CACHE_FILE):
+        with open(GAME_DETAILS_CACHE_FILE, "r", encoding="utf-8") as f:
+            try:
+                game_details_cache = json.load(f)
+            except json.JSONDecodeError:
+                game_details_cache = {}
+    else:
+        game_details_cache = {}
+
+# Load on startup
+load_game_details_cache_from_disk()
+
 def load_game_details_cache():
     if not os.path.exists(GAME_DETAILS_CACHE_FILE):
         return fetch_and_cache_all_game_details()
-    with open(GAME_DETAILS_CACHE_FILE, "r", encoding="utf-8") as f:
+
+    with open(GAME_DETAILS_CACHE_FILE, "r") as f:
         try:
             data = json.load(f)
             return data if data else fetch_and_cache_all_game_details()
         except json.JSONDecodeError:
             return fetch_and_cache_all_game_details()
 
-# ---- Debug endpoint for cache inspection ----
 @app.route('/debug/game-details-cache')
 def debug_game_details_cache():
     return jsonify(game_details_cache)
