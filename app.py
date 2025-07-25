@@ -32,9 +32,6 @@ SEASON_STATS_CACHE_FILE = '/data/season_stats_cache.json'
 BETSLIP_GENERATOR_URL = f"https://data.oddalerts.com/api/betslips?api_token={API_TOKEN}"
 PREDICTABILITY_CACHE_FILE = '/data/predictability_cache.json'
 
-GAME_DETAILS_CACHE_FILE = "game_details_cache.json"
-
-
 # Set the secret key (needed for session management and flash messages)
 app.secret_key = 'dev_secret_key'  # Replace 'dev_secret_key' with any string you like for local development
 
@@ -76,7 +73,6 @@ else:
 
 # ---- Global Cache ----
 fixtures_cache = {}  # <-- Only use this name globally
-game_details_cache = {}
 
 # ---- Fetch & Cache Functions ----
 
@@ -168,42 +164,47 @@ def load_fixtures_cache_from_disk():
 load_fixtures_cache_from_disk()
 
 def refresh_fixtures_cache():
-    global fixtures_cache  # Use this one global everywhere!
+    global fixtures_cache  # <--- Make sure this is at the top!
     print("[CACHE] Starting full cache refresh...")
 
-    # --- Step 1: Fetch fixtures and season IDs, force refresh from source/API ---
+    # Step 1: Fetch Fixtures and Season IDs
     print("[CACHE] Refreshing Fixtures Cache...")
     fixtures_data, unique_season_ids = fetch_fixtures_grouped_by_structure(force_refresh=True)
     print("[CACHE] Fixtures Cache Updated.")
 
-    # --- Step 1.5: Overwrite in-memory and disk cache immediately ---
-    fixtures_cache = fixtures_data
-    save_fixtures_cache_to_disk()
-    print("[CACHE] Fixtures saved to disk.")
+    # ✅ Step 1.5: Update in-memory and disk cache
+    fixtures_cache = fixtures_data              # Overwrite global with fresh data
+    save_fixtures_cache_to_disk()               # Overwrite the JSON file
 
-    # --- Step 1.6: Update predictability cache from latest fixtures ---
+    # ✅ Step 1.6: Update Predictability Cache Immediately After Fixtures Are Updated
     update_predictability_cache_from_fixtures(fixtures_cache)
     print("[CACHE] Predictability Cache Updated from Fixtures.")
 
-    # --- Step 2: Fetch & update season stats for all unique season IDs ---
+    # Step 2: Fetch Season Stats
     print("[CACHE] Fetching Season Stats...")
     fetch_season_stats(unique_season_ids, API_TOKEN)
     print("[CACHE] Season Stats Cache Updated.")
 
-    # --- Step 3: Fetch & update game details using the latest fixtures_cache ---
+    # Step 3: Fetch Game Details
     print("[CACHE] Fetching Game Details...")
     fetch_and_cache_all_game_details()
     print("[CACHE] Game Details Cache Updated.")
 
     print("[CACHE] Full Cache Refresh Completed Successfully.\n")
 
-# ---- Debug Endpoint for Fixtures Cache ----
+# ---- Debug Endpoint ----
 
 @app.route('/debug/fixtures-cache')
 def debug_fixtures_cache():
-    global fixtures_cache
-    # Serve the current in-memory fixtures_cache for inspection
-    return jsonify(fixtures_cache)
+    if os.path.exists(FIXTURES_CACHE_FILE):
+        with open(FIXTURES_CACHE_FILE, "r", encoding="utf-8") as f:
+            try:
+                data = json.load(f)
+                return jsonify(data)
+            except json.JSONDecodeError:
+                return jsonify({})
+    return jsonify({})
+
 
 
 # =========================
@@ -279,6 +280,8 @@ def refresh_value_bets_cache():
 # =========================
 # Game Details
 # =========================
+
+game_details_cache = {}
 
 def fetch_season_stats(season_ids, api_token):
     cache_file = SEASON_STATS_CACHE_FILE
@@ -369,35 +372,20 @@ def fetch_season_stats(season_ids, api_token):
     print(f"[CACHE] Fetched and cached season stats for {len(season_stats)} Season IDs.")
     return season_stats
 
-# --- Cache Save/Load functions ---
-def save_game_details_cache_to_disk():
-    os.makedirs(os.path.dirname(GAME_DETAILS_CACHE_FILE), exist_ok=True)
-    with open(GAME_DETAILS_CACHE_FILE, "w", encoding="utf-8") as f:
-        json.dump(game_details_cache, f, indent=2, ensure_ascii=False)
+API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"
+GAME_DETAILS_CACHE_FILE = '/data/game_details_cache.json'
 
-def load_game_details_cache_from_disk():
-    global game_details_cache
-    if os.path.exists(GAME_DETAILS_CACHE_FILE):
-        with open(GAME_DETAILS_CACHE_FILE, "r", encoding="utf-8") as f:
-            try:
-                game_details_cache = json.load(f)
-            except json.JSONDecodeError:
-                game_details_cache = {}
-    else:
-        game_details_cache = {}
+game_details_cache = {}  # In-memory cache
 
-# --- At module level: LOAD at startup (do NOT SAVE here!) ---
-load_game_details_cache_from_disk()
+# You should have 'cached_fixtures' populated elsewhere in your script.
 
-# --- MAIN: Fetch and cache all game details ---
 def fetch_and_cache_all_game_details():
     print(f"[CACHE] Refreshing Game Details Cache at {datetime.now().strftime('%H:%M:%S')}...")
-    global fixtures_cache, game_details_cache
+    global cached_fixtures, game_details_cache
 
-    # Always use fixtures_cache (dict structure: {date: {country: {league: [fixtures]}}})
     all_fixtures = {
         str(f.get("fixture_id"))
-        for date_fixtures in fixtures_cache.values()
+        for date_fixtures in cached_fixtures.values()
         for country_fixtures in date_fixtures.values()
         for league_fixtures in country_fixtures.values()
         for f in league_fixtures
@@ -407,7 +395,16 @@ def fetch_and_cache_all_game_details():
         print("No fixtures found to update game details.")
         return {}
 
-    # Start with empty data, do not load old data
+    if os.path.exists(GAME_DETAILS_CACHE_FILE):
+        with open(GAME_DETAILS_CACHE_FILE, "r") as f:
+            try:
+                combined_data = json.load(f)
+            except json.JSONDecodeError:
+                combined_data = {}
+    else:
+        combined_data = {}
+
+    # ✅ Reset stale cache before fetching fresh data
     combined_data = {}
 
     def fetch_bookmaker_odds(bookmaker_id):
@@ -442,11 +439,10 @@ def fetch_and_cache_all_game_details():
             print(f"[ERROR] Failed to fetch Bookmaker {bookmaker_id} odds after multiple retries.")
         return odds_map
 
-    # Bookmaker odds, all at once
-    pinnacle_odds_map   = fetch_bookmaker_odds(1)
-    onexbet_odds_map    = fetch_bookmaker_odds(3)
-    williamhill_odds_map= fetch_bookmaker_odds(4)
-    betfair_odds_map    = fetch_bookmaker_odds(5)
+    pinnacle_odds_map = fetch_bookmaker_odds(1)
+    onexbet_odds_map = fetch_bookmaker_odds(3)
+    williamhill_odds_map = fetch_bookmaker_odds(4)
+    betfair_odds_map = fetch_bookmaker_odds(5)
 
     url = f"https://data.oddalerts.com/api/fixtures/upcoming?api_token={API_TOKEN}&include=probability,odds&bookmaker=2"
     start_time = time.time()
@@ -467,32 +463,25 @@ def fetch_and_cache_all_game_details():
                     continue
 
                 market_data = combined_data.setdefault(fixture_id, {})
-
-                # Find the matching fixture and attach static info
-                found = False
-                for date_fixtures in fixtures_cache.values():
+                # ✅ Add fixture-level data from cached_fixtures
+                for date_fixtures in cached_fixtures.values():
                     for country_fixtures in date_fixtures.values():
                         for league_fixtures in country_fixtures.values():
                             for game in league_fixtures:
                                 if str(game.get("fixture_id")) == fixture_id:
                                     for key in [
                                         "fixture_name", "unix", "season_id", "competition_predictability",
-                                        "competition_id", "home_id", "away_id", "home_position", "away_position",
+                                        "competition_id", "home_id", "away_id", "home_position", "away_position", 
                                         "competition_country", "competition_name"
                                     ]:
                                         market_data[key] = game.get(key)
-                                    found = True
                                     break
-                            if found: break
-                        if found: break
-                    if found: break
-
                 probs = item.get("probability", {})
                 odds = item.get("odds", {})
-                pinnacle_odds   = pinnacle_odds_map.get(fixture_id, {})
-                onexbet_odds    = onexbet_odds_map.get(fixture_id, {})
-                williamhill_odds= williamhill_odds_map.get(fixture_id, {})
-                betfair_odds    = betfair_odds_map.get(fixture_id, {})
+                pinnacle_odds = pinnacle_odds_map.get(fixture_id, {})
+                onexbet_odds = onexbet_odds_map.get(fixture_id, {})
+                williamhill_odds = williamhill_odds_map.get(fixture_id, {})
+                betfair_odds = betfair_odds_map.get(fixture_id, {})
 
                 def add_alt_odds(market_key, market_type, option_key, source_odds, label):
                     if market_key in market_data and isinstance(source_odds, dict):
@@ -657,6 +646,10 @@ def fetch_and_cache_all_game_details():
             print(f"[ERROR] Failed to fetch game details: {e}")
             break
 
+
+    # Make sure this line comes BEFORE you assign to game_details_cache:
+    global game_details_cache
+    
     # Overwrite both in-memory and disk cache
     game_details_cache = combined_data
     save_game_details_cache_to_disk()
@@ -665,7 +658,27 @@ def fetch_and_cache_all_game_details():
     print(f"[CACHE COMPLETE] Game details updated in {duration} minutes ✅")
     return combined_data
 
-# --- Debug route ---
+# --- Save function ---
+def save_game_details_cache_to_disk():
+    os.makedirs(os.path.dirname(GAME_DETAILS_CACHE_FILE), exist_ok=True)
+    with open(GAME_DETAILS_CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump(game_details_cache, f, indent=2, ensure_ascii=False)
+
+# --- Load function ---
+def load_game_details_cache_from_disk():
+    global game_details_cache
+    if os.path.exists(GAME_DETAILS_CACHE_FILE):
+        with open(GAME_DETAILS_CACHE_FILE, "r", encoding="utf-8") as f:
+            try:
+                game_details_cache = json.load(f)
+            except json.JSONDecodeError:
+                game_details_cache = {}
+    else:
+        game_details_cache = {}
+
+# --- At module level: LOAD at startup (do NOT SAVE here!) ---
+load_game_details_cache_from_disk()
+
 @app.route('/debug/game-details-cache')
 def debug_game_details_cache():
     return jsonify(game_details_cache)
@@ -1781,7 +1794,7 @@ def custom_date(value):
 # =========================
 scheduler = BackgroundScheduler()
 scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=10)
-scheduler.add_job(refresh_value_bets_cache, 'interval', minutes=10)
+scheduler.add_job(refresh_value_bets_cache, 'interval', minutes=2)
 scheduler.start()
 
 if __name__ == '__main__':
