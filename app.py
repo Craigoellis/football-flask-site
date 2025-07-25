@@ -32,6 +32,9 @@ SEASON_STATS_CACHE_FILE = '/data/season_stats_cache.json'
 BETSLIP_GENERATOR_URL = f"https://data.oddalerts.com/api/betslips?api_token={API_TOKEN}"
 PREDICTABILITY_CACHE_FILE = '/data/predictability_cache.json'
 
+GAME_DETAILS_CACHE_FILE = "game_details_cache.json"
+
+
 # Set the secret key (needed for session management and flash messages)
 app.secret_key = 'dev_secret_key'  # Replace 'dev_secret_key' with any string you like for local development
 
