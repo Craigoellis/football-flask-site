@@ -646,6 +646,10 @@ def fetch_and_cache_all_game_details():
             print(f"[ERROR] Failed to fetch game details: {e}")
             break
 
+
+    # Make sure this line comes BEFORE you assign to game_details_cache:
+    global game_details_cache
+    
     # Overwrite both in-memory and disk cache
     game_details_cache = combined_data
     save_game_details_cache_to_disk()
