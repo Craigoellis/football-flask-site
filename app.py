@@ -654,11 +654,13 @@ def fetch_and_cache_all_game_details():
     print(f"[CACHE COMPLETE] Game details updated in {duration} minutes ✅")
     return combined_data
 
+# --- Save function ---
 def save_game_details_cache_to_disk():
     os.makedirs(os.path.dirname(GAME_DETAILS_CACHE_FILE), exist_ok=True)
     with open(GAME_DETAILS_CACHE_FILE, "w", encoding="utf-8") as f:
         json.dump(game_details_cache, f, indent=2, ensure_ascii=False)
 
+# --- Load function ---
 def load_game_details_cache_from_disk():
     global game_details_cache
     if os.path.exists(GAME_DETAILS_CACHE_FILE):
@@ -670,25 +672,12 @@ def load_game_details_cache_from_disk():
     else:
         game_details_cache = {}
 
-# Load on startup
+# --- At module level: LOAD at startup (do NOT SAVE here!) ---
 load_game_details_cache_from_disk()
-
-def load_game_details_cache():
-    if not os.path.exists(GAME_DETAILS_CACHE_FILE):
-        return fetch_and_cache_all_game_details()
-
-    with open(GAME_DETAILS_CACHE_FILE, "r") as f:
-        try:
-            data = json.load(f)
-            return data if data else fetch_and_cache_all_game_details()
-        except json.JSONDecodeError:
-            return fetch_and_cache_all_game_details()
 
 @app.route('/debug/game-details-cache')
 def debug_game_details_cache():
     return jsonify(game_details_cache)
-
-
 
 # =========================
 # Betslip Generator
@@ -824,8 +813,7 @@ def game_details(fixture_id):
         return f"No data found for Fixture ID: {fixture_id}", 404
 
     # Load cached game details data
-    all_game_data = load_game_details_cache()
-    game_data = all_game_data.get(str(fixture_id), {})
+    game_data = game_details_cache.get(str(fixture_id), {})
 
     # ✅ Match season stats by team_id
     home_stats = {}
