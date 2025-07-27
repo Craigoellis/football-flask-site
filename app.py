@@ -373,7 +373,7 @@ def fetch_season_stats(season_ids, api_token):
     return season_stats
 
 API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"
-GAME_DETAILS_CACHE_FILE = '/data/game_details_cache.json'
+GAME_DETAILS_CACHE_FILE = 'data/game_details_cache.json'
 
 game_details_cache = {}  # In-memory cache
 
