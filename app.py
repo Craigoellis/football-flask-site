@@ -476,8 +476,15 @@ def fetch_and_cache_all_game_details():
                                     ]:
                                         market_data[key] = game.get(key)
                                     break
+
                 probs = item.get("probability", {})
                 odds = item.get("odds", {})
+                # --- Convert odds to dict if it's a list ---
+                if isinstance(odds, list):
+                    odds_dict = {od.get("market_name"): od for od in odds if "market_name" in od}
+                else:
+                    odds_dict = odds
+
                 pinnacle_odds = pinnacle_odds_map.get(fixture_id, {})
                 onexbet_odds = onexbet_odds_map.get(fixture_id, {})
                 williamhill_odds = williamhill_odds_map.get(fixture_id, {})
@@ -505,7 +512,7 @@ def fetch_and_cache_all_game_details():
                         market_data[key] = {
                             "probability": round(prob, 2),
                             "implied_odds": round(100 / prob, 2),
-                            "actual_odds": odds.get("ft_result", {}).get(base, "N/A")
+                            "actual_odds": odds_dict.get("ft_result", {}).get(base, "N/A")
                         }
                         add_all_bookmaker_odds(key, "ft_result", base)
 
@@ -517,7 +524,7 @@ def fetch_and_cache_all_game_details():
                         market_data[key] = {
                             "probability": round(prob, 2),
                             "implied_odds": round(100 / prob, 2),
-                            "actual_odds": odds.get("ht_result", {}).get(base, "N/A")
+                            "actual_odds": odds_dict.get("ht_result", {}).get(base, "N/A")
                         }
                         add_all_bookmaker_odds(key, "ht_result", base)
 
@@ -542,7 +549,7 @@ def fetch_and_cache_all_game_details():
                         market_data[key] = {
                             "probability": round(prob, 2),
                             "implied_odds": round(100 / prob, 2),
-                            "actual_odds": odds.get("double_chance", {}).get(label, "N/A")
+                            "actual_odds": odds_dict.get("double_chance", {}).get(label, "N/A")
                         }
                         add_all_bookmaker_odds(key, "double_chance", label)
 
@@ -552,7 +559,7 @@ def fetch_and_cache_all_game_details():
                     market_data["btts_yes"] = {
                         "probability": round(btts_yes, 2),
                         "implied_odds": round(100 / btts_yes, 2),
-                        "actual_odds": odds.get("btts", {}).get("yes", "N/A")
+                        "actual_odds": odds_dict.get("btts", {}).get("yes", "N/A")
                     }
                     add_all_bookmaker_odds("btts_yes", "btts", "yes")
 
@@ -561,7 +568,7 @@ def fetch_and_cache_all_game_details():
                     market_data["btts_no"] = {
                         "probability": round(btts_no, 2),
                         "implied_odds": round(100 / btts_no, 2),
-                        "actual_odds": odds.get("btts", {}).get("no", "N/A")
+                        "actual_odds": odds_dict.get("btts", {}).get("no", "N/A")
                     }
                     add_all_bookmaker_odds("btts_no", "btts", "no")
 
@@ -576,7 +583,7 @@ def fetch_and_cache_all_game_details():
                         market_data[mkt_over] = {
                             "probability": round(over_prob, 2),
                             "implied_odds": round(100 / over_prob, 2),
-                            "actual_odds": odds.get("total_goals", {}).get(odds_over, "N/A")
+                            "actual_odds": odds_dict.get("total_goals", {}).get(odds_over, "N/A")
                         }
                         add_all_bookmaker_odds(mkt_over, "total_goals", odds_over)
 
@@ -584,7 +591,7 @@ def fetch_and_cache_all_game_details():
                         market_data[mkt_under] = {
                             "probability": under_prob,
                             "implied_odds": round(100 / under_prob, 2),
-                            "actual_odds": odds.get("total_goals", {}).get(odds_under, "N/A")
+                            "actual_odds": odds_dict.get("total_goals", {}).get(odds_under, "N/A")
                         }
                         add_all_bookmaker_odds(mkt_under, "total_goals", odds_under)
 
@@ -600,7 +607,7 @@ def fetch_and_cache_all_game_details():
                             market_data[market_key] = {
                                 "probability": round(prob, 2),
                                 "implied_odds": round(100 / prob, 2),
-                                "actual_odds": odds.get(f"{team_type}_goals", {}).get(odds_key, "N/A")
+                                "actual_odds": odds_dict.get(f"{team_type}_goals", {}).get(odds_key, "N/A")
                             }
                             add_all_bookmaker_odds(market_key, f"{team_type}_goals", odds_key)
 
@@ -610,7 +617,7 @@ def fetch_and_cache_all_game_details():
                             market_data[under_market] = {
                                 "probability": under_prob,
                                 "implied_odds": round(100 / under_prob, 2),
-                                "actual_odds": odds.get(f"{team_type}_goals", {}).get(under_odds_key, "N/A")
+                                "actual_odds": odds_dict.get(f"{team_type}_goals", {}).get(under_odds_key, "N/A")
                             }
                             add_all_bookmaker_odds(under_market, f"{team_type}_goals", under_odds_key)
 
@@ -627,7 +634,7 @@ def fetch_and_cache_all_game_details():
                         market_data[market_over] = {
                             "probability": round(over_prob, 2),
                             "implied_odds": round(100 / over_prob, 2),
-                            "actual_odds": odds.get("total_corners", {}).get(odds_over_key, "N/A")
+                            "actual_odds": odds_dict.get("total_corners", {}).get(odds_over_key, "N/A")
                         }
                         add_all_bookmaker_odds(market_over, "total_corners", odds_over_key)
 
@@ -635,7 +642,7 @@ def fetch_and_cache_all_game_details():
                         market_data[market_under] = {
                             "probability": under_prob,
                             "implied_odds": round(100 / under_prob, 2),
-                            "actual_odds": odds.get("total_corners", {}).get(odds_under_key, "N/A")
+                            "actual_odds": odds_dict.get("total_corners", {}).get(odds_under_key, "N/A")
                         }
                         add_all_bookmaker_odds(market_under, "total_corners", odds_under_key)
 
@@ -646,17 +653,15 @@ def fetch_and_cache_all_game_details():
             print(f"[ERROR] Failed to fetch game details: {e}")
             break
 
-
-    # Make sure this line comes BEFORE you assign to game_details_cache:
-    global game_details_cache
-    
     # Overwrite both in-memory and disk cache
+    global game_details_cache
     game_details_cache = combined_data
     save_game_details_cache_to_disk()
 
     duration = round((time.time() - start_time) / 60, 2)
     print(f"[CACHE COMPLETE] Game details updated in {duration} minutes ✅")
     return combined_data
+
 
 # --- Save function ---
 def save_game_details_cache_to_disk():
