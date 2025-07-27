@@ -1799,8 +1799,8 @@ def custom_date(value):
 # Scheduler Setup
 # =========================
 scheduler = BackgroundScheduler()
-scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=10)
-scheduler.add_job(refresh_value_bets_cache, 'interval', minutes=2)
+scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=2)
+scheduler.add_job(refresh_value_bets_cache, 'interval', minutes=5)
 scheduler.start()
 
 if __name__ == '__main__':
