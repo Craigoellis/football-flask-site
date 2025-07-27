@@ -786,6 +786,10 @@ def datetimeformat(value):
 
 @app.route('/game/<int:fixture_id>')
 def game_details(fixture_id):
+    # 🔁 Always load latest from disk
+    load_fixtures_cache_from_disk()
+    load_game_details_cache_from_disk()
+
     fixture_name = None
     kick_off_time = None
     home_team = None
@@ -794,9 +798,8 @@ def game_details(fixture_id):
     home_id = None
     away_id = None
     home_position = None
-    away_position = None  # ✅ Add these
+    away_position = None
 
-    # ✅ Search once and grab all required details
     for date_fixtures in cached_fixtures.values():
         for country_fixtures in date_fixtures.values():
             for league_fixtures in country_fixtures.values():
@@ -807,8 +810,8 @@ def game_details(fixture_id):
                         season_id = game.get("season_id")
                         home_id = game.get("home_id")
                         away_id = game.get("away_id")
-                        home_position = game.get("home_position")  # ✅
-                        away_position = game.get("away_position")  # ✅
+                        home_position = game.get("home_position")
+                        away_position = game.get("away_position")
                         if " vs " in fixture_name:
                             home_team, away_team = fixture_name.split(" vs ")
                         break
@@ -816,10 +819,8 @@ def game_details(fixture_id):
     if fixture_name is None:
         return f"No data found for Fixture ID: {fixture_id}", 404
 
-    # Load cached game details data
     game_data = game_details_cache.get(str(fixture_id), {})
 
-    # ✅ Match season stats by team_id
     home_stats = {}
     away_stats = {}
     if season_id:
@@ -837,13 +838,13 @@ def game_details(fixture_id):
         kick_off_time=kick_off_time,
         home_team=home_team,
         away_team=away_team,
-        home_position=home_position,  # ✅ Pass it in
-        away_position=away_position,  # ✅ Pass it in
+        home_position=home_position,
+        away_position=away_position,
         game_data=game_data,
         home_stats=home_stats,
         away_stats=away_stats,
-        fixture_id=fixture_id,            # ✅ Add this
-        api_token=API_TOKEN    
+        fixture_id=fixture_id,
+        api_token=API_TOKEN
     )
 
 @app.template_filter('ordinal')
