@@ -408,6 +408,16 @@ def load_game_details_cache_from_disk():
     else:
         game_details_cache = {}
 
+def load_season_stats_cache_from_disk():
+    if os.path.exists(SEASON_STATS_CACHE_FILE):
+        with open(SEASON_STATS_CACHE_FILE, "r", encoding="utf-8") as f:
+            try:
+                return json.load(f)
+            except Exception:
+                return {}
+    return {}
+
+
 # --- Main Function ---
 def fetch_and_cache_all_game_details():
     print(f"[CACHE] Refreshing Game Details Cache at {datetime.now().strftime('%H:%M:%S')}...")
@@ -815,9 +825,10 @@ def datetimeformat(value):
 
 @app.route('/game/<int:fixture_id>')
 def game_details(fixture_id):
-    # 🔁 Always load latest data from disk to avoid stale cache
-    load_fixtures_cache_from_disk()
-    load_game_details_cache_from_disk()
+    # Always load latest data from disk (never rely on in-memory global)
+    fixtures_by_date = load_fixtures_cache_from_disk()  # Should return the loaded dict
+    game_details_data = load_game_details_cache_from_disk()  # Should return the loaded dict
+    season_stats_cache = load_season_stats_cache_from_disk()  # If you use this in your template
 
     fixture_name = None
     kick_off_time = None
@@ -829,8 +840,8 @@ def game_details(fixture_id):
     home_position = None
     away_position = None
 
-    # Find the fixture in the cached fixtures
-    for date_fixtures in cached_fixtures.values():
+    # Find the fixture in the loaded cache
+    for date_fixtures in fixtures_by_date.values():
         for country_fixtures in date_fixtures.values():
             for league_fixtures in country_fixtures.values():
                 for game in league_fixtures:
@@ -850,12 +861,12 @@ def game_details(fixture_id):
         return f"No data found for Fixture ID: {fixture_id}", 404
 
     # Get the game details from cache
-    game_data = game_details_cache.get(str(fixture_id), {})
+    game_data = game_details_data.get(str(fixture_id), {})
 
     # Load season stats for the two teams (if present)
     home_stats = {}
     away_stats = {}
-    if season_id:
+    if season_id and season_stats_cache:
         season_stats_data = season_stats_cache.get(str(season_id), {}).get("data", [])
         for team_data in season_stats_data:
             team_id = team_data.get("team_id")
