@@ -375,17 +375,46 @@ def fetch_season_stats(season_ids, api_token):
 API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"
 GAME_DETAILS_CACHE_FILE = '/data/game_details_cache.json'
 
-game_details_cache = {}  # In-memory cache
+# --- Load Fixtures Cache ---
+def load_fixtures_cache_from_disk():
+    global fixtures_cache
+    if os.path.exists(FIXTURES_CACHE_FILE):
+        with open(FIXTURES_CACHE_FILE, "r", encoding="utf-8") as f:
+            try:
+                fixtures_cache = json.load(f)
+            except json.JSONDecodeError:
+                fixtures_cache = {}
+    else:
+        fixtures_cache = {}
 
-# You should have 'cached_fixtures' populated elsewhere in your script.
+# --- Save Game Details Cache ---
+def save_game_details_cache_to_disk():
+    os.makedirs(os.path.dirname(GAME_DETAILS_CACHE_FILE), exist_ok=True)
+    with open(GAME_DETAILS_CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump(game_details_cache, f, indent=2, ensure_ascii=False)
 
+# --- Load Game Details Cache ---
+def load_game_details_cache_from_disk():
+    global game_details_cache
+    if os.path.exists(GAME_DETAILS_CACHE_FILE):
+        with open(GAME_DETAILS_CACHE_FILE, "r", encoding="utf-8") as f:
+            try:
+                game_details_cache = json.load(f)
+            except json.JSONDecodeError:
+                game_details_cache = {}
+    else:
+        game_details_cache = {}
+
+# --- Main Function ---
 def fetch_and_cache_all_game_details():
     print(f"[CACHE] Refreshing Game Details Cache at {datetime.now().strftime('%H:%M:%S')}...")
-    global cached_fixtures, game_details_cache
+    global game_details_cache, fixtures_cache
+
+    load_fixtures_cache_from_disk()  # Reload fixtures cache from disk
 
     all_fixtures = {
         str(f.get("fixture_id"))
-        for date_fixtures in cached_fixtures.values()
+        for date_fixtures in fixtures_cache.values()
         for country_fixtures in date_fixtures.values()
         for league_fixtures in country_fixtures.values()
         for f in league_fixtures
@@ -404,7 +433,7 @@ def fetch_and_cache_all_game_details():
     else:
         combined_data = {}
 
-    # ✅ Reset stale cache before fetching fresh data
+    # Reset stale cache before fetching fresh data
     combined_data = {}
 
     def fetch_bookmaker_odds(bookmaker_id):
@@ -463,8 +492,8 @@ def fetch_and_cache_all_game_details():
                     continue
 
                 market_data = combined_data.setdefault(fixture_id, {})
-                # ✅ Add fixture-level data from cached_fixtures
-                for date_fixtures in cached_fixtures.values():
+                # Add fixture-level data from cached fixtures
+                for date_fixtures in fixtures_cache.values():
                     for country_fixtures in date_fixtures.values():
                         for league_fixtures in country_fixtures.values():
                             for game in league_fixtures:
@@ -479,7 +508,7 @@ def fetch_and_cache_all_game_details():
 
                 probs = item.get("probability", {})
                 odds = item.get("odds", {})
-                # --- Convert odds to dict if it's a list ---
+                # Convert odds to dict if it's a list
                 if isinstance(odds, list):
                     odds_dict = {od.get("market_name"): od for od in odds if "market_name" in od}
                 else:
@@ -661,25 +690,6 @@ def fetch_and_cache_all_game_details():
     duration = round((time.time() - start_time) / 60, 2)
     print(f"[CACHE COMPLETE] Game details updated in {duration} minutes ✅")
     return combined_data
-
-
-# --- Save function ---
-def save_game_details_cache_to_disk():
-    os.makedirs(os.path.dirname(GAME_DETAILS_CACHE_FILE), exist_ok=True)
-    with open(GAME_DETAILS_CACHE_FILE, "w", encoding="utf-8") as f:
-        json.dump(game_details_cache, f, indent=2, ensure_ascii=False)
-
-# --- Load function ---
-def load_game_details_cache_from_disk():
-    global game_details_cache
-    if os.path.exists(GAME_DETAILS_CACHE_FILE):
-        with open(GAME_DETAILS_CACHE_FILE, "r", encoding="utf-8") as f:
-            try:
-                game_details_cache = json.load(f)
-            except json.JSONDecodeError:
-                game_details_cache = {}
-    else:
-        game_details_cache = {}
 
 # --- At module level: LOAD at startup (do NOT SAVE here!) ---
 load_game_details_cache_from_disk()
