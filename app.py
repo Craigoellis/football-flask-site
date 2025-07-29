@@ -76,6 +76,11 @@ cached_fixtures = {}
 
 # ---- Fetch & Cache Functions ----
 
+# ---- Global Cache ----
+cached_fixtures = {}  # Only use this globally
+
+# ---- Fetch & Cache Functions ----
+
 def fetch_fixtures_grouped_by_structure(force_refresh=False):
     global cached_fixtures
 
@@ -130,7 +135,7 @@ def fetch_fixtures_grouped_by_structure(force_refresh=False):
             break
 
     cached_fixtures = fixtures_by_date
-    save_fixtures_cache_to_disk()  # <-- Always save to disk when updating cache
+    save_fixtures_cache_to_disk()  # Always save updated cache to disk
 
     unique_season_ids = set()
     for date_data in fixtures_by_date.values():
@@ -142,7 +147,9 @@ def fetch_fixtures_grouped_by_structure(force_refresh=False):
                         unique_season_ids.add(season_id)
 
     print(f"[CACHE] Fetched {len(unique_season_ids)} unique season IDs.")
-    return fixtures_by_date, unique_season_ids
+
+    # ✅ Ensure a valid empty structure is always returned
+    return fixtures_by_date or {}, unique_season_ids
 
 def save_fixtures_cache_to_disk():
     os.makedirs(os.path.dirname(FIXTURES_CACHE_FILE), exist_ok=True)
@@ -164,7 +171,7 @@ def load_fixtures_cache_from_disk():
 load_fixtures_cache_from_disk()
 
 def refresh_fixtures_cache():
-    global cached_fixtures  # <--- Make sure this is at the top!
+    global cached_fixtures
     print("[CACHE] Starting full cache refresh...")
 
     # Step 1: Fetch Fixtures and Season IDs
@@ -172,11 +179,11 @@ def refresh_fixtures_cache():
     fixtures_data, unique_season_ids = fetch_fixtures_grouped_by_structure(force_refresh=True)
     print("[CACHE] Fixtures Cache Updated.")
 
-    # ✅ Step 1.5: Update in-memory and disk cache
-    cached_fixtures = fixtures_data              # Overwrite global with fresh data
-    save_fixtures_cache_to_disk()               # Overwrite the JSON file
+    # Step 1.5: Update in-memory and disk cache
+    cached_fixtures = fixtures_data
+    save_fixtures_cache_to_disk()
 
-    # ✅ Step 1.6: Update Predictability Cache Immediately After Fixtures Are Updated
+    # Step 1.6: Update Predictability Cache
     update_predictability_cache_from_fixtures(cached_fixtures)
     print("[CACHE] Predictability Cache Updated from Fixtures.")
 
@@ -204,8 +211,6 @@ def debug_fixtures_cache():
             except json.JSONDecodeError:
                 return jsonify({})
     return jsonify({})
-
-
 
 # =========================
 # Value Bets Fetch & Cache
