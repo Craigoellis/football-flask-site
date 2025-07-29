@@ -407,18 +407,18 @@ def load_game_details_cache_from_disk():
 # --- Main Function ---
 def fetch_and_cache_all_game_details():
     print(f"[CACHE] Refreshing Game Details Cache at {datetime.now().strftime('%H:%M:%S')}...")
-    global game_details_cache, fixtures_cache
+    global game_details_cache, fixtures_cache  # ✅ Add this line
 
-    load_fixtures_cache_from_disk()  # Reload fixtures cache from disk
+    # ✅ Properly load fixtures_cache from disk
+    fixtures_cache = load_fixtures_cache_from_disk()
 
     all_fixtures = {
         str(fixture.get("fixture_id"))
-        for date in cached_fixtures.values()
+        for date in fixtures_cache.values()
         for country in date.values()
         for league in country.values()
         for fixture in league
     }
-
 
     if not all_fixtures:
         print("No fixtures found to update game details.")
@@ -508,11 +508,7 @@ def fetch_and_cache_all_game_details():
 
                 probs = item.get("probability", {})
                 odds = item.get("odds", {})
-                # Convert odds to dict if it's a list
-                if isinstance(odds, list):
-                    odds_dict = {od.get("market_name"): od for od in odds if "market_name" in od}
-                else:
-                    odds_dict = odds
+                odds_dict = {od.get("market_name"): od for od in odds if "market_name" in od} if isinstance(odds, list) else odds
 
                 pinnacle_odds = pinnacle_odds_map.get(fixture_id, {})
                 onexbet_odds = onexbet_odds_map.get(fixture_id, {})
@@ -682,8 +678,6 @@ def fetch_and_cache_all_game_details():
             print(f"[ERROR] Failed to fetch game details: {e}")
             break
 
-    # Overwrite both in-memory and disk cache
-    global game_details_cache
     game_details_cache = combined_data
     save_game_details_cache_to_disk()
 
