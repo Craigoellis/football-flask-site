@@ -72,15 +72,15 @@ else:
     season_stats_cache = {}
 
 # ---- Global Cache ----
-fixtures_cache = {}  # <-- Only use this name globally
+cached_fixtures = {}
 
 # ---- Fetch & Cache Functions ----
 
 def fetch_fixtures_grouped_by_structure(force_refresh=False):
-    global fixtures_cache
+    global cached_fixtures
 
-    if not force_refresh and fixtures_cache:
-        return fixtures_cache, set()
+    if not force_refresh and cached_fixtures:
+        return cached_fixtures, set()
 
     fixtures_by_date = {}
     url = FIXTURES_API_URL
@@ -129,7 +129,7 @@ def fetch_fixtures_grouped_by_structure(force_refresh=False):
         except requests.RequestException:
             break
 
-    fixtures_cache = fixtures_by_date
+    cached_fixtures = fixtures_by_date
     save_fixtures_cache_to_disk()  # <-- Always save to disk when updating cache
 
     unique_season_ids = set()
@@ -147,24 +147,24 @@ def fetch_fixtures_grouped_by_structure(force_refresh=False):
 def save_fixtures_cache_to_disk():
     os.makedirs(os.path.dirname(FIXTURES_CACHE_FILE), exist_ok=True)
     with open(FIXTURES_CACHE_FILE, "w", encoding="utf-8") as f:
-        json.dump(fixtures_cache, f, indent=2, ensure_ascii=False)
+        json.dump(cached_fixtures, f, indent=2, ensure_ascii=False)
 
 def load_fixtures_cache_from_disk():
-    global fixtures_cache
+    global cached_fixtures
     if os.path.exists(FIXTURES_CACHE_FILE):
         with open(FIXTURES_CACHE_FILE, "r", encoding="utf-8") as f:
             try:
-                fixtures_cache = json.load(f)
+                cached_fixtures = json.load(f)
             except json.JSONDecodeError:
-                fixtures_cache = {}
+                cached_fixtures = {}
     else:
-        fixtures_cache = {}
+        cached_fixtures = {}
 
 # ---- Always load from disk at startup ----
 load_fixtures_cache_from_disk()
 
 def refresh_fixtures_cache():
-    global fixtures_cache  # <--- Make sure this is at the top!
+    global cached_fixtures  # <--- Make sure this is at the top!
     print("[CACHE] Starting full cache refresh...")
 
     # Step 1: Fetch Fixtures and Season IDs
@@ -173,11 +173,11 @@ def refresh_fixtures_cache():
     print("[CACHE] Fixtures Cache Updated.")
 
     # ✅ Step 1.5: Update in-memory and disk cache
-    fixtures_cache = fixtures_data              # Overwrite global with fresh data
+    cached_fixtures = fixtures_data              # Overwrite global with fresh data
     save_fixtures_cache_to_disk()               # Overwrite the JSON file
 
     # ✅ Step 1.6: Update Predictability Cache Immediately After Fixtures Are Updated
-    update_predictability_cache_from_fixtures(fixtures_cache)
+    update_predictability_cache_from_fixtures(cached_fixtures)
     print("[CACHE] Predictability Cache Updated from Fixtures.")
 
     # Step 2: Fetch Season Stats
@@ -374,18 +374,6 @@ def fetch_season_stats(season_ids, api_token):
 
 API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"
 GAME_DETAILS_CACHE_FILE = '/data/game_details_cache.json'
-
-# --- Load Fixtures Cache ---
-def load_fixtures_cache_from_disk():
-    global fixtures_cache
-    if os.path.exists(FIXTURES_CACHE_FILE):
-        with open(FIXTURES_CACHE_FILE, "r", encoding="utf-8") as f:
-            try:
-                fixtures_cache = json.load(f)
-            except json.JSONDecodeError:
-                fixtures_cache = {}
-    else:
-        fixtures_cache = {}
 
 # --- Save Game Details Cache ---
 def save_game_details_cache_to_disk():
@@ -782,12 +770,6 @@ def sort_fixtures_structure(fixtures_by_date):
             sorted_countries[country] = sorted_leagues
         fixtures_by_date[date] = sorted_countries
     return fixtures_by_date
-
-def load_fixtures_cache_from_disk():
-    if os.path.exists(FIXTURES_CACHE_FILE):
-        with open(FIXTURES_CACHE_FILE, 'r') as f:
-            return json.load(f)
-    return {}
 
 @app.route('/fixtures')
 def fixtures_page():
