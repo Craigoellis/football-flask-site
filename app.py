@@ -389,12 +389,13 @@ def load_fixtures_cache_from_disk():
 
 # --- Save Game Details Cache ---
 def save_game_details_cache_to_disk():
-    os.makedirs(os.path.dirname(GAME_DETAILS_CACHE_FILE), exist_ok=True)
-    with open(GAME_DETAILS_CACHE_FILE, "w", encoding="utf-8") as f:
-        json.dump(game_details_cache, f, indent=2, ensure_ascii=False)
-    # Save last updated time
-    with open("/data/game_details_cache_time.txt", "w", encoding="utf-8") as f_time:
-        f_time.write(datetime.now().strftime("%d/%m/%Y %I:%M%p"))
+    try:
+        with open(GAME_DETAILS_CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump(game_details_cache, f, indent=2)
+        with open("/data/game_details_cache_time.txt", "w", encoding="utf-8") as t:
+            t.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    except Exception as e:
+        print(f"[ERROR] Failed to save game details cache: {e}")
 
 # --- Load Game Details Cache ---
 def load_game_details_cache_from_disk():
@@ -815,9 +816,27 @@ def datetimeformat(value):
 
 @app.route('/game/<int:fixture_id>')
 def game_details(fixture_id):
-    # 🔁 Always load latest data from disk to avoid stale cache
+    fixture_id_str = str(fixture_id)
+
+    # 🔁 Always load latest fixtures data from disk (optional but harmless)
     load_fixtures_cache_from_disk()
-    load_game_details_cache_from_disk()
+
+    # 🔍 Check if game data for this fixture is in memory
+    if fixture_id_str not in game_details_cache:
+        # 🧠 Try loading the latest game details cache from disk
+        if os.path.exists(GAME_DETAILS_CACHE_FILE):
+            try:
+                with open(GAME_DETAILS_CACHE_FILE, "r", encoding="utf-8") as f:
+                    disk_data = json.load(f)
+                    # If this fixture exists on disk, update memory
+                    if fixture_id_str in disk_data:
+                        game_details_cache[fixture_id_str] = disk_data[fixture_id_str]
+                    else:
+                        return f"No data found for Fixture ID: {fixture_id}", 404
+            except Exception as e:
+                return f"Error loading game details cache: {e}", 500
+        else:
+            return f"No data found for Fixture ID: {fixture_id}", 404
 
     fixture_name = None
     kick_off_time = None
@@ -829,7 +848,7 @@ def game_details(fixture_id):
     home_position = None
     away_position = None
 
-    # Find the fixture in the cached fixtures
+    # 🔍 Find the fixture info from the fixture cache
     for date_fixtures in cached_fixtures.values():
         for country_fixtures in date_fixtures.values():
             for league_fixtures in country_fixtures.values():
@@ -849,10 +868,10 @@ def game_details(fixture_id):
     if fixture_name is None:
         return f"No data found for Fixture ID: {fixture_id}", 404
 
-    # Get the game details from cache
-    game_data = game_details_cache.get(str(fixture_id), {})
+    # ✅ Get the game data from memory (now guaranteed to exist)
+    game_data = game_details_cache.get(fixture_id_str, {})
 
-    # Load season stats for the two teams (if present)
+    # 📊 Load season stats for each team (if available)
     home_stats = {}
     away_stats = {}
     if season_id:
@@ -864,6 +883,7 @@ def game_details(fixture_id):
             elif team_id == away_id:
                 away_stats = team_data
 
+    # 🧾 Render the page with all available data
     return render_template(
         'game_details.html',
         fixture_name=fixture_name,
@@ -878,7 +898,6 @@ def game_details(fixture_id):
         fixture_id=fixture_id,
         api_token=API_TOKEN
     )
-
 
 @app.template_filter('ordinal')
 def ordinal(value):
