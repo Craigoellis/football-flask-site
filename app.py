@@ -413,11 +413,12 @@ def fetch_and_cache_all_game_details():
 
     all_fixtures = {
         str(fixture.get("fixture_id"))
-        for date in fixtures_cache.values()
+        for date in cached_fixtures.values()
         for country in date.values()
         for league in country.values()
         for fixture in league
     }
+
 
     if not all_fixtures:
         print("No fixtures found to update game details.")
