@@ -779,21 +779,57 @@ def sort_fixtures_structure(fixtures_by_date):
 @app.route('/fixtures')
 def fixtures_page():
     fixtures_by_date = load_fixtures_cache_from_disk()
+
+    # ✅ SAFETY CHECK
+    if not fixtures_by_date:
+        return "Error: No fixture data available.", 500
+
     fixtures_by_date = sort_fixtures_structure(fixtures_by_date)
+
     dates = sorted(fixtures_by_date.keys())
-    formatted_dates = [(date, datetime.strptime(date, '%Y-%m-%d').strftime('%a %d %b')) for date in dates]
+    formatted_dates = [
+        (date, datetime.strptime(date, '%Y-%m-%d').strftime('%a %d %b'))
+        for date in dates
+    ]
+
     today_date = datetime.utcnow().strftime('%Y-%m-%d')
     fixtures = fixtures_by_date.get(today_date, {})
-    return render_template('fixtures.html', fixtures=fixtures, dates=formatted_dates, selected_date=today_date, today_date=today_date)
+
+    return render_template(
+        'fixtures.html',
+        fixtures=fixtures,
+        dates=formatted_dates,
+        selected_date=today_date,
+        today_date=today_date
+    )
+
 
 @app.route('/fixtures/<selected_date>')
 def fixtures_by_date_route(selected_date):
     fixtures_by_date = load_fixtures_cache_from_disk()
+
+    # ✅ SAFETY CHECK
+    if not fixtures_by_date:
+        return "Error: No fixture data available.", 500
+
     fixtures_by_date = sort_fixtures_structure(fixtures_by_date)
+
     dates = sorted(fixtures_by_date.keys())
-    formatted_dates = [(date, datetime.strptime(date, '%Y-%m-%d').strftime('%a %d %b')) for date in dates]
+    formatted_dates = [
+        (date, datetime.strptime(date, '%Y-%m-%d').strftime('%a %d %b'))
+        for date in dates
+    ]
+
     fixtures = fixtures_by_date.get(selected_date, {})
-    return render_template('fixtures.html', fixtures=fixtures, dates=formatted_dates, selected_date=selected_date, today_date=datetime.utcnow().strftime('%Y-%m-%d'))
+
+    return render_template(
+        'fixtures.html',
+        fixtures=fixtures,
+        dates=formatted_dates,
+        selected_date=selected_date,
+        today_date=datetime.utcnow().strftime('%Y-%m-%d')
+    )
+
 
 @app.template_filter('datetimeformat')
 def datetimeformat(value):
