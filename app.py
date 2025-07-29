@@ -166,6 +166,8 @@ def load_fixtures_cache_from_disk():
                 cached_fixtures = {}
     else:
         cached_fixtures = {}
+    
+    return cached_fixtures  # ✅ This was missing
 
 # ---- Always load from disk at startup ----
 load_fixtures_cache_from_disk()
