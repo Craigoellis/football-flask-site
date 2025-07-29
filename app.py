@@ -413,7 +413,7 @@ def fetch_and_cache_all_game_details():
 
     all_fixtures = {
         str(f.get("fixture_id"))
-        for date_fixtures in fixtures_cache.values()
+        for date_fixtures in cached_fixtures.values():
         for country_fixtures in date_fixtures.values()
         for league_fixtures in country_fixtures.values()
         for f in league_fixtures
