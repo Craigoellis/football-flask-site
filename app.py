@@ -967,6 +967,7 @@ def probability_rankings():
     selected_market = request.args.get('market', 'home_win')
     odds_filter = request.args.get('odds') == 'on'
     value_filter = request.args.get('value') == 'on'
+    selected_predictabilities = request.args.getlist('predictability')
 
     london_tz = pytz.timezone('Europe/London')
 
@@ -984,7 +985,6 @@ def probability_rankings():
         print("Error loading fixtures cache:", e)
         fixtures_data = {}
 
-    # ✅ Fix: use today's date in London timezone if no date is provided
     if not selected_date:
         today_london = datetime.now(pytz.utc).astimezone(london_tz).strftime('%Y-%m-%d')
         selected_date = today_london
@@ -1001,13 +1001,17 @@ def probability_rankings():
                         "kick_off": kick_off,
                         "kickoff_unix": fixture["unix"],
                         "league": league,
-                        "country": country
+                        "country": country,
+                        "predictability": fixture.get("competition_predictability", "").lower()
                     }
 
     results = []
     for fixture_id, markets in game_details.items():
         info = fixture_lookup.get(fixture_id)
         if info and info["kick_off"] == selected_date:
+            if selected_predictabilities and info["predictability"] not in selected_predictabilities:
+                continue
+
             market_data = markets.get(selected_market)
             if market_data and isinstance(market_data, dict):
                 actual_odds = market_data.get("actual_odds")
@@ -1043,6 +1047,7 @@ def probability_rankings():
                     value_percentage = round(value_change, 2)
                 except (ValueError, ZeroDivisionError, TypeError):
                     value_percentage = 'N/A'
+
                 results.append({
                     "fixture_id": fixture_id,
                     "fixture_name": info["name"],
@@ -1052,11 +1057,11 @@ def probability_rankings():
                     "probability": probability,
                     "implied_odds": implied_odds,
                     "actual_odds": actual_odds,
-                    "value_percentage": value_percentage
+                    "value_percentage": value_percentage,
+                    "predictability": info["predictability"]
                 })
 
     results.sort(key=lambda x: x["probability"], reverse=True)
-
 
     available_markets = [
         "home_win", "draw", "away_win",
@@ -1102,6 +1107,7 @@ def probability_rankings():
         available_markets=available_markets,
         odds_filter=odds_filter,
         value_filter=value_filter,
+        selected_predictabilities=selected_predictabilities,
         now=datetime.utcnow(),
         timedelta=timedelta,
         market_labels=market_labels

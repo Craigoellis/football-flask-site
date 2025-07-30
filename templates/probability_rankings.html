@@ -11,7 +11,7 @@
         {% for offset in range(7) %}
             {% set target_date = (now + timedelta(days=offset)).strftime('%Y-%m-%d') %}
             {% set label = 'Today' if offset == 0 else (now + timedelta(days=offset)).strftime('%a %d %b') %}
-            <a href="{{ url_for('probability_rankings') }}?date={{ target_date }}&market={{ selected_market }}{% if odds_filter %}&odds=on{% endif %}{% if value_filter %}&value=on{% endif %}"
+            <a href="{{ url_for('probability_rankings') }}?date={{ target_date }}&market={{ selected_market }}{% if odds_filter %}&odds=on{% endif %}{% if value_filter %}&value=on{% endif %}{% for p in selected_predictabilities %}&predictability={{ p }}{% endfor %}"
                style="margin: 3px; padding: 6px 12px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
                 {{ label }}
             </a>
@@ -39,6 +39,26 @@
         <label style="margin-left: 20px;">
             <input type="checkbox" name="value" onchange="this.form.submit()" {% if value_filter %}checked{% endif %}>
             Value Only
+        </label>
+
+        <label style="margin-left: 20px;">
+            <input type="checkbox" name="predictability" value="high" onchange="this.form.submit()" {% if 'high' in selected_predictabilities %}checked{% endif %}>
+            High
+        </label>
+
+        <label style="margin-left: 10px;">
+            <input type="checkbox" name="predictability" value="good" onchange="this.form.submit()" {% if 'good' in selected_predictabilities %}checked{% endif %}>
+            Good
+        </label>
+
+        <label style="margin-left: 10px;">
+            <input type="checkbox" name="predictability" value="medium" onchange="this.form.submit()" {% if 'medium' in selected_predictabilities %}checked{% endif %}>
+            Medium
+        </label>
+
+        <label style="margin-left: 10px;">
+            <input type="checkbox" name="predictability" value="low" onchange="this.form.submit()" {% if 'low' in selected_predictabilities %}checked{% endif %}>
+            Low
         </label>
     </form>
 </div>
