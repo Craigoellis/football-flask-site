@@ -1002,7 +1002,7 @@ def probability_rankings():
                         "kickoff_unix": fixture["unix"],
                         "league": league,
                         "country": country,
-                        "predictability": fixture.get("competition_predictability", "").lower()
+                        "predictability": (fixture.get("competition_predictability") or "").lower()
                     }
 
     results = []
