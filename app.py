@@ -1036,6 +1036,13 @@ def probability_rankings():
 
                 kickoff_time = datetime.fromtimestamp(info["kickoff_unix"], pytz.utc).astimezone(london_tz).strftime('%H:%M')
 
+                try:
+                    actual_float = float(actual_odds)
+                    implied_float = float(implied_odds)
+                    value_change = ((actual_float - implied_float) / abs(implied_float)) * 100
+                    value_percentage = round(value_change, 2)
+                except (ValueError, ZeroDivisionError, TypeError):
+                    value_percentage = 'N/A'
                 results.append({
                     "fixture_id": fixture_id,
                     "fixture_name": info["name"],
@@ -1044,7 +1051,8 @@ def probability_rankings():
                     "country": info["country"],
                     "probability": probability,
                     "implied_odds": implied_odds,
-                    "actual_odds": actual_odds
+                    "actual_odds": actual_odds,
+                    "value_percentage": value_percentage
                 })
 
     results.sort(key=lambda x: x["probability"], reverse=True)
@@ -1084,8 +1092,6 @@ def probability_rankings():
         "under_7_corners": "Under 7.5 Corners", "under_8_corners": "Under 8.5 Corners", "under_9_corners": "Under 9.5 Corners",
         "under_10_corners": "Under 10.5 Corners", "under_11_corners": "Under 11.5 Corners",
         "home_score_first": "Home Scores First", "draw_score_first": "No Goals First", "away_score_first": "Away Scores First",
-
-
     }
 
     return render_template(
