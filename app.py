@@ -999,7 +999,7 @@ def probability_rankings():
                 for fixture in fixtures:
                     fixture_id = str(fixture["fixture_id"])
                     kick_off = datetime.fromtimestamp(fixture["unix"], pytz.utc).astimezone(london_tz).strftime('%Y-%m-%d')
-                    predictability = fixture.get("competition_predictability", "").lower()
+                    predictability = (fixture.get("competition_predictability") or "").lower()
                     fixture_lookup[fixture_id] = {
                         "name": fixture["fixture_name"],
                         "kick_off": kick_off,
