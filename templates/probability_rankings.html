@@ -71,6 +71,7 @@
             <th>Kickoff</th>
             <th>Fixture</th>
             <th>League</th>
+            <th>Predictability</th>
             <th>Probability (%)</th>
             <th>Implied Odds</th>
             <th>Actual Odds</th>
@@ -87,6 +88,7 @@
                 </a>
             </td>
             <td>{{ row.country }} - {{ row.league }}</td>
+            <td>{{ row.predictability | title }}</td>
             <td>{{ row.probability }}%</td>
             <td>{{ row.implied_odds }}</td>
             <td>{{ row.actual_odds }}</td>
