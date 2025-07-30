@@ -54,6 +54,7 @@
             <th>Probability (%)</th>
             <th>Implied Odds</th>
             <th>Actual Odds</th>
+            <th>Value %</th>
         </tr>
     </thead>
     <tbody>
@@ -69,6 +70,13 @@
             <td>{{ row.probability }}%</td>
             <td>{{ row.implied_odds }}</td>
             <td>{{ row.actual_odds }}</td>
+            <td>
+                {% if row.value_percentage != 'N/A' %}
+                    {{ row.value_percentage }}%
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>
