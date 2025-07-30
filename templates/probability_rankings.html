@@ -101,7 +101,7 @@
     <div class="filters">
         <form method="get" id="filter-form">
             <label for="selected_date">Date:</label>
-            <input type="date" name="selected_date" value="{{ selected_date.strftime('%Y-%m-%d') }}" onchange="autoSubmit()">
+            <input type="date" name="selected_date" value="{{ selected_date }}" onchange="autoSubmit()">
 
             <label for="selected_market">Market:</label>
             <select name="selected_market" onchange="autoSubmit()">
