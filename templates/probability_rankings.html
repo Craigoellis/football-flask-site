@@ -1,168 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Probability Rankings</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f2f2f2;
-            padding: 20px;
-        }
+{% extends 'base.html' %}
 
-        h1 {
-            margin-bottom: 20px;
-        }
+{% block title %}Probability Rankings{% endblock %}
 
-        .filters {
-            background: #fff;
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
+{% block content %}
+<div style="text-align: center; margin-bottom: 20px;">
+    <h2>Probability Rankings for {{ selected_date }}</h2>
 
-        .filters form {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .tabs {
-            margin-bottom: 20px;
-        }
-
-        .tabs a {
-            margin-right: 10px;
-            text-decoration: none;
-            padding: 8px 12px;
-            background: #eee;
-            border-radius: 5px;
-            color: #000;
-        }
-
-        .tabs a.active {
-            background: #4285f4;
-            color: white;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border: 1px solid #ccc;
-        }
-
-        th {
-            background: #007bff;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background: #f9f9f9;
-        }
-
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        .predictability-label {
-            margin-right: 10px;
-        }
-    </style>
-    <script>
-        function autoSubmit() {
-            document.getElementById('filter-form').submit();
-        }
-    </script>
-</head>
-<body>
-    <h1>Probability Rankings</h1>
-
-    <div class="tabs">
-        {% for date in available_dates %}
-            <a href="{{ url_for('probability_rankings', selected_date=date, selected_market=selected_market) }}"
-               class="{{ 'active' if date == selected_date else '' }}">
-                {{ date.strftime('%a %d/%m/%Y') }}
+    <!-- Date Tabs -->
+    <div style="margin-bottom: 20px;">
+        {% for offset in range(7) %}
+            {% set target_date = (now + timedelta(days=offset)).strftime('%Y-%m-%d') %}
+            {% set label = 'Today' if offset == 0 else (now + timedelta(days=offset)).strftime('%a %d %b') %}
+            <a href="{{ url_for('probability_rankings') }}?date={{ target_date }}&market={{ selected_market }}{% if odds_filter %}&odds=on{% endif %}{% if value_filter %}&value=on{% endif %}"
+               style="margin: 3px; padding: 6px 12px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                {{ label }}
             </a>
         {% endfor %}
     </div>
 
-    <div class="filters">
-        <form method="get" id="filter-form">
-            <label for="selected_date">Date:</label>
-            <input type="date" name="selected_date" value="{{ selected_date }}" onchange="autoSubmit()">
+    <!-- Market & Filter Form -->
+    <form method="get" action="/probability-rankings" style="margin-top: 10px;">
+        <input type="hidden" name="date" value="{{ selected_date }}">
 
-            <label for="selected_market">Market:</label>
-            <select name="selected_market" onchange="autoSubmit()">
-                {% for market in available_markets %}
-                    <option value="{{ market }}" {% if market == selected_market %}selected{% endif %}>
-                        {{ market_labels.get(market, market) }}
-                    </option>
-                {% endfor %}
-            </select>
-
-            <label>
-                <input type="checkbox" name="odds_only" value="1" {% if odds_filter %}checked{% endif %} onchange="autoSubmit()">
-                Odds Only
-            </label>
-
-            <label>
-                <input type="checkbox" name="value_only" value="1" {% if value_filter %}checked{% endif %} onchange="autoSubmit()">
-                Value Only
-            </label>
-
-            <label class="predictability-label">League Predictability:</label>
-            {% for level in ['high', 'good', 'medium', 'poor'] %}
-                <label>
-                    <input type="checkbox" name="predictability" value="{{ level }}"
-                        {% if level in selected_predictabilities %}checked{% endif %}
-                        onchange="autoSubmit()">
-                    {{ level.capitalize() }}
-                </label>
+        <label for="market">Select Market:</label>
+        <select name="market" id="market" style="padding: 5px;" onchange="this.form.submit()">
+            {% for market in available_markets %}
+                <option value="{{ market }}" {% if market == selected_market %}selected{% endif %}>
+                    {{ market_labels.get(market, market.replace('_', ' ').title()) }}
+                </option>
             {% endfor %}
-        </form>
-    </div>
+        </select>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Kickoff</th>
-                <th>Fixture</th>
-                <th>League</th>
-                <th>Country</th>
-                <th>Probability (%)</th>
-                <th>Implied Odds</th>
-                <th>Actual Odds</th>
-                <th>Value %</th>
-                <th>Predictability</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in market_rows %}
-                <tr>
-                    <td>{{ row.kickoff }}</td>
-                    <td><a href="{{ url_for('game_details', fixture_id=row.fixture_id) }}">{{ row.fixture }}</a></td>
-                    <td>{{ row.league }}</td>
-                    <td>{{ row.country }}</td>
-                    <td>{{ row.probability }}</td>
-                    <td>{{ row.implied_odds }}</td>
-                    <td>{{ row.actual_odds }}</td>
-                    <td>{{ row.value_percent }}</td>
-                    <td>{{ row.predictability }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+        <label style="margin-left: 20px;">
+            <input type="checkbox" name="odds" onchange="this.form.submit()" {% if odds_filter %}checked{% endif %}>
+            Odds Available
+        </label>
+
+        <label style="margin-left: 20px;">
+            <input type="checkbox" name="value" onchange="this.form.submit()" {% if value_filter %}checked{% endif %}>
+            Value Only
+        </label>
+    </form>
+</div>
+
+<!-- Results Table -->
+{% if market_rows %}
+<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; text-align: center; border-collapse: collapse;">
+    <thead style="background-color: #007bff; color: white;">
+        <tr>
+            <th>Kickoff</th>
+            <th>Fixture</th>
+            <th>League</th>
+            <th>Probability (%)</th>
+            <th>Implied Odds</th>
+            <th>Actual Odds</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in market_rows %}
+        <tr>
+            <td>{{ row.kickoff }}</td>
+            <td>
+                <a href="{{ url_for('game_details', fixture_id=row.fixture_id) }}" target="_blank">
+                    {{ row.fixture_name }}
+                </a>
+            </td>
+            <td>{{ row.country }} - {{ row.league }}</td>
+            <td>{{ row.probability }}%</td>
+            <td>{{ row.implied_odds }}</td>
+            <td>{{ row.actual_odds }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="text-align: center;">No data available for this market on {{ selected_date }}.</p>
+{% endif %}
+{% endblock %}
