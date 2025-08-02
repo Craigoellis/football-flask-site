@@ -9,191 +9,119 @@
 {% block content %}
 <div class="pinnacle-container">
     <h1>Pinnacle Comparison</h1>
-
+    
     <div style="margin-bottom: 15px;">
         <label>
             <input type="checkbox" id="valueOnlyToggle" onchange="toggleValueOnly()"> Value Only
         </label>
-        <button onclick="openFilterPopup()">Filter Options</button>
     </div>
-
-    <div id="filterPopup" class="filter-popup" style="display:none;">
-        <div class="filter-settings">
-            <h3>Filter Options</h3>
-            <div>
-                <strong>Bookmakers:</strong><br>
-                {% for bookmaker in ['bet365', 'skybet', 'williamhill', 'ladbrokes', 'coral', 'unibet', 'betfair'] %}
-                    <label><input type="checkbox" class="filter-bookmaker" value="{{ bookmaker }}" checked> {{ bookmaker }}</label><br>
-                {% endfor %}
-            </div>
-            <div style="margin-top: 10px;">
-                <strong>Predictability:</strong><br>
-                {% for level in ['high', 'good', 'medium', 'poor'] %}
-                    <label><input type="checkbox" class="filter-predictability" value="{{ level }}" checked> {{ level | capitalize }}</label><br>
-                {% endfor %}
-            </div>
-            <div style="margin-top: 10px;">
-                <label><input type="checkbox" id="excludeCupFriendly"> Exclude Cups/Friendlies</label>
-            </div>
-            <div style="margin-top: 10px;">
-                <strong>Market Filters:</strong>
-                {% for market in ['Home Win', 'Draw', 'Away Win', 'Over 1.5 Goals', 'Over 2.5 Goals', 'Over 3.5 Goals'] %}
-                    <div style="margin-top:5px;">
-                        <strong>{{ market }}:</strong><br>
-                        Probability: <input type="number" class="min-prob" data-market="{{ market }}" placeholder="Min %" style="width:60px;">
-                        - <input type="number" class="max-prob" data-market="{{ market }}" placeholder="Max %" style="width:60px;"><br>
-                        Odds: <input type="number" class="min-odds" data-market="{{ market }}" placeholder="Min" style="width:60px;">
-                        - <input type="number" class="max-odds" data-market="{{ market }}" placeholder="Max" style="width:60px;"><br>
-                        Value %: <input type="number" class="min-value" data-market="{{ market }}" placeholder="Min %" style="width:60px;">
-                        - <input type="number" class="max-value" data-market="{{ market }}" placeholder="Max %" style="width:60px;">
-                    </div>
-                {% endfor %}
-            </div>
-            <div style="margin-top: 10px;">
-                <button onclick="applyFilter()">Apply</button>
-                <button onclick="closeFilterPopup()">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <table class="pinnacle-table">
-        <thead>
-            <tr>
-                <th>Competition</th>
-                <th>Predictability</th>
-                <th>Fixture</th>
-                <th>Kick Off</th>
-                <th>Market</th>
-                <th>Probability (%)</th>
-                <th>Implied Odds</th>
-                <th onclick="sortTableByPinnacleOdds()">Pinnacle Odds</th>
-                <th>Bookmaker</th>
-                <th onclick="sortTableByBookmakerOdds()">Bookmaker Odds</th>
-                <th onclick="sortTableByOddsDifference()">Odds Difference (%)</th>
-            </tr>
-        </thead>
-        <tbody id="comparisonBody">
-            {% for item in comparisons %}
+    
+    {% if comparisons %}
+        <table class="pinnacle-table">
+            <thead>
                 <tr>
-                    <td>{{ item.competition_country }} — {{ item.competition_name }}</td>
-                    <td>{{ item.predictability | capitalize }}</td>
-                    <td><a href="{{ url_for('game_details', fixture_id=item.fixture_id) }}" target="_blank">{{ item.fixture }}</a></td>
-                    <td>{{ item.kickoff | format_kickoff }}</td>
-                    <td>{{ item.market }}</td>
-                    <td>{{ item.probability }}%</td>
-                    <td>{{ item.implied_odds }}</td>
-                    <td>{{ item.pinnacle_odds }}</td>
-                    <td>{{ item.bookmaker }}</td>
-                    <td style="font-weight: bold; color: green;">{{ item.bookmaker_odds }}</td>
-                    <td>{{ item.odds_difference }}%</td>
+                    <th>Competition</th>
+                    <th>Predictability</th>
+                    <th>Fixture</th>
+                    <th>Kick Off</th>
+                    <th>Market</th>
+                    <th>Probability (%)</th>
+                    <th>Implied Odds</th>
+                    <th onclick="sortTableByPinnacleOdds()">Pinnacle Odds</th>
+                    <th>Bookmaker</th>
+                    <th onclick="sortTableByBookmakerOdds()">Bookmaker Odds</th>
+                    <th onclick="sortTableByOddsDifference()">Odds Difference (%)</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for item in comparisons %}
+                    <tr>
+                        <td>{{ item.competition_country }} — {{ item.competition_name }}</td>
+                        <td>{{ item.predictability | capitalize }}</td>
+                        <td>
+                            <a href="{{ url_for('game_details', fixture_id=item.fixture_id) }}" target="_blank">
+                                {{ item.fixture }}
+                            </a>
+                        </td>
+                        <td>{{ item.kickoff | format_kickoff }}</td>
+                        <td>{{ item.market }}</td>
+                        <td>{{ item.probability }}%</td> 
+                        <td>{{ item.implied_odds }}</td>
+                        <td>{{ item.pinnacle_odds }}</td>
+                        <td>{{ item.bookmaker }}</td>
+                        <td style="font-weight: bold; color: green;">{{ item.bookmaker_odds }}</td>
+                        <td>{{ item.odds_difference }}%</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="margin-top: 30px;">No comparisons found where bookmakers beat Pinnacle odds.</p>
+    {% endif %}
 </div>
 
 <script>
 function sortTableByOddsDifference() {
-    const rows = Array.from(document.querySelectorAll("#comparisonBody tr"));
-    rows.sort((a, b) => parseFloat(b.cells[10].innerText) - parseFloat(a.cells[10].innerText));
-    const tbody = document.getElementById("comparisonBody");
-    tbody.innerHTML = '';
-    rows.forEach(row => tbody.appendChild(row));
+    const table = document.querySelector(".pinnacle-table tbody");
+    const rows = Array.from(table.rows);
+
+    const sortedRows = rows.sort((a, b) => {
+        const aVal = parseFloat(a.cells[10].innerText.replace('%', '').trim());
+        const bVal = parseFloat(b.cells[10].innerText.replace('%', '').trim());
+        return bVal - aVal;  // descending
+    });
+
+    while (table.firstChild) {
+        table.removeChild(table.firstChild);
+    }
+    sortedRows.forEach(row => table.appendChild(row));
 }
 
 function sortTableByPinnacleOdds() {
-    const rows = Array.from(document.querySelectorAll("#comparisonBody tr"));
-    rows.sort((a, b) => parseFloat(b.cells[7].innerText) - parseFloat(a.cells[7].innerText));
-    const tbody = document.getElementById("comparisonBody");
-    tbody.innerHTML = '';
-    rows.forEach(row => tbody.appendChild(row));
+    const table = document.querySelector(".pinnacle-table tbody");
+    const rows = Array.from(table.rows);
+
+    const sortedRows = rows.sort((a, b) => {
+        const aVal = parseFloat(a.cells[7].innerText.trim());
+        const bVal = parseFloat(b.cells[7].innerText.trim());
+        return bVal - aVal;  // descending
+    });
+
+    while (table.firstChild) {
+        table.removeChild(table.firstChild);
+    }
+    sortedRows.forEach(row => table.appendChild(row));
 }
 
 function sortTableByBookmakerOdds() {
-    const rows = Array.from(document.querySelectorAll("#comparisonBody tr"));
-    rows.sort((a, b) => parseFloat(b.cells[9].innerText) - parseFloat(a.cells[9].innerText));
-    const tbody = document.getElementById("comparisonBody");
-    tbody.innerHTML = '';
-    rows.forEach(row => tbody.appendChild(row));
+    const table = document.querySelector(".pinnacle-table tbody");
+    const rows = Array.from(table.rows);
+
+    const sortedRows = rows.sort((a, b) => {
+        const aVal = parseFloat(a.cells[9].innerText.trim());
+        const bVal = parseFloat(b.cells[9].innerText.trim());
+        return bVal - aVal;  // descending
+    });
+
+    while (table.firstChild) {
+        table.removeChild(table.firstChild);
+    }
+    sortedRows.forEach(row => table.appendChild(row));
 }
 
 function toggleValueOnly() {
     const checkbox = document.getElementById("valueOnlyToggle");
-    const rows = document.querySelectorAll("#comparisonBody tr");
+    const showValueOnly = checkbox.checked;
+    const rows = document.querySelectorAll(".pinnacle-table tbody tr");
 
     rows.forEach(row => {
-        const implied = parseFloat(row.cells[6].innerText.trim());
-        const actual = parseFloat(row.cells[9].innerText.trim());
+        const implied = parseFloat(row.cells[6].innerText.trim());   // Implied Odds
+        const actual = parseFloat(row.cells[9].innerText.trim());    // Bookmaker Odds
+
         const isValue = actual > implied;
-        row.style.display = (checkbox.checked && !isValue) ? "none" : "";
+        row.style.display = (showValueOnly && !isValue) ? "none" : "";
     });
-}
-
-function openFilterPopup() {
-    document.getElementById("filterPopup").style.display = "block";
-}
-
-function closeFilterPopup() {
-    document.getElementById("filterPopup").style.display = "none";
-}
-
-function applyFilter() {
-    const selectedBookmakers = Array.from(document.querySelectorAll(".filter-bookmaker:checked")).map(cb => cb.value);
-    const selectedPredictability = Array.from(document.querySelectorAll(".filter-predictability:checked")).map(cb => cb.value);
-    const excludeCups = document.getElementById("excludeCupFriendly").checked;
-
-    const marketFilters = {};
-    ['Home Win', 'Draw', 'Away Win', 'Over 1.5 Goals', 'Over 2.5 Goals', 'Over 3.5 Goals'].forEach(market => {
-        marketFilters[market] = {
-            min_prob: getInputValue(`.min-prob[data-market='${market}']`),
-            max_prob: getInputValue(`.max-prob[data-market='${market}']`),
-            min_odds: getInputValue(`.min-odds[data-market='${market}']`),
-            max_odds: getInputValue(`.max-odds[data-market='${market}']`),
-            min_value: getInputValue(`.min-value[data-market='${market}']`),
-            max_value: getInputValue(`.max-value[data-market='${market}']`)
-        };
-    });
-
-    fetch("/filter_pinnacle", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            bookmakers: selectedBookmakers,
-            predictability: selectedPredictability,
-            exclude_cup_friendly: excludeCups,
-            filters: marketFilters
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        const tbody = document.getElementById("comparisonBody");
-        tbody.innerHTML = "";
-        data.forEach(item => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${item.competition_country} — ${item.competition_name}</td>
-                <td>${item.predictability}</td>
-                <td><a href="/game/${item.fixture_id}" target="_blank">${item.fixture}</a></td>
-                <td>${item.ko_human}</td>
-                <td>${item.market}</td>
-                <td>${item.probability}%</td>
-                <td>${item.implied_odds}</td>
-                <td>${item.pinnacle_odds}</td>
-                <td>${item.bookmaker}</td>
-                <td style="font-weight: bold; color: green;">${item.bookmaker_odds}</td>
-                <td>${item.odds_difference}%</td>
-            `;
-            tbody.appendChild(row);
-        });
-
-        toggleValueOnly();
-        closeFilterPopup();
-    });
-}
-
-function getInputValue(selector) {
-    const el = document.querySelector(selector);
-    return el && el.value ? parseFloat(el.value) : null;
 }
 </script>
+
 {% endblock %}
