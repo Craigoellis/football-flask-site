@@ -20,7 +20,8 @@
   </div>
 
   <!-- Filter Popup -->
-  <div id="filterPopup" style="display:none; background:#f9f9f9; padding:15px; border:1px solid #ccc; margin-bottom:15px;">
+  <div id="filterPopup"
+       style="display:none; background:#f9f9f9; padding:15px; border:1px solid #ccc; margin-bottom:15px;">
     <h3>Filter Options</h3>
 
     <!-- League Predictability -->
@@ -50,26 +51,69 @@
       {% endfor %}
     </div>
 
-    <!-- Markets -->
-    {% for market in ['Home Win', 'Draw', 'Away Win'] %}
-      {% set id = market.lower().replace(' ', '_') %}
-      <details open style="margin-bottom:10px;">
-        <summary>
-          <label style="font-weight:bold; cursor:pointer;">
-            <input type="checkbox" id="{{ id }}_include" checked>
-            Include {{ market }}
-          </label>
-        </summary>
-        <div style="padding-left:20px; margin-top:8px;">
-          <label>Min Probability (%): <input type="number" id="{{ id }}_prob_min" value="0" min="0" max="100"></label><br>
-          <label>Max Probability (%): <input type="number" id="{{ id }}_prob_max" value="100" min="0" max="100"></label><br>
-          <label>Min Bookmaker Odds: <input type="number" id="{{ id }}_odds_min" value="1.00" step="0.01"></label><br>
-          <label>Max Bookmaker Odds: <input type="number" id="{{ id }}_odds_max" value="10.00" step="0.01"></label><br>
-          <label>Min Odds Difference (%): <input type="number" id="{{ id }}_diff_min" value="0" step="0.1"></label><br>
-          <label>Max Odds Difference (%): <input type="number" id="{{ id }}_diff_max" value="100" step="0.1"></label><br>
-        </div>
-      </details>
-    {% endfor %}
+    <!-- FT Market Results grouping -->
+    <details open style="margin-bottom:10px;">
+      <summary style="font-weight:bold; cursor:pointer;">
+        FT Market Results
+      </summary>
+      <div style="padding-left:20px; margin-top:8px;">
+
+        <!-- Home Win -->
+        <details open style="margin-bottom:8px;">
+          <summary>
+            <label>
+              <input type="checkbox" id="home_win_include" checked>
+              Include Home Win
+            </label>
+          </summary>
+          <div style="padding-left:20px; margin-top:5px;">
+            <label>Min Probability (%): <input type="number" id="home_win_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="home_win_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="home_win_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="home_win_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="home_win_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="home_win_diff_max" value="100" step="0.1"></label><br>
+          </div>
+        </details>
+
+        <!-- Draw -->
+        <details open style="margin-bottom:8px;">
+          <summary>
+            <label>
+              <input type="checkbox" id="draw_include" checked>
+              Include Draw
+            </label>
+          </summary>
+          <div style="padding-left:20px; margin-top:5px;">
+            <label>Min Probability (%): <input type="number" id="draw_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="draw_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="draw_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="draw_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="draw_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="draw_diff_max" value="100" step="0.1"></label><br>
+          </div>
+        </details>
+
+        <!-- Away Win -->
+        <details open style="margin-bottom:8px;">
+          <summary>
+            <label>
+              <input type="checkbox" id="away_win_include" checked>
+              Include Away Win
+            </label>
+          </summary>
+          <div style="padding-left:20px; margin-top:5px;">
+            <label>Min Probability (%): <input type="number" id="away_win_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="away_win_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="away_win_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="away_win_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="away_win_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="away_win_diff_max" value="100" step="0.1"></label><br>
+          </div>
+        </details>
+
+      </div>
+    </details>
 
     <button onclick="applyFilters()">Apply Filter</button>
     <button onclick="document.getElementById('filterPopup').style.display='none'">Close</button>
@@ -149,7 +193,7 @@
         if (!selBook.includes(bk)) show = false;
       }
 
-      // c) filter by market/io thresholds
+      // c) filter by market & thresholds
       if (show) {
         const mtxt = row.cells[4].innerText.trim();
         for (let i = 0; i < markets.length; i++) {
@@ -189,12 +233,14 @@
          .sort((a,b) => parseFloat(b.cells[10].innerText) - parseFloat(a.cells[10].innerText))
          .forEach(r => tbody.appendChild(r));
   }
+
   function sortTableByPinnacleOdds() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
          .sort((a,b) => parseFloat(b.cells[7].innerText) - parseFloat(a.cells[7].innerText))
          .forEach(r => tbody.appendChild(r));
   }
+
   function sortTableByBookmakerOdds() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
