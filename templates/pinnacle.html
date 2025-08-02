@@ -9,6 +9,7 @@
 {% block content %}
 <div class="pinnacle-container">
 
+  <!-- Centered header with title and Filter Options button -->
   <div class="pinnacle-header">
     <h1>Pinnacle Comparison</h1>
     <button class="filter-button" onclick="openFilter()">Filter Options</button>
@@ -18,7 +19,7 @@
   <div id="filterPopup" style="display:none;">
     <h3>Filter Options</h3>
 
-    <!-- Move Value Only toggle INSIDE the popup -->
+    <!-- Value Only toggle inside popup -->
     <div style="margin-bottom:12px;">
       <label>
         <input type="checkbox" id="valueOnlyToggle" onchange="toggleValueOnly()">
@@ -55,7 +56,7 @@
         ['Away Win','away_win','#cce5ff']
       ] %}
       <details open>
-        <summary class="sub-header" style="background:{{col}};">
+        <summary class="sub-header" style="background:{{col}}; color: #000;">
           <label>
             <input type="checkbox"
                    class="market-include"
@@ -92,7 +93,7 @@
         ['HT Away Win','ht_away_win']
       ] %}
       <details open>
-        <summary class="sub-header" style="background:#d4edda;">
+        <summary class="sub-header" style="background:#d4edda; color:#000;">
           <label>
             <input type="checkbox"
                    class="market-include"
@@ -129,7 +130,7 @@
         ['Home or Away','home_or_away']
       ] %}
       <details open>
-        <summary class="sub-header" style="background:#fff3cd;">
+        <summary class="sub-header" style="background:#fff3cd; color:#000;">
           <label>
             <input type="checkbox"
                    class="market-include"
@@ -165,7 +166,7 @@
         ['BTTS: No','btts_no']
       ] %}
       <details open>
-        <summary class="sub-header" style="background:#d1ecf1;">
+        <summary class="sub-header" style="background:#d1ecf1; color:#000;">
           <label>
             <input type="checkbox"
                    class="market-include"
@@ -205,7 +206,7 @@
         ['Under 3.5 Goals','under_3_5_goals']
       ] %}
       <details open>
-        <summary class="sub-header" style="background:#e9ecef;">
+        <summary class="sub-header" style="background:#e9ecef; color:#000;">
           <label>
             <input type="checkbox"
                    class="market-include"
@@ -247,7 +248,7 @@
         ['Away Under 1.5 Goals','away_under_1_5_goals']
       ] %}
       <details open>
-        <summary class="sub-header" style="background:#dee2e6;">
+        <summary class="sub-header" style="background:#dee2e6; color:#000;">
           <label>
             <input type="checkbox"
                    class="market-include"
@@ -277,20 +278,22 @@
 
     <!-- Corners -->
     <details open>
-      <summary class="group-header cr">Corners</summary>
+      <summary class="group-header cr" style="background:#dc3545; color:#fff;">Corners</summary>
       {% for t in [7.5,8.5,9.5,10.5,11.5] %}
         {% set over_id = 'over_' + (t|string).replace('.','_') + '_corners' %}
         {% set under_id = 'under_' + (t|string).replace('.','_') + '_corners' %}
+      <!-- Over X Corners -->
       <details open>
-        <summary class="sub-header" style="background:#007bff; color:#fff;">
-          <label>
-            <input type="checkbox"
-                   class="market-include"
-                   data-market="Over {{ t }} Corners"
-                   id="{{ over_id }}_include"
-                   checked>
-            Include Over {{ t }} Corners
-          </label>
+        <summary class="sub-header" style="background:#f8d7da; color:#721c24;">
+         
+        <label>
+          <input type="checkbox"
+                 class="market-include"
+                 data-market="Over {{ t }} Corners"
+                 id="{{ over_id }}_include"
+                 checked>
+          Include Over {{ t }} Corners
+        </label>
         </summary>
         <div class="filter-grid">
           <div class="filter-group">
@@ -307,16 +310,17 @@
           </div>
         </div>
       </details>
+      <!-- Under X Corners -->
       <details open>
-        <summary class="sub-header" style="background:#f8d7da;">
-          <label>
-            <input type="checkbox"
-                   class="market-include"
-                   data-market="Under {{ t }} Corners"
-                   id="{{ under_id }}_include"
-                   checked>
-            Include Under {{ t }} Corners
-          </label>
+        <summary class="sub-header" style="background:#f8d7da; color:#721c24;">
+        <label>
+          <input type="checkbox"
+                 class="market-include"
+                 data-market="Under {{ t }} Corners"
+                 id="{{ under_id }}_include"
+                 checked>
+          Include Under {{ t }} Corners
+        </label>
         </summary>
         <div class="filter-grid">
           <div class="filter-group">
@@ -336,10 +340,12 @@
       {% endfor %}
     </details>
 
+    <!-- Apply & Close -->
     <button onclick="applyFilters()">Apply Filter</button>
-    <button onclick="document.getElementById('filterPopup').style.display='none'">Close</button>
+    <button onclick="closeFilter()">Close</button>
   </div>
 
+  <!-- Data Table -->
   <div class="table-responsive">
     <table class="pinnacle-table table table-striped table-hover">
       <thead>
@@ -394,12 +400,12 @@
       el: r,
       predict: c[2].innerText.trim().toLowerCase(),
       market: c[5].innerText.trim(),
-      prob: parseFloat(c[6].innerText),
+      prob:    parseFloat(c[6].innerText),
       implied: parseFloat(c[7].innerText),
-      pinn: parseFloat(c[8].innerText),
-      bk: c[9].innerText.trim(),
-      odds: parseFloat(c[10].innerText),
-      diff: parseFloat(c[11].innerText)
+      pinn:    parseFloat(c[8].innerText),
+      bk:      c[9].innerText.trim(),
+      odds:    parseFloat(c[10].innerText),
+      diff:    parseFloat(c[11].innerText)
     };
   });
 
@@ -410,11 +416,14 @@
     });
   }
 
+  // Open the popup without resetting any fields
   function openFilter() {
-    const pop = document.getElementById('filterPopup');
-    pop.querySelectorAll('details').forEach(d => d.removeAttribute('open'));
-    pop.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-    pop.style.display = 'block';
+    document.getElementById('filterPopup').style.display = 'block';
+  }
+
+  // Close the popup without resetting anything
+  function closeFilter() {
+    document.getElementById('filterPopup').style.display = 'none';
   }
 
   function applyFilters() {
@@ -444,22 +453,26 @@
               oMax = parseFloat(document.getElementById(key + '_odds_max').value),
               dMin = parseFloat(document.getElementById(key + '_diff_min').value),
               dMax = parseFloat(document.getElementById(key + '_diff_max').value);
-        if (!(d.prob >= pMin && d.prob <= pMax &&
-              d.odds >= oMin && d.odds <= oMax &&
-              d.diff >= dMin && d.diff <= dMax)) show = false;
+        if (!(d.prob  >= pMin && d.prob  <= pMax &&
+              d.odds  >= oMin && d.odds  <= oMax &&
+              d.diff  >= dMin && d.diff  <= dMax)) {
+          show = false;
+        }
       }
       d.el.style.display = show ? '' : 'none';
     });
   }
 
   function sortTableByOddsDifference() {
-    rowData.sort((a,b)=>b.diff - a.diff).forEach(d=>d.el.parentNode.appendChild(d.el));
+    rowData.sort((a,b)=>b.diff - a.diff)
+           .forEach(d=>d.el.parentNode.appendChild(d.el));
   }
   function sortTableByPinnacleOdds() {
-    rowData.sort((a,b)=>b.pinn - a.pinn).forEach(d=>d.el.parentNode.appendChild(d.el));
+    rowData.sort((a,b)=>b.pinn - a.pinn)
+           .forEach(d=>d.el.parentNode.appendChild(d.el));
   }
   function sortTableByBookmakerOdds() {
-    rowData.sort((a,b)=>b.odds - a.odds).forEach(d=>d.el.parentNode.appendChild(d.el));
+    rowData.sort((a,b)=>b.odds - a.odds)
+           .forEach(d=>d.el.parentNode.appendChild(d.el));
   }
 </script>
-{% endblock %}
