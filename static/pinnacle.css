@@ -7,7 +7,7 @@
     padding: 20px;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow-x: auto;
 }
 
@@ -81,33 +81,10 @@
     cursor: pointer;
 }
 
-/* --------------------------------------
-   New: three-column filter grid
-   -------------------------------------- */
-#filterPopup .filter-grid {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin-top: 8px;
-}
-#filterPopup .filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    text-align: left;
-}
-#filterPopup .filter-group label {
-    font-size: 0.95em;
-}
-#filterPopup .filter-group input {
-    margin-top: 2px;
-    width: 80px;
-    text-align: center;
+#filterPopup summary.sub-header {
+    margin-bottom: 8px;
 }
 
-/* --------------------------------------
-   Buttons & focus styles
-   -------------------------------------- */
 #filterPopup button {
     margin: 8px 6px 0;
     padding: 6px 12px;
@@ -118,10 +95,12 @@
     border-radius: 4px;
     cursor: pointer;
 }
+
 #filterPopup button:hover {
     background: #0056b3;
     border-color: #0056b3;
 }
+
 #filterPopup input:focus,
 #filterPopup button:focus,
 #filterPopup summary:focus {
@@ -130,12 +109,42 @@
 }
 
 /* --------------------------------------
-   Optional: color-coded group headers
+   Color‐coded group headers
    -------------------------------------- */
-#filterPopup summary.group-header.ft  { background: #007bff; color: #fff; }
-#filterPopup summary.group-header.ht  { background: #28a745; color: #fff; }
-#filterPopup summary.group-header.dc  { background: #ffc107; color: #212529; }
-#filterPopup summary.group-header.btts{ background: #17a2b8; color: #fff; }
-#filterPopup summary.group-header.ou  { background: #6c757d; color: #fff; }
-#filterPopup summary.group-header.tg  { background: #343a40; color: #fff; }
-#filterPopup summary.group-header.cr  { background: #007bff; color: #fff; }
+#filterPopup summary.group-header.ft   { background: #007bff; color: #fff; }
+#filterPopup summary.group-header.ht   { background: #28a745; color: #fff; }
+#filterPopup summary.group-header.dc   { background: #ffc107; color: #212529; }
+#filterPopup summary.group-header.btts { background: #17a2b8; color: #fff; }
+#filterPopup summary.group-header.ou   { background: #6c757d; color: #fff; }
+#filterPopup summary.group-header.tg   { background: #343a40; color: #fff; }
+#filterPopup summary.group-header.cr   { background: #007bff; color: #fff; }
+
+/* --------------------------------------
+   Filter‐Grid: equal‐width, aligned inputs
+   -------------------------------------- */
+#filterPopup .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 20px;
+    row-gap: 12px;
+    margin-top: 12px;
+}
+
+#filterPopup .filter-group {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+}
+
+#filterPopup .filter-group label {
+    font-size: 0.95em;
+    text-align: left;
+}
+
+#filterPopup .filter-group input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 6px;
+    font-size: 0.95em;
+}
