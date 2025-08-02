@@ -14,7 +14,7 @@
     <label>
       <input type="checkbox" id="valueOnlyToggle" onchange="toggleValueOnly()"> Value Only
     </label>
-    <button onclick="document.getElementById('filterPopup').style.display = 'block'" style="margin-left: 15px;">
+    <button onclick="document.getElementById('filterPopup').style.display='block'" style="margin-left:15px;">
       Filter
     </button>
   </div>
@@ -35,15 +35,17 @@
     <!-- Bookmakers -->
     <div style="margin-bottom:10px;">
       <strong>Select Bookmakers</strong><br>
-      {# build a unique list of bookmakers from your data, excluding 'Pinnacle' #}
       {% set bks = comparisons | map(attribute='bookmaker') | unique %}
       {% for bk in bks %}
         {% if bk != 'Pinnacle' %}
-          {% set html_id = ('bk_' + bk).replace(' ', '_').lower() %}
-          <label>
-            <input type="checkbox" id="{{ html_id }}">
-            {{ bk }}
-          </label>
+          {% set html_id = 'bk_' + bk.lower().replace(' ', '_') %}
+          <input
+            type="checkbox"
+            class="bm-filter"
+            data-bk="{{ bk }}"
+            id="{{ html_id }}"
+          >
+          <label for="{{ html_id }}">{{ bk }}</label>
         {% endif %}
       {% endfor %}
     </div>
@@ -51,14 +53,14 @@
     <!-- Markets -->
     {% for market in ['Home Win', 'Draw', 'Away Win'] %}
       {% set id = market.lower().replace(' ', '_') %}
-      <details open style="margin-bottom: 10px;">
+      <details open style="margin-bottom:10px;">
         <summary>
-          <label style="font-weight: bold; cursor: pointer;">
+          <label style="font-weight:bold; cursor:pointer;">
             <input type="checkbox" id="{{ id }}_include" checked>
             Include {{ market }}
           </label>
         </summary>
-        <div style="padding-left: 20px; margin-top: 8px;">
+        <div style="padding-left:20px; margin-top:8px;">
           <label>Min Probability (%): <input type="number" id="{{ id }}_prob_min" value="0" min="0" max="100"></label><br>
           <label>Max Probability (%): <input type="number" id="{{ id }}_prob_max" value="100" min="0" max="100"></label><br>
           <label>Min Bookmaker Odds: <input type="number" id="{{ id }}_odds_min" value="1.00" step="0.01"></label><br>
@@ -70,7 +72,7 @@
     {% endfor %}
 
     <button onclick="applyFilters()">Apply Filter</button>
-    <button onclick="document.getElementById('filterPopup').style.display = 'none'">Close</button>
+    <button onclick="document.getElementById('filterPopup').style.display='none'">Close</button>
   </div>
 
   <table class="pinnacle-table">
@@ -121,45 +123,38 @@
 
   function applyFilters() {
     // 1) Predictability
-    const preds = ['high','good','medium','poor'];
-    const selPred = preds.filter(p => document.getElementById(p + '_pred').checked);
+    const predLevels = ['high','good','medium','poor'];
+    const selPred = predLevels.filter(l => document.getElementById(l + '_pred').checked);
 
     // 2) Bookmakers
-    const bookList = [
-      {% for bk in bks if bk != 'Pinnacle' %}
-        "{{ bk }}"{% if not loop.last %}, {% endif %}
-      {% endfor %}
-    ];
-    const selBook = bookList.filter(b => {
-      const id = 'bk_' + b.replace(/ /g, '_').toLowerCase();
-      return document.getElementById(id).checked;
-    });
+    const selBookElems = document.querySelectorAll('.bm-filter:checked');
+    const selBook = Array.from(selBookElems).map(el => el.dataset.bk);
 
-    // 3) Markets
-    const markets = ['home_win','draw','away_win'];
-    const names   = ['Home Win','Draw','Away Win'];
+    // 3) Markets meta
+    const markets = ['Home Win','Draw','Away Win'];
+    const keys    = ['home_win','draw','away_win'];
 
     document.querySelectorAll('.pinnacle-table tbody tr').forEach(row => {
       let show = true;
 
-      // a) league predictability
-      if (selPred.length) {
+      // a) filter by league predictability
+      if (selPred.length > 0) {
         const rp = row.cells[1].innerText.trim().toLowerCase();
         if (!selPred.includes(rp)) show = false;
       }
 
-      // b) bookmaker filter
-      if (show && selBook.length) {
+      // b) filter by bookmaker
+      if (show && selBook.length > 0) {
         const bk = row.cells[8].innerText.trim();
         if (!selBook.includes(bk)) show = false;
       }
 
-      // c) market filters
+      // c) filter by market/io thresholds
       if (show) {
         const mtxt = row.cells[4].innerText.trim();
         for (let i = 0; i < markets.length; i++) {
-          if (mtxt === names[i]) {
-            const inc = document.getElementById(`${markets[i]}_include`).checked;
+          if (mtxt === markets[i]) {
+            const inc = document.getElementById(keys[i] + '_include').checked;
             if (!inc) {
               show = false;
             } else {
@@ -167,12 +162,12 @@
               const odds = parseFloat(row.cells[9].innerText);
               const diff = parseFloat(row.cells[10].innerText);
 
-              const pMin = parseFloat(document.getElementById(`${markets[i]}_prob_min`).value);
-              const pMax = parseFloat(document.getElementById(`${markets[i]}_prob_max`).value);
-              const oMin = parseFloat(document.getElementById(`${markets[i]}_odds_min`).value);
-              const oMax = parseFloat(document.getElementById(`${markets[i]}_odds_max`).value);
-              const dMin = parseFloat(document.getElementById(`${markets[i]}_diff_min`).value);
-              const dMax = parseFloat(document.getElementById(`${markets[i]}_diff_max`).value);
+              const pMin = parseFloat(document.getElementById(keys[i] + '_prob_min').value);
+              const pMax = parseFloat(document.getElementById(keys[i] + '_prob_max').value);
+              const oMin = parseFloat(document.getElementById(keys[i] + '_odds_min').value);
+              const oMax = parseFloat(document.getElementById(keys[i] + '_odds_max').value);
+              const dMin = parseFloat(document.getElementById(keys[i] + '_diff_min').value);
+              const dMax = parseFloat(document.getElementById(keys[i] + '_diff_max').value);
 
               show =
                 prob >= pMin && prob <= pMax &&
@@ -191,20 +186,20 @@
   function sortTableByOddsDifference() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
-         .sort((a,b)=> parseFloat(b.cells[10].innerText) - parseFloat(a.cells[10].innerText))
-         .forEach(r=>tbody.appendChild(r));
+         .sort((a,b) => parseFloat(b.cells[10].innerText) - parseFloat(a.cells[10].innerText))
+         .forEach(r => tbody.appendChild(r));
   }
   function sortTableByPinnacleOdds() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
-         .sort((a,b)=> parseFloat(b.cells[7].innerText) - parseFloat(a.cells[7].innerText))
-         .forEach(r=>tbody.appendChild(r));
+         .sort((a,b) => parseFloat(b.cells[7].innerText) - parseFloat(a.cells[7].innerText))
+         .forEach(r => tbody.appendChild(r));
   }
   function sortTableByBookmakerOdds() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
-         .sort((a,b)=> parseFloat(b.cells[9].innerText) - parseFloat(a.cells[9].innerText))
-         .forEach(r=>tbody.appendChild(r));
+         .sort((a,b) => parseFloat(b.cells[9].innerText) - parseFloat(a.cells[9].innerText))
+         .forEach(r => tbody.appendChild(r));
   }
 </script>
 {% endblock %}
