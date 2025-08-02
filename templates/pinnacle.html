@@ -1,128 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Value Bets</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 6px;
-      text-align: center;
-    }
-    th {
-      background-color: #007bff;
-      color: white;
-    }
-    .filter-section {
-      margin-bottom: 20px;
-    }
-    .filter-toggle {
-      background-color: #007bff;
-      color: white;
-      font-weight: bold;
-      padding: 10px;
-      cursor: pointer;
-      border: none;
-      margin: 10px 0;
-    }
-    .filter-container {
-      display: none;
-      padding: 10px;
-      border: 1px solid #ccc;
-      background-color: #f8f8f8;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Value Bets</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #fff; }
+        .filter-section { margin-bottom: 20px; background: #f0f0f0; padding: 15px; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
+        th { background-color: #007bff; color: white; }
+        .highlight { color: green; font-weight: bold; }
+    </style>
 </head>
 <body>
 
-<h3>▼ Filter Options</h3>
 <div class="filter-section">
-  <input type="checkbox" id="value-only" checked> Value Only
+    <label><input type="checkbox" id="valueOnly" checked> Value Only</label><br><br>
+    <label><input type="checkbox" id="homeWinOnly" checked> Home Win</label><br><br>
+
+    <label>Min Probability (%): <input type="number" id="minProb" value="40"></label>
+    <label>Max Probability (%): <input type="number" id="maxProb" value="100"></label><br><br>
+
+    <label>Min Odds: <input type="number" id="minOdds" value="1.00" step="0.01"></label>
+    <label>Max Odds: <input type="number" id="maxOdds" value="10.00" step="0.01"></label><br><br>
+
+    <label>Min Odds Diff (%): <input type="number" id="minDiff" value="1"></label>
+    <label>Max Odds Diff (%): <input type="number" id="maxDiff" value="100"></label><br><br>
+
+    <button onclick="applyFilters()">Apply Filters</button>
 </div>
 
-<button class="filter-toggle" onclick="toggleFilter('ft-result-filter')">▼ FT Result</button>
-<div id="ft-result-filter" class="filter-container">
-  <input type="checkbox" id="home-win" checked> Home Win
-  <input type="checkbox" id="draw"> Draw
-  <input type="checkbox" id="away-win"> Away Win
-  <br><br>
-  Min Probability (%): <input type="number" id="min-probability" value="0">
-  Max Probability (%): <input type="number" id="max-probability" value="100">
-  <br>
-  Min Latest Odds: <input type="number" id="min-odds" value="1.00">
-  Max Latest Odds: <input type="number" id="max-odds" value="10.00">
-  <br>
-  Min Odds Diff (%): <input type="number" id="min-diff" value="0">
-  Max Odds Diff (%): <input type="number" id="max-diff" value="100">
-  <br><br>
-  <button onclick="applyFilters()">Apply Filters</button>
-</div>
-
-<table id="value-bets-table">
-  <thead>
-    <tr>
-      <th>Competition</th>
-      <th>Predictability</th>
-      <th>Fixture</th>
-      <th>Kick Off</th>
-      <th>Market</th>
-      <th>Probability (%)</th>
-      <th>Implied Odds</th>
-      <th>Pinnacle Odds</th>
-      <th>Bookmaker</th>
-      <th>Bookmaker Odds</th>
-      <th>Odds Difference (%)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Data rows populated here -->
-  </tbody>
+<table>
+    <thead>
+        <tr>
+            <th>Competition</th>
+            <th>Predictability</th>
+            <th>Fixture</th>
+            <th>Kick Off</th>
+            <th>Market</th>
+            <th>Probability (%)</th>
+            <th>Implied Odds</th>
+            <th>Pinnacle Odds</th>
+            <th>Bookmaker</th>
+            <th>Bookmaker Odds</th>
+            <th>Odds Difference (%)</th>
+        </tr>
+    </thead>
+    <tbody id="betsBody">
+        <!-- Data rows will be inserted here -->
+    </tbody>
 </table>
 
 <script>
-function toggleFilter(id) {
-  const filter = document.getElementById(id);
-  filter.style.display = filter.style.display === 'block' ? 'none' : 'block';
-}
+    const sampleData = []; // Fill with actual bet data objects from backend
 
-function applyFilters() {
-  const rows = document.querySelectorAll('#value-bets-table tbody tr');
-  const valueOnly = document.getElementById('value-only').checked;
-  const homeWin = document.getElementById('home-win').checked;
-  const draw = document.getElementById('draw').checked;
-  const awayWin = document.getElementById('away-win').checked;
-  const minProb = parseFloat(document.getElementById('min-probability').value);
-  const maxProb = parseFloat(document.getElementById('max-probability').value);
-  const minOdds = parseFloat(document.getElementById('min-odds').value);
-  const maxOdds = parseFloat(document.getElementById('max-odds').value);
-  const minDiff = parseFloat(document.getElementById('min-diff').value);
-  const maxDiff = parseFloat(document.getElementById('max-diff').value);
+    function applyFilters() {
+        const valueOnly = document.getElementById("valueOnly").checked;
+        const homeWinOnly = document.getElementById("homeWinOnly").checked;
+        const minProb = parseFloat(document.getElementById("minProb").value);
+        const maxProb = parseFloat(document.getElementById("maxProb").value);
+        const minOdds = parseFloat(document.getElementById("minOdds").value);
+        const maxOdds = parseFloat(document.getElementById("maxOdds").value);
+        const minDiff = parseFloat(document.getElementById("minDiff").value);
+        const maxDiff = parseFloat(document.getElementById("maxDiff").value);
 
-  rows.forEach(row => {
-    const market = row.children[4].textContent.trim();
-    const prob = parseFloat(row.children[5].textContent);
-    const latestOdds = parseFloat(row.children[9].textContent);
-    const oddsDiff = parseFloat(row.children[10].textContent);
+        const tbody = document.getElementById("betsBody");
+        tbody.innerHTML = "";
 
-    let show = true;
-    if (valueOnly && oddsDiff <= 0) show = false;
-    if (market === 'Home Win' && !homeWin) show = false;
-    if (market === 'Draw' && !draw) show = false;
-    if (market === 'Away Win' && !awayWin) show = false;
-    if (prob < minProb || prob > maxProb) show = false;
-    if (latestOdds < minOdds || latestOdds > maxOdds) show = false;
-    if (oddsDiff < minDiff || oddsDiff > maxDiff) show = false;
+        sampleData.forEach(bet => {
+            if (homeWinOnly && bet.market !== "Home Win") return;
+            if (valueOnly && bet.odds_difference <= 0) return;
 
-    row.style.display = show ? '' : 'none';
-  });
-}
+            const prob = parseFloat(bet.probability);
+            const odds = parseFloat(bet.latest_odds);
+            const diff = parseFloat(bet.odds_difference);
+
+            if (
+                prob >= minProb && prob <= maxProb &&
+                odds >= minOdds && odds <= maxOdds &&
+                diff >= minDiff && diff <= maxDiff
+            ) {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${bet.competition}</td>
+                    <td>${bet.predictability}</td>
+                    <td>${bet.fixture}</td>
+                    <td>${bet.kick_off}</td>
+                    <td>${bet.market}</td>
+                    <td>${prob.toFixed(2)}%</td>
+                    <td>${bet.implied_odds}</td>
+                    <td>${bet.pinnacle_odds}</td>
+                    <td>${bet.bookmaker}</td>
+                    <td class="highlight">${bet.latest_odds}</td>
+                    <td>${diff.toFixed(2)}%</td>
+                `;
+                tbody.appendChild(row);
+            }
+        });
+    }
+
+    // Auto run once on load
+    applyFilters();
 </script>
 
 </body>
