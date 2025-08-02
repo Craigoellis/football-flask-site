@@ -1197,7 +1197,7 @@ def pinnacle_comparisons():
         "over_1_goals": "Over 1.5 Goals", "over_2_goals": "Over 2.5 Goals", "over_3_goals": "Over 3.5 Goals",
         "under_1_goals": "Under 1.5 Goals", "under_2_goals": "Under 2.5 Goals", "under_3_goals": "Under 3.5 Goals",
         "home_o05": "Home Over 0.5 Goals", "home_o15": "Home Over 1.5 Goals", "home_o25": "Home Over 2.5 Goals",
-        "home_u05": "Home Under 0.5 Goals", "home_u05": "Home Under 1.5 Goals", "home_u05": "Home Under 2.5 Goals",
+        "home_u05": "Home Under 0.5 Goals", "home_u15": "Home Under 1.5 Goals", "home_u05": "Home Under 2.5 Goals",
         "away_o05": "Away Over 0.5 Goals", "away_o15": "Away Over 1.5 Goals", "away_o25": "Away Over 2.5 Goals",
         "away_u05": "Away Under 0.5 Goals", "away_u15": "Away Under 1.5 Goals", "away_u25": "Away Under 2.5 Goals",
         "over_7_corners": "Over 7.5 Corners", "over_8_corners": "Over 8.5 Corners", "over_9_corners": "Over 9.5 Corners",
