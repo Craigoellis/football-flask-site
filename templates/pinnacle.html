@@ -10,16 +10,22 @@
 <div class="pinnacle-container">
   <h1>Pinnacle Comparison</h1>
 
+  <!-- Only the Filter button remains here -->
   <div style="margin-bottom:15px;">
-    <label>
-      <input type="checkbox" id="valueOnlyToggle" onchange="toggleValueOnly()"> Value Only
-    </label>
-    <button onclick="openFilter()" style="margin-left:15px;">Filter</button>
+    <button onclick="openFilter()">Filter</button>
   </div>
 
   <!-- Filter Popup -->
   <div id="filterPopup" style="display:none;">
     <h3>Filter Options</h3>
+
+    <!-- Move Value Only toggle INSIDE the popup -->
+    <div style="margin-bottom:12px;">
+      <label>
+        <input type="checkbox" id="valueOnlyToggle" onchange="toggleValueOnly()">
+        Value Only
+      </label>
+    </div>
 
     <!-- League Predictability -->
     <div style="margin-bottom:10px;">
