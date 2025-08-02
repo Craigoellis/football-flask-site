@@ -40,10 +40,12 @@
       {% for bk in bks %}
         {% if bk != 'Pinnacle' %}
           {% set html_id = 'bk_' + bk.lower().replace(' ', '_') %}
-          <input type="checkbox"
-                 class="bm-filter"
-                 data-bk="{{ bk }}"
-                 id="{{ html_id }}">
+          <input
+            type="checkbox"
+            class="bm-filter"
+            data-bk="{{ bk }}"
+            id="{{ html_id }}"
+          >
           <label for="{{ html_id }}">{{ bk }}</label>
         {% endif %}
       {% endfor %}
@@ -59,10 +61,7 @@
         <!-- Home Win -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#cce5ff; padding:6px; cursor:pointer; border-radius:4px;">
-            <label>
-              <input type="checkbox" id="home_win_include" checked>
-              Include Home Win
-            </label>
+            <label><input type="checkbox" id="home_win_include" checked> Include Home Win</label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
             <label>Min Probability (%): <input type="number" id="home_win_prob_min" value="0" min="0" max="100"></label><br>
@@ -77,10 +76,7 @@
         <!-- Draw -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#cce5ff; padding:6px; cursor:pointer; border-radius:4px;">
-            <label>
-              <input type="checkbox" id="draw_include" checked>
-              Include Draw
-            </label>
+            <label><input type="checkbox" id="draw_include" checked> Include Draw</label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
             <label>Min Probability (%): <input type="number" id="draw_prob_min" value="0" min="0" max="100"></label><br>
@@ -95,10 +91,7 @@
         <!-- Away Win -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#cce5ff; padding:6px; cursor:pointer; border-radius:4px;">
-            <label>
-              <input type="checkbox" id="away_win_include" checked>
-              Include Away Win
-            </label>
+            <label><input type="checkbox" id="away_win_include" checked> Include Away Win</label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
             <label>Min Probability (%): <input type="number" id="away_win_prob_min" value="0" min="0" max="100"></label><br>
@@ -123,10 +116,7 @@
         <!-- HT Home Win -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
-            <label>
-              <input type="checkbox" id="ht_home_win_include" checked>
-              Include HT Home Win
-            </label>
+            <label><input type="checkbox" id="ht_home_win_include" checked> Include HT Home Win</label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
             <label>Min Probability (%): <input type="number" id="ht_home_win_prob_min" value="0" min="0" max="100"></label><br>
@@ -141,10 +131,7 @@
         <!-- HT Draw -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
-            <label>
-              <input type="checkbox" id="ht_draw_include" checked>
-              Include HT Draw
-            </label>
+            <label><input type="checkbox" id="ht_draw_include" checked> Include HT Draw</label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
             <label>Min Probability (%): <input type="number" id="ht_draw_prob_min" value="0" min="0" max="100"></label><br>
@@ -159,10 +146,7 @@
         <!-- HT Away Win -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
-            <label>
-              <input type="checkbox" id="ht_away_win_include" checked>
-              Include HT Away Win
-            </label>
+            <label><input type="checkbox" id="ht_away_win_include" checked> Include HT Away Win</label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
             <label>Min Probability (%): <input type="number" id="ht_away_win_prob_min" value="0" min="0" max="100"></label><br>
@@ -171,6 +155,61 @@
             <label>Max Bookmaker Odds: <input type="number" id="ht_away_win_odds_max" value="10.00" step="0.01"></label><br>
             <label>Min Odds Difference (%): <input type="number" id="ht_away_win_diff_min" value="0" step="0.1"></label><br>
             <label>Max Odds Difference (%): <input type="number" id="ht_away_win_diff_max" value="100" step="0.1"></label><br>
+          </div>
+        </details>
+
+      </div>
+    </details>
+
+    <!-- Double Chance Markets grouping -->
+    <details open style="margin-bottom:10px;">
+      <summary style="background:#ffc107; color:#212529; padding:8px; cursor:pointer; border-radius:4px;">
+        Double Chance Markets
+      </summary>
+      <div style="padding-left:20px; margin-top:8px;">
+
+        <!-- Home Or Draw -->
+        <details open style="margin-bottom:8px;">
+          <summary style="background:#fff3cd; padding:6px; cursor:pointer; border-radius:4px;">
+            <label><input type="checkbox" id="home_or_draw_include" checked> Include Home Or Draw</label>
+          </summary>
+          <div style="padding-left:20px; margin-top:5px;">
+            <label>Min Probability (%): <input type="number" id="home_or_draw_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="home_or_draw_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="home_or_draw_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="home_or_draw_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="home_or_draw_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="home_or_draw_diff_max" value="100" step="0.1"></label><br>
+          </div>
+        </details>
+
+        <!-- Draw Or Away -->
+        <details open style="margin-bottom:8px;">
+          <summary style="background:#fff3cd; padding:6px; cursor:pointer; border-radius:4px;">
+            <label><input type="checkbox" id="draw_or_away_include" checked> Include Draw Or Away</label>
+          </summary>
+          <div style="padding-left:20px; margin-top:5px;">
+            <label>Min Probability (%): <input type="number" id="draw_or_away_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="draw_or_away_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="draw_or_away_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="draw_or_away_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="draw_or_away_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="draw_or_away_diff_max" value="100" step="0.1"></label><br>
+          </div>
+        </details>
+
+        <!-- Home Or Away -->
+        <details open style="margin-bottom:8px;">
+          <summary style="background:#fff3cd; padding:6px; cursor:pointer; border-radius:4px;">
+            <label><input type="checkbox" id="home_or_away_include" checked> Include Home Or Away</label>
+          </summary>
+          <div style="padding-left:20px; margin-top:5px;">
+            <label>Min Probability (%): <input type="number" id="home_or_away_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="home_or_away_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="home_or_away_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="home_or_away_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="home_or_away_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="home_or_away_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
 
@@ -239,37 +278,39 @@
       document.querySelectorAll('.bm-filter:checked')
     ).map(el => el.dataset.bk);
 
-    // 3) Markets meta
+    // 3) All markets and keys
     const markets = [
       'Home Win','Draw','Away Win',
-      'HT Home Win','HT Draw','HT Away Win'
+      'HT Home Win','HT Draw','HT Away Win',
+      'Home Or Draw','Draw Or Away','Home Or Away'
     ];
     const keys = [
       'home_win','draw','away_win',
-      'ht_home_win','ht_draw','ht_away_win'
+      'ht_home_win','ht_draw','ht_away_win',
+      'home_or_draw','draw_or_away','home_or_away'
     ];
 
     document.querySelectorAll('.pinnacle-table tbody tr').forEach(row => {
       let show = true;
 
-      // a) Predictability
-      if (selPred.length > 0) {
+      // a) predictability
+      if (selPred.length) {
         const rp = row.cells[1].innerText.trim().toLowerCase();
         if (!selPred.includes(rp)) show = false;
       }
 
-      // b) Bookmaker
-      if (show && selBook.length > 0) {
+      // b) bookmaker
+      if (show && selBook.length) {
         const bk = row.cells[8].innerText.trim();
         if (!selBook.includes(bk)) show = false;
       }
 
-      // c) Market & thresholds
+      // c) market logic
       if (show) {
         const mtxt = row.cells[4].innerText.trim();
         for (let i = 0; i < markets.length; i++) {
           if (mtxt === markets[i]) {
-            // exclude if not checked
+            // include checkbox?
             if (!document.getElementById(keys[i] + '_include').checked) {
               show = false;
             } else {
