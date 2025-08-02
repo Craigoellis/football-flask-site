@@ -18,7 +18,12 @@
   </div>
 
   <!-- Filter Popup -->
-  <div id="filterPopup" style="display:none; background:#f9f9f9; padding:15px; border:1px solid #ccc; margin-bottom:15px;">
+  <div id="filterPopup"
+       style="display:none;
+              background:#f9f9f9;
+              padding:15px;
+              border:1px solid #ccc;
+              margin-bottom:15px;">
     <h3>Filter Options</h3>
 
     <!-- League Predictability -->
@@ -36,7 +41,10 @@
       {% set bks = comparisons | map(attribute='bookmaker') | unique %}
       {% for bk in bks if bk != 'Pinnacle' %}
         {% set html_id = 'bk_' + bk.lower().replace(' ', '_') %}
-        <input type="checkbox" class="bm-filter" data-bk="{{ bk }}" id="{{ html_id }}">
+        <input type="checkbox"
+               class="bm-filter"
+               data-bk="{{ bk }}"
+               id="{{ html_id }}">
         <label for="{{ html_id }}">{{ bk }}</label>
       {% endfor %}
     </div>
@@ -45,30 +53,29 @@
     <details open style="margin-bottom:10px;">
       <summary style="background:#007bff; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">FT Market Results</summary>
       <div style="padding-left:20px; margin-top:8px;">
-        {% for m,id,col in [
-          ('Home Win','home_win','#cce5ff'),
-          ('Draw','draw','#cce5ff'),
-          ('Away Win','away_win','#cce5ff')
+        {% for label,key,col in [
+          ['Home Win','home_win','#cce5ff'],
+          ['Draw','draw','#cce5ff'],
+          ['Away Win','away_win','#cce5ff']
         ] %}
         <details open style="margin-bottom:8px;">
           <summary style="background:{{ col }}; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
               <input type="checkbox"
                      class="market-include"
-                     data-market="{{ m }}"
-                     id="{{ id }}_include"
-                     checked
-              >
-              Include {{ m }}
+                     data-market="{{ label }}"
+                     id="{{ key }}_include"
+                     checked>
+              Include {{ label }}
             </label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="{{ id }}_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="{{ id }}_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="{{ id }}_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="{{ id }}_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="{{ id }}_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="{{ id }}_diff_max" value="100" step="0.1"></label><br>
+            <label>Min Probability (%): <input type="number" id="{{ key }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ key }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ key }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ key }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ key }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ key }}_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
         {% endfor %}
@@ -79,30 +86,29 @@
     <details open style="margin-bottom:10px;">
       <summary style="background:#28a745; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">HT Market Results</summary>
       <div style="padding-left:20px; margin-top:8px;">
-        {% for m,id in [
-          ('HT Home Win','ht_home_win'),
-          ('HT Draw','ht_draw'),
-          ('HT Away Win','ht_away_win')
+        {% for label,key in [
+          ['HT Home Win','ht_home_win'],
+          ['HT Draw','ht_draw'],
+          ['HT Away Win','ht_away_win']
         ] %}
         <details open style="margin-bottom:8px;">
           <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
               <input type="checkbox"
                      class="market-include"
-                     data-market="{{ m }}"
-                     id="{{ id }}_include"
-                     checked
-              >
-              Include {{ m }}
+                     data-market="{{ label }}"
+                     id="{{ key }}_include"
+                     checked>
+              Include {{ label }}
             </label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="{{ id }}_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="{{ id }}_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="{{ id }}_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="{{ id }}_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="{{ id }}_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="{{ id }}_diff_max" value="100" step="0.1"></label><br>
+            <label>Min Probability (%): <input type="number" id="{{ key }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ key }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ key }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ key }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ key }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ key }}_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
         {% endfor %}
@@ -113,30 +119,29 @@
     <details open style="margin-bottom:10px;">
       <summary style="background:#ffc107; color:#212529; padding:8px; cursor:pointer; border-radius:4px;">Double Chance Markets</summary>
       <div style="padding-left:20px; margin-top:8px;">
-        {% for m,id in [
-          ('Home Or Draw','home_or_draw'),
-          ('Draw Or Away','draw_or_away'),
-          ('Home Or Away','home_or_away')
+        {% for label,key in [
+          ['Home or Draw','home_or_draw'],
+          ['Draw or Away','draw_or_away'],
+          ['Home or Away','home_or_away']
         ] %}
         <details open style="margin-bottom:8px;">
           <summary style="background:#fff3cd; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
               <input type="checkbox"
                      class="market-include"
-                     data-market="{{ m }}"
-                     id="{{ id }}_include"
-                     checked
-              >
-              Include {{ m }}
+                     data-market="{{ label }}"
+                     id="{{ key }}_include"
+                     checked>
+              Include {{ label }}
             </label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="{{ id }}_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="{{ id }}_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="{{ id }}_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="{{ id }}_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="{{ id }}_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="{{ id }}_diff_max" value="100" step="0.1"></label><br>
+            <label>Min Probability (%): <input type="number" id="{{ key }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ key }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ key }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ key }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ key }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ key }}_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
         {% endfor %}
@@ -147,29 +152,28 @@
     <details open style="margin-bottom:10px;">
       <summary style="background:#17a2b8; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">Both Teams To Score</summary>
       <div style="padding-left:20px; margin-top:8px;">
-        {% for m,id in [
-          ('BTTS: Yes','btts_yes'),
-          ('BTTS: No','btts_no')
+        {% for label,key in [
+          ['BTTS: Yes','btts_yes'],
+          ['BTTS: No','btts_no']
         ] %}
         <details open style="margin-bottom:8px;">
           <summary style="background:#d1ecf1; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
               <input type="checkbox"
                      class="market-include"
-                     data-market="{{ m }}"
-                     id="{{ id }}_include"
-                     checked
-              >
-              Include {{ m }}
+                     data-market="{{ label }}"
+                     id="{{ key }}_include"
+                     checked>
+              Include {{ label }}
             </label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="{{ id }}_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="{{ id }}_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="{{ id }}_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="{{ id }}_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="{{ id }}_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="{{ id }}_diff_max" value="100" step="0.1"></label><br>
+            <label>Min Probability (%): <input type="number" id="{{ key }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ key }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ key }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ key }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ key }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ key }}_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
         {% endfor %}
@@ -180,33 +184,32 @@
     <details open style="margin-bottom:10px;">
       <summary style="background:#6c757d; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">Over/Under Goals</summary>
       <div style="padding-left:20px; margin-top:8px;">
-        {% for m,id in [
-          ('Over 1.5 Goals','over_1_5_goals'),
-          ('Over 2.5 Goals','over_2_5_goals'),
-          ('Over 3.5 Goals','over_3_5_goals'),
-          ('Under 1.5 Goals','under_1_5_goals'),
-          ('Under 2.5 Goals','under_2_5_goals'),
-          ('Under 3.5 Goals','under_3_5_goals')
+        {% for label,key in [
+          ['Over 1.5 Goals','over_1_5_goals'],
+          ['Over 2.5 Goals','over_2_5_goals'],
+          ['Over 3.5 Goals','over_3_5_goals'],
+          ['Under 1.5 Goals','under_1_5_goals'],
+          ['Under 2.5 Goals','under_2_5_goals'],
+          ['Under 3.5 Goals','under_3_5_goals']
         ] %}
         <details open style="margin-bottom:8px;">
           <summary style="background:#e9ecef; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
               <input type="checkbox"
                      class="market-include"
-                     data-market="{{ m }}"
-                     id="{{ id }}_include"
-                     checked
-              >
-              Include {{ m }}
+                     data-market="{{ label }}"
+                     id="{{ key }}_include"
+                     checked>
+              Include {{ label }}
             </label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="{{ id }}_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="{{ id }}_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="{{ id }}_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="{{ id }}_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="{{ id }}_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="{{ id }}_diff_max" value="100" step="0.1"></label><br>
+            <label>Min Probability (%): <input type="number" id="{{ key }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ key }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ key }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ key }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ key }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ key }}_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
         {% endfor %}
@@ -217,35 +220,34 @@
     <details open style="margin-bottom:10px;">
       <summary style="background:#343a40; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">Team Goals</summary>
       <div style="padding-left:20px; margin-top:8px;">
-        {% for m,id in [
-          ('Home Over 0.5 Goals','home_over_0_5_goals'),
-          ('Home Over 1.5 Goals','home_over_1_5_goals'),
-          ('Home Under 0.5 Goals','home_under_0_5_goals'),
-          ('Home Under 1.5 Goals','home_under_1_5_goals'),
-          ('Away Over 0.5 Goals','away_over_0_5_goals'),
-          ('Away Over 1.5 Goals','away_over_1_5_goals'),
-          ('Away Under 0.5 Goals','away_under_0_5_goals'),
-          ('Away Under 1.5 Goals','away_under_1_5_goals')
+        {% for label,key in [
+          ['Home Over 0.5 Goals','home_over_0_5_goals'],
+          ['Home Over 1.5 Goals','home_over_1_5_goals'],
+          ['Home Under 0.5 Goals','home_under_0_5_goals'],
+          ['Home Under 1.5 Goals','home_under_1_5_goals'],
+          ['Away Over 0.5 Goals','away_over_0_5_goals'],
+          ['Away Over 1.5 Goals','away_over_1_5_goals'],
+          ['Away Under 0.5 Goals','away_under_0_5_goals'],
+          ['Away Under 1.5 Goals','away_under_1_5_goals']
         ] %}
         <details open style="margin-bottom:8px;">
           <summary style="background:#dee2e6; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
               <input type="checkbox"
                      class="market-include"
-                     data-market="{{ m }}"
-                     id="{{ id }}_include"
-                     checked
-              >
-              Include {{ m }}
+                     data-market="{{ label }}"
+                     id="{{ key }}_include"
+                     checked>
+              Include {{ label }}
             </label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="{{ id }}_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="{{ id }}_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="{{ id }}_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="{{ id }}_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="{{ id }}_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="{{ id }}_diff_max" value="100" step="0.1"></label><br>
+            <label>Min Probability (%): <input type="number" id="{{ key }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ key }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ key }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ key }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ key }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ key }}_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
         {% endfor %}
@@ -266,8 +268,7 @@
                      class="market-include"
                      data-market="Over {{ t }} Corners"
                      id="{{ over_id }}_include"
-                     checked
-              >
+                     checked>
               Include Over {{ t }} Corners
             </label>
           </summary>
@@ -287,8 +288,7 @@
                      class="market-include"
                      data-market="Under {{ t }} Corners"
                      id="{{ under_id }}_include"
-                     checked
-              >
+                     checked>
               Include Under {{ t }} Corners
             </label>
           </summary>
@@ -313,6 +313,7 @@
     <table class="pinnacle-table table table-striped table-hover">
       <thead>
         <tr>
+          <th>Country</th>
           <th>Competition</th>
           <th>Predictability</th>
           <th>Fixture</th>
@@ -329,8 +330,9 @@
       <tbody>
         {% for item in comparisons %}
         <tr>
+          <td>{{ item.competition_country }}</td>
           <td>{{ item.competition_name }}</td>
-          <td>{{ item.predictability }}</td>
+          <td>{{ item.predictability|capitalize }}</td>
           <td><a href="{{ item.fixture_url }}" target="_blank">{{ item.fixture }}</a></td>
           <td>{{ item.kickoff | format_kickoff }}</td>
           <td>{{ item.market }}</td>
@@ -351,8 +353,8 @@
   function toggleValueOnly() {
     const showOnly = document.getElementById('valueOnlyToggle').checked;
     document.querySelectorAll('.pinnacle-table tbody tr').forEach(r => {
-      const implied = parseFloat(r.cells[6].innerText),
-            actual  = parseFloat(r.cells[9].innerText);
+      const implied = parseFloat(r.cells[7].innerText),
+            actual  = parseFloat(r.cells[10].innerText);
       r.style.display = (showOnly && actual <= implied) ? 'none' : '';
     });
   }
@@ -365,7 +367,7 @@
   }
 
   function applyFilters() {
-    // 1) Predictability
+    // 1) League Predictability
     const predLevels = ['high','good','medium','poor'];
     const selPred = predLevels.filter(l => document.getElementById(l + '_pred').checked);
 
@@ -374,7 +376,7 @@
       document.querySelectorAll('.bm-filter:checked')
     ).map(el => el.dataset.bk);
 
-    // 3) Allowed markets
+    // 3) Allowed Markets
     const allowedMarkets = Array.from(
       document.querySelectorAll('#filterPopup input.market-include:checked')
     ).map(cb => cb.dataset.market);
@@ -382,30 +384,30 @@
     document.querySelectorAll('.pinnacle-table tbody tr').forEach(row => {
       let show = true;
 
-      // a) league predictability
+      // a) Predictability
       if (selPred.length) {
-        const rp = row.cells[1].innerText.trim().toLowerCase();
+        const rp = row.cells[2].innerText.trim().toLowerCase();
         if (!selPred.includes(rp)) show = false;
       }
 
-      // b) bookmaker
+      // b) Bookmaker
       if (show && selBook.length) {
-        const bk = row.cells[8].innerText.trim();
+        const bk = row.cells[9].innerText.trim();
         if (!selBook.includes(bk)) show = false;
       }
 
-      // c) market inclusion
-      const market = row.cells[4].innerText.trim();
+      // c) Market inclusion
+      const market = row.cells[5].innerText.trim();
       if (show && allowedMarkets.length && !allowedMarkets.includes(market)) {
         show = false;
       }
 
-      // d) thresholds
+      // d) Thresholds
       if (show && allowedMarkets.includes(market)) {
         const key = market.toLowerCase().replace(/[^a-z0-9]+/g,'_');
-        const prob = parseFloat(row.cells[5].innerText),
-              odds = parseFloat(row.cells[9].innerText),
-              diff = parseFloat(row.cells[10].innerText);
+        const prob = parseFloat(row.cells[6].innerText),
+              odds = parseFloat(row.cells[10].innerText),
+              diff = parseFloat(row.cells[11].innerText);
         const pMin = parseFloat(document.getElementById(key + '_prob_min').value),
               pMax = parseFloat(document.getElementById(key + '_prob_max').value),
               oMin = parseFloat(document.getElementById(key + '_odds_min').value),
@@ -424,19 +426,19 @@
   function sortTableByOddsDifference() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
-      .sort((a, b) => parseFloat(b.cells[10].innerText) - parseFloat(a.cells[10].innerText))
+      .sort((a,b) => parseFloat(b.cells[11].innerText) - parseFloat(a.cells[11].innerText))
       .forEach(r => tbody.appendChild(r));
   }
   function sortTableByPinnacleOdds() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
-      .sort((a, b) => parseFloat(b.cells[7].innerText) - parseFloat(a.cells[7].innerText))
+      .sort((a,b) => parseFloat(b.cells[8].innerText) - parseFloat(a.cells[8].innerText))
       .forEach(r => tbody.appendChild(r));
   }
   function sortTableByBookmakerOdds() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
-      .sort((a, b) => parseFloat(b.cells[9].innerText) - parseFloat(a.cells[9].innerText))
+      .sort((a,b) => parseFloat(b.cells[10].innerText) - parseFloat(a.cells[10].innerText))
       .forEach(r => tbody.appendChild(r));
   }
 </script>
