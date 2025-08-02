@@ -389,7 +389,18 @@
 </div>
 
 <script>
-  // Pre-cache all row data once
+  // 1) On initial page load: clear all filters & collapse all details
+  window.addEventListener('DOMContentLoaded', () => {
+    const pop = document.getElementById('filterPopup');
+    if (pop) {
+      // uncheck every checkbox in the popup
+      pop.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+      // collapse every <details> in the popup
+      pop.querySelectorAll('details').forEach(d => d.removeAttribute('open'));
+    }
+  });
+
+  // 2) Cache the table rows for fast filtering
   const rowData = Array.from(
     document.querySelectorAll('.pinnacle-table tbody tr')
   ).map(r => {
@@ -407,6 +418,7 @@
     };
   });
 
+  // 3) Value-only toggle
   function toggleValueOnly() {
     const only = document.getElementById('valueOnlyToggle').checked;
     rowData.forEach(d => {
@@ -414,14 +426,15 @@
     });
   }
 
+  // 4) Open/close popup without resetting anything
   function openFilter() {
     document.getElementById('filterPopup').style.display = 'block';
   }
-
   function closeFilter() {
     document.getElementById('filterPopup').style.display = 'none';
   }
 
+  // 5) Apply all active filters
   function applyFilters() {
     const selPred = new Set(
       ['high','good','medium','poor']
@@ -441,6 +454,7 @@
       if (selPred.size && !selPred.has(d.predict)) show = false;
       if (show && selBook.size && !selBook.has(d.bk)) show = false;
       if (show && allowed.size && !allowed.has(d.market)) show = false;
+
       if (show && allowed.has(d.market)) {
         const key = d.market.toLowerCase().replace(/[^a-z0-9]+/g,'_');
         const pMin = parseFloat(document.getElementById(key + '_prob_min').value),
@@ -449,9 +463,9 @@
               oMax = parseFloat(document.getElementById(key + '_odds_max').value),
               dMin = parseFloat(document.getElementById(key + '_diff_min').value),
               dMax = parseFloat(document.getElementById(key + '_diff_max').value);
-        if (!(d.prob >= pMin && d.prob <= pMax &&
-              d.odds >= oMin && d.odds <= oMax &&
-              d.diff >= dMin && d.diff <= dMax)) {
+        if (!(d.prob  >= pMin && d.prob  <= pMax &&
+              d.odds  >= oMin && d.odds  <= oMax &&
+              d.diff  >= dMin && d.diff  <= dMax)) {
           show = false;
         }
       }
@@ -459,6 +473,7 @@
     });
   }
 
+  // 6) Sorting helpers
   function sortTableByOddsDifference() {
     rowData.sort((a,b) => b.diff - a.diff)
            .forEach(d => d.el.parentNode.appendChild(d.el));
@@ -472,4 +487,5 @@
            .forEach(d => d.el.parentNode.appendChild(d.el));
   }
 </script>
+
 {% endblock %}
