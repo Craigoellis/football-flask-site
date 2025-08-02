@@ -106,7 +106,12 @@
       for (let i = 0; i < markets.length; i++) {
         if (marketText === names[i]) {
           const include = document.getElementById(`${markets[i]}_include`).checked;
-          if (include) {
+
+          if (!include) {
+            // If unchecked, hide all rows for this market
+            show = false;
+          } else {
+            // Otherwise apply numeric filters
             const prob = parseFloat(row.cells[5].innerText);
             const odds = parseFloat(row.cells[9].innerText);
             const diff = parseFloat(row.cells[10].innerText);
@@ -118,9 +123,10 @@
             const dMin = parseFloat(document.getElementById(`${markets[i]}_diff_min`).value);
             const dMax = parseFloat(document.getElementById(`${markets[i]}_diff_max`).value);
 
-            show = prob >= pMin && prob <= pMax &&
-                   odds >= oMin && odds <= oMax &&
-                   diff >= dMin && diff <= dMax;
+            show =
+              prob >= pMin && prob <= pMax &&
+              odds >= oMin && odds <= oMax &&
+              diff >= dMin && diff <= dMax;
           }
           break;
         }
