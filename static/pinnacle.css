@@ -7,7 +7,7 @@
     padding: 20px;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     overflow-x: auto;
 }
 
@@ -51,10 +51,8 @@
 }
 
 /* --------------------------------------
-   Filter Popup Styles
+   Filter Popup
    -------------------------------------- */
-
-/* Center & size the popup */
 #filterPopup {
     max-width: 900px;
     margin: 0 auto 20px;
@@ -65,19 +63,16 @@
     text-align: center;
 }
 
-/* Popup header */
 #filterPopup h3 {
     margin-bottom: 12px;
     font-size: 1.25em;
     font-weight: bold;
 }
 
-/* Each group (<details>) spacing */
 #filterPopup details {
     margin-bottom: 10px;
 }
 
-/* Tidy up all <summary> elements */
 #filterPopup summary {
     font-weight: bold;
     user-select: none;
@@ -86,26 +81,33 @@
     cursor: pointer;
 }
 
-/* Responsive grid for your min/max controls */
-#filterPopup .sub-body {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 8px 12px;
-    justify-items: center;
-    align-items: start;
+/* --------------------------------------
+   New: three-column filter grid
+   -------------------------------------- */
+#filterPopup .filter-grid {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
     margin-top: 8px;
 }
-
-/* Stack each label/input pair vertically */
-#filterPopup .sub-body label {
+#filterPopup .filter-group {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin: 0;
+    gap: 4px;
+    text-align: left;
+}
+#filterPopup .filter-group label {
     font-size: 0.95em;
 }
+#filterPopup .filter-group input {
+    margin-top: 2px;
+    width: 80px;
+    text-align: center;
+}
 
-/* Style the action buttons */
+/* --------------------------------------
+   Buttons & focus styles
+   -------------------------------------- */
 #filterPopup button {
     margin: 8px 6px 0;
     padding: 6px 12px;
@@ -116,25 +118,24 @@
     border-radius: 4px;
     cursor: pointer;
 }
-
 #filterPopup button:hover {
     background: #0056b3;
     border-color: #0056b3;
 }
-
-/* Colour‐coded group‐header overrides (if you’re using group-header classes) */
-#filterPopup summary.group-header.ft { background: #007bff; color: #fff; }
-#filterPopup summary.group-header.ht { background: #28a745; color: #fff; }
-#filterPopup summary.group-header.dc { background: #ffc107; color: #212529; }
-#filterPopup summary.group-header.btts { background: #17a2b8; color: #fff; }
-#filterPopup summary.group-header.ou { background: #6c757d; color: #fff; }
-#filterPopup summary.group-header.tg { background: #343a40; color: #fff; }
-#filterPopup summary.group-header.cr { background: #007bff; color: #fff; }
-
-/* Accessibility: focus outlines */
 #filterPopup input:focus,
 #filterPopup button:focus,
 #filterPopup summary:focus {
     outline: 2px dashed #007BFF;
     outline-offset: 2px;
 }
+
+/* --------------------------------------
+   Optional: color-coded group headers
+   -------------------------------------- */
+#filterPopup summary.group-header.ft  { background: #007bff; color: #fff; }
+#filterPopup summary.group-header.ht  { background: #28a745; color: #fff; }
+#filterPopup summary.group-header.dc  { background: #ffc107; color: #212529; }
+#filterPopup summary.group-header.btts{ background: #17a2b8; color: #fff; }
+#filterPopup summary.group-header.ou  { background: #6c757d; color: #fff; }
+#filterPopup summary.group-header.tg  { background: #343a40; color: #fff; }
+#filterPopup summary.group-header.cr  { background: #007bff; color: #fff; }
