@@ -10,44 +10,32 @@
 <div class="pinnacle-container">
     <h1>Pinnacle Comparison</h1>
 
-    <!-- Value Only Toggle -->
     <div style="margin-bottom: 15px;">
         <label>
             <input type="checkbox" id="valueOnlyToggle" onchange="toggleValueOnly()"> Value Only
         </label>
-
-        <!-- Filter Options Button -->
         <button onclick="document.getElementById('filterPopup').style.display = 'block'" style="margin-left: 15px;">
             Filter Options
         </button>
     </div>
 
     <!-- Filter Popup -->
-    <div id="filterPopup" style="display: none; border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; background: #f9f9f9;">
-        <h3>Home Win (FT Result) Filters</h3>
+    <div id="filterPopup" style="display:none; background:#f9f9f9; padding:15px; border:1px solid #ccc;">
+        <h3>Filter Options</h3>
 
-        <label>Min Probability (%):
-            <input type="number" id="prob-min" value="0" min="0" max="100">
-        </label><br>
-        <label>Max Probability (%):
-            <input type="number" id="prob-max" value="100" min="0" max="100">
-        </label><br><br>
+        {% for market in ['Home Win', 'Draw', 'Away Win'] %}
+        <fieldset style="margin-bottom: 20px; border: 1px solid #aaa; padding: 10px;">
+            <legend><strong>{{ market }} (FT Result)</strong></legend>
+            <label>Min Probability (%): <input type="number" id="{{ market | lower | replace(' ', '_') }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ market | lower | replace(' ', '_') }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ market | lower | replace(' ', '_') }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ market | lower | replace(' ', '_') }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ market | lower | replace(' ', '_') }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ market | lower | replace(' ', '_') }}_diff_max" value="100" step="0.1"></label><br>
+        </fieldset>
+        {% endfor %}
 
-        <label>Min Bookmaker Odds:
-            <input type="number" id="odds-min" value="1.00" step="0.01">
-        </label><br>
-        <label>Max Bookmaker Odds:
-            <input type="number" id="odds-max" value="10.00" step="0.01">
-        </label><br><br>
-
-        <label>Min Odds Difference (%):
-            <input type="number" id="diff-min" value="0" step="0.1">
-        </label><br>
-        <label>Max Odds Difference (%):
-            <input type="number" id="diff-max" value="100" step="0.1">
-        </label><br><br>
-
-        <button onclick="applyHomeWinFilter()">Apply Filter</button>
+        <button onclick="applyFilters()">Apply Filter</button>
         <button onclick="document.getElementById('filterPopup').style.display = 'none'">Close</button>
     </div>
 
@@ -80,7 +68,7 @@
                         </td>
                         <td>{{ item.kickoff | format_kickoff }}</td>
                         <td>{{ item.market }}</td>
-                        <td>{{ item.probability }}%</td> 
+                        <td>{{ item.probability }}%</td>
                         <td>{{ item.implied_odds }}</td>
                         <td>{{ item.pinnacle_odds }}</td>
                         <td>{{ item.bookmaker }}</td>
@@ -99,49 +87,22 @@
 function sortTableByOddsDifference() {
     const table = document.querySelector(".pinnacle-table tbody");
     const rows = Array.from(table.rows);
-
-    const sortedRows = rows.sort((a, b) => {
-        const aVal = parseFloat(a.cells[10].innerText.replace('%', '').trim());
-        const bVal = parseFloat(b.cells[10].innerText.replace('%', '').trim());
-        return bVal - aVal;
-    });
-
-    while (table.firstChild) {
-        table.removeChild(table.firstChild);
-    }
-    sortedRows.forEach(row => table.appendChild(row));
+    rows.sort((a, b) => parseFloat(b.cells[10].innerText) - parseFloat(a.cells[10].innerText));
+    rows.forEach(row => table.appendChild(row));
 }
 
 function sortTableByPinnacleOdds() {
     const table = document.querySelector(".pinnacle-table tbody");
     const rows = Array.from(table.rows);
-
-    const sortedRows = rows.sort((a, b) => {
-        const aVal = parseFloat(a.cells[7].innerText.trim());
-        const bVal = parseFloat(b.cells[7].innerText.trim());
-        return bVal - aVal;
-    });
-
-    while (table.firstChild) {
-        table.removeChild(table.firstChild);
-    }
-    sortedRows.forEach(row => table.appendChild(row));
+    rows.sort((a, b) => parseFloat(b.cells[7].innerText) - parseFloat(a.cells[7].innerText));
+    rows.forEach(row => table.appendChild(row));
 }
 
 function sortTableByBookmakerOdds() {
     const table = document.querySelector(".pinnacle-table tbody");
     const rows = Array.from(table.rows);
-
-    const sortedRows = rows.sort((a, b) => {
-        const aVal = parseFloat(a.cells[9].innerText.trim());
-        const bVal = parseFloat(b.cells[9].innerText.trim());
-        return bVal - aVal;
-    });
-
-    while (table.firstChild) {
-        table.removeChild(table.firstChild);
-    }
-    sortedRows.forEach(row => table.appendChild(row));
+    rows.sort((a, b) => parseFloat(b.cells[9].innerText) - parseFloat(a.cells[9].innerText));
+    rows.forEach(row => table.appendChild(row));
 }
 
 function toggleValueOnly() {
@@ -150,45 +111,47 @@ function toggleValueOnly() {
     const rows = document.querySelectorAll(".pinnacle-table tbody tr");
 
     rows.forEach(row => {
-        const implied = parseFloat(row.cells[6].innerText.trim());   // Implied Odds
-        const actual = parseFloat(row.cells[9].innerText.trim());    // Bookmaker Odds
+        const implied = parseFloat(row.cells[6].innerText.trim());
+        const actual = parseFloat(row.cells[9].innerText.trim());
         const isValue = actual > implied;
         row.style.display = (showValueOnly && !isValue) ? "none" : "";
     });
 }
 
-// New Filter Logic
-function applyHomeWinFilter() {
-    const probMin = parseFloat(document.getElementById('prob-min').value);
-    const probMax = parseFloat(document.getElementById('prob-max').value);
-    const oddsMin = parseFloat(document.getElementById('odds-min').value);
-    const oddsMax = parseFloat(document.getElementById('odds-max').value);
-    const diffMin = parseFloat(document.getElementById('diff-min').value);
-    const diffMax = parseFloat(document.getElementById('diff-max').value);
-
+function applyFilters() {
     const rows = document.querySelectorAll(".pinnacle-table tbody tr");
 
     rows.forEach(row => {
-        const market = row.cells[4].innerText.trim().toLowerCase();
-        if (market !== 'home win') {
-            row.style.display = '';
-            return;
+        const market = row.cells[4].innerText.trim();
+        const prob = parseFloat(row.cells[5].innerText);
+        const odds = parseFloat(row.cells[9].innerText);
+        const diff = parseFloat(row.cells[10].innerText);
+
+        let show = true;
+
+        const markets = ['home_win', 'draw', 'away_win'];
+        const names = ['Home Win', 'Draw', 'Away Win'];
+
+        for (let i = 0; i < markets.length; i++) {
+            if (market === names[i]) {
+                const probMin = parseFloat(document.getElementById(`${markets[i]}_prob_min`).value);
+                const probMax = parseFloat(document.getElementById(`${markets[i]}_prob_max`).value);
+                const oddsMin = parseFloat(document.getElementById(`${markets[i]}_odds_min`).value);
+                const oddsMax = parseFloat(document.getElementById(`${markets[i]}_odds_max`).value);
+                const diffMin = parseFloat(document.getElementById(`${markets[i]}_diff_min`).value);
+                const diffMax = parseFloat(document.getElementById(`${markets[i]}_diff_max`).value);
+
+                show = (
+                    prob >= probMin && prob <= probMax &&
+                    odds >= oddsMin && odds <= oddsMax &&
+                    diff >= diffMin && diff <= diffMax
+                );
+                break;
+            }
         }
 
-        const prob = parseFloat(row.cells[5].innerText.replace('%', '').trim());
-        const odds = parseFloat(row.cells[9].innerText.trim());
-        const diff = parseFloat(row.cells[10].innerText.replace('%', '').trim());
-
-        const show =
-            prob >= probMin && prob <= probMax &&
-            odds >= oddsMin && odds <= oddsMax &&
-            diff >= diffMin && diff <= diffMax;
-
-        row.style.display = show ? '' : 'none';
+        row.style.display = show ? "" : "none";
     });
-
-    document.getElementById('filterPopup').style.display = 'none';
 }
 </script>
-
 {% endblock %}
