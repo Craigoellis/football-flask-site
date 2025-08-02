@@ -1,4 +1,6 @@
-/* Container */
+/* --------------------------------------
+   Container
+   -------------------------------------- */
 .pinnacle-container {
     width: 100%;
     margin: 30px auto;
@@ -9,7 +11,9 @@
     overflow-x: auto;
 }
 
-/* Table */
+/* --------------------------------------
+   Table
+   -------------------------------------- */
 .pinnacle-table {
     width: 100%;
     border-collapse: collapse;
@@ -50,7 +54,7 @@
    Filter Popup Styles
    -------------------------------------- */
 
-/* Center the popup and constrain its width */
+/* Center & size the popup */
 #filterPopup {
     max-width: 900px;
     margin: 0 auto 20px;
@@ -61,14 +65,28 @@
     text-align: center;
 }
 
-/* Stylize the popup heading */
+/* Popup header */
 #filterPopup h3 {
     margin-bottom: 12px;
     font-size: 1.25em;
     font-weight: bold;
 }
 
-/* Make each parameter-row a responsive grid */
+/* Each group (<details>) spacing */
+#filterPopup details {
+    margin-bottom: 10px;
+}
+
+/* Tidy up all <summary> elements */
+#filterPopup summary {
+    font-weight: bold;
+    user-select: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Responsive grid for your min/max controls */
 #filterPopup .sub-body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -78,26 +96,13 @@
     margin-top: 8px;
 }
 
-/* Stack label/input pairs vertically and center them */
+/* Stack each label/input pair vertically */
 #filterPopup .sub-body label {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 0;
     font-size: 0.95em;
-}
-
-/* Tidy up the <summary> headers */
-#filterPopup summary {
-    font-weight: bold;
-    user-select: none;
-    padding: 6px 10px;
-    border-radius: 4px;
-}
-
-/* Adjust spacing inside each <details> section */
-#filterPopup details {
-    margin-bottom: 10px;
 }
 
 /* Style the action buttons */
@@ -117,8 +122,8 @@
     border-color: #0056b3;
 }
 
-/* Specific colour overrides for group headers if needed */
-#filterPopup summary.group-header.ft { background: #007BFF; color: #fff; }
+/* Colour‐coded group‐header overrides (if you’re using group-header classes) */
+#filterPopup summary.group-header.ft { background: #007bff; color: #fff; }
 #filterPopup summary.group-header.ht { background: #28a745; color: #fff; }
 #filterPopup summary.group-header.dc { background: #ffc107; color: #212529; }
 #filterPopup summary.group-header.btts { background: #17a2b8; color: #fff; }
@@ -126,7 +131,7 @@
 #filterPopup summary.group-header.tg { background: #343a40; color: #fff; }
 #filterPopup summary.group-header.cr { background: #007bff; color: #fff; }
 
-/* Accessibility focus styles */
+/* Accessibility: focus outlines */
 #filterPopup input:focus,
 #filterPopup button:focus,
 #filterPopup summary:focus {
