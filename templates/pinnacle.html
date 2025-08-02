@@ -32,6 +32,23 @@
       <label><input type="checkbox" id="poor_pred"> Poor</label>
     </div>
 
+    <!-- Bookmakers -->
+    <div style="margin-bottom:10px;">
+      <strong>Select Bookmakers</strong><br>
+      {# build a unique list of bookmakers from your data, excluding 'Pinnacle' #}
+      {% set bks = comparisons | map(attribute='bookmaker') | unique %}
+      {% for bk in bks %}
+        {% if bk != 'Pinnacle' %}
+          {% set html_id = ('bk_' + bk).replace(' ', '_').lower() %}
+          <label>
+            <input type="checkbox" id="{{ html_id }}">
+            {{ bk }}
+          </label>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- Markets -->
     {% for market in ['Home Win', 'Draw', 'Away Win'] %}
       {% set id = market.lower().replace(' ', '_') %}
       <details open style="margin-bottom: 10px;">
@@ -103,23 +120,41 @@
   }
 
   function applyFilters() {
-    // build lowercase list of selected predictabilities
-    const levels = ['high','good','medium','poor'];
-    const selPred = levels.filter(l => document.getElementById(l + '_pred').checked);
+    // 1) Predictability
+    const preds = ['high','good','medium','poor'];
+    const selPred = preds.filter(p => document.getElementById(p + '_pred').checked);
 
+    // 2) Bookmakers
+    const bookList = [
+      {% for bk in bks if bk != 'Pinnacle' %}
+        "{{ bk }}"{% if not loop.last %}, {% endif %}
+      {% endfor %}
+    ];
+    const selBook = bookList.filter(b => {
+      const id = 'bk_' + b.replace(/ /g, '_').toLowerCase();
+      return document.getElementById(id).checked;
+    });
+
+    // 3) Markets
     const markets = ['home_win','draw','away_win'];
     const names   = ['Home Win','Draw','Away Win'];
 
     document.querySelectorAll('.pinnacle-table tbody tr').forEach(row => {
       let show = true;
 
-      // 1) predictability filter
+      // a) league predictability
       if (selPred.length) {
         const rp = row.cells[1].innerText.trim().toLowerCase();
         if (!selPred.includes(rp)) show = false;
       }
 
-      // 2) market and numeric filters
+      // b) bookmaker filter
+      if (show && selBook.length) {
+        const bk = row.cells[8].innerText.trim();
+        if (!selBook.includes(bk)) show = false;
+      }
+
+      // c) market filters
       if (show) {
         const mtxt = row.cells[4].innerText.trim();
         for (let i = 0; i < markets.length; i++) {
@@ -139,9 +174,10 @@
               const dMin = parseFloat(document.getElementById(`${markets[i]}_diff_min`).value);
               const dMax = parseFloat(document.getElementById(`${markets[i]}_diff_max`).value);
 
-              show = prob>=pMin && prob<=pMax &&
-                     odds>=oMin && odds<=oMax &&
-                     diff>=dMin && diff<=dMax;
+              show =
+                prob >= pMin && prob <= pMax &&
+                odds >= oMin && odds <= oMax &&
+                diff >= dMin && diff <= dMax;
             }
             break;
           }
@@ -155,19 +191,19 @@
   function sortTableByOddsDifference() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
-         .sort((a,b)=> parseFloat(b.cells[10].innerText)-parseFloat(a.cells[10].innerText))
+         .sort((a,b)=> parseFloat(b.cells[10].innerText) - parseFloat(a.cells[10].innerText))
          .forEach(r=>tbody.appendChild(r));
   }
   function sortTableByPinnacleOdds() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
-         .sort((a,b)=> parseFloat(b.cells[7].innerText)-parseFloat(a.cells[7].innerText))
+         .sort((a,b)=> parseFloat(b.cells[7].innerText) - parseFloat(a.cells[7].innerText))
          .forEach(r=>tbody.appendChild(r));
   }
   function sortTableByBookmakerOdds() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
-         .sort((a,b)=> parseFloat(b.cells[9].innerText)-parseFloat(a.cells[9].innerText))
+         .sort((a,b)=> parseFloat(b.cells[9].innerText) - parseFloat(a.cells[9].innerText))
          .forEach(r=>tbody.appendChild(r));
   }
 </script>
