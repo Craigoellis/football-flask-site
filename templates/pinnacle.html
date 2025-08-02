@@ -366,7 +366,7 @@
           <td>{{ item.competition_name }}</td>
           <td>{{ item.predictability|capitalize }}</td>
           <td>
-            <a href="{{ url_for('fixture_detail', fixture_id=item.fixture_id) }}" target="_blank">
+            <a href="{{ url_for('game_details', fixture_id=item.fixture_id) }}" target="_blank">
               {{ item.fixture }}
             </a>
           </td>
