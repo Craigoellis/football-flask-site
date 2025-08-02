@@ -113,6 +113,70 @@
       </div>
     </details>
 
+    <!-- HT Market Results grouping -->
+    <details open style="margin-bottom:10px;">
+      <summary style="background:#28a745; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">
+        HT Market Results
+      </summary>
+      <div style="padding-left:20px; margin-top:8px;">
+
+        <!-- HT Home Win -->
+        <details open style="margin-bottom:8px;">
+          <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
+            <label>
+              <input type="checkbox" id="ht_home_win_include" checked>
+              Include HT Home Win
+            </label>
+          </summary>
+          <div style="padding-left:20px; margin-top:5px;">
+            <label>Min Probability (%): <input type="number" id="ht_home_win_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="ht_home_win_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="ht_home_win_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="ht_home_win_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="ht_home_win_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="ht_home_win_diff_max" value="100" step="0.1"></label><br>
+          </div>
+        </details>
+
+        <!-- HT Draw -->
+        <details open style="margin-bottom:8px;">
+          <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
+            <label>
+              <input type="checkbox" id="ht_draw_include" checked>
+              Include HT Draw
+            </label>
+          </summary>
+          <div style="padding-left:20px; margin-top:5px;">
+            <label>Min Probability (%): <input type="number" id="ht_draw_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="ht_draw_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="ht_draw_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="ht_draw_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="ht_draw_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="ht_draw_diff_max" value="100" step="0.1"></label><br>
+          </div>
+        </details>
+
+        <!-- HT Away Win -->
+        <details open style="margin-bottom:8px;">
+          <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
+            <label>
+              <input type="checkbox" id="ht_away_win_include" checked>
+              Include HT Away Win
+            </label>
+          </summary>
+          <div style="padding-left:20px; margin-top:5px;">
+            <label>Min Probability (%): <input type="number" id="ht_away_win_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="ht_away_win_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="ht_away_win_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="ht_away_win_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="ht_away_win_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="ht_away_win_diff_max" value="100" step="0.1"></label><br>
+          </div>
+        </details>
+
+      </div>
+    </details>
+
     <button onclick="applyFilters()">Apply Filter</button>
     <button onclick="document.getElementById('filterPopup').style.display='none'">Close</button>
   </div>
@@ -166,39 +230,46 @@
   }
 
   function applyFilters() {
-    // Predictabilities
-    const levels = ['high','good','medium','poor'],
-          selPred = levels.filter(l => document.getElementById(l + '_pred').checked);
+    // 1) Predictabilities
+    const predLevels = ['high','good','medium','poor'];
+    const selPred = predLevels.filter(l => document.getElementById(l + '_pred').checked);
 
-    // Bookmakers
+    // 2) Bookmakers
     const selBook = Array.from(
       document.querySelectorAll('.bm-filter:checked')
     ).map(el => el.dataset.bk);
 
-    // Markets
-    const markets = ['Home Win','Draw','Away Win'],
-          keys    = ['home_win','draw','away_win'];
+    // 3) Markets meta
+    const markets = [
+      'Home Win','Draw','Away Win',
+      'HT Home Win','HT Draw','HT Away Win'
+    ];
+    const keys = [
+      'home_win','draw','away_win',
+      'ht_home_win','ht_draw','ht_away_win'
+    ];
 
     document.querySelectorAll('.pinnacle-table tbody tr').forEach(row => {
       let show = true;
 
-      // 1) Predictability
-      if (selPred.length) {
+      // a) Predictability
+      if (selPred.length > 0) {
         const rp = row.cells[1].innerText.trim().toLowerCase();
         if (!selPred.includes(rp)) show = false;
       }
 
-      // 2) Bookmaker
-      if (show && selBook.length) {
+      // b) Bookmaker
+      if (show && selBook.length > 0) {
         const bk = row.cells[8].innerText.trim();
         if (!selBook.includes(bk)) show = false;
       }
 
-      // 3) FT-market filters
+      // c) Market & thresholds
       if (show) {
         const mtxt = row.cells[4].innerText.trim();
         for (let i = 0; i < markets.length; i++) {
           if (mtxt === markets[i]) {
+            // exclude if not checked
             if (!document.getElementById(keys[i] + '_include').checked) {
               show = false;
             } else {
