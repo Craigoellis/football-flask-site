@@ -23,7 +23,7 @@
   <div id="filterPopup" style="display:none; background:#f9f9f9; padding:15px; border:1px solid #ccc; margin-bottom:15px;">
     <h3>Filter Options</h3>
 
-    <!-- New: League Predictability -->
+    <!-- League Predictability -->
     <div style="margin-bottom:10px;">
       <strong>Select Predictability</strong><br>
       <label><input type="checkbox" id="high_pred"> High</label>
@@ -38,7 +38,7 @@
         <summary>
           <label style="font-weight: bold; cursor: pointer;">
             <input type="checkbox" id="{{ id }}_include" checked>
-            Include {{ market }} (FT Result)
+            Include {{ market }}
           </label>
         </summary>
         <div style="padding-left: 20px; margin-top: 8px;">
@@ -77,9 +77,7 @@
       <tr>
         <td>{{ item.competition_name }}</td>
         <td>{{ item.predictability }}</td>
-        <td>
-          <a href="{{ item.fixture_url }}" target="_blank">{{ item.fixture }}</a>
-        </td>
+        <td><a href="{{ item.fixture_url }}" target="_blank">{{ item.fixture }}</a></td>
         <td>{{ item.kickoff | format_kickoff }}</td>
         <td>{{ item.market }}</td>
         <td>{{ item.probability }}%</td>
@@ -105,29 +103,29 @@
   }
 
   function applyFilters() {
-    // 1) Gather selected predictabilities
-    const preds = ['High','Good','Medium','Poor'];
-    const selectedPreds = preds.filter(p => document.getElementById(p.toLowerCase() + '_pred').checked);
+    // build lowercase list of selected predictabilities
+    const levels = ['high','good','medium','poor'];
+    const selPred = levels.filter(l => document.getElementById(l + '_pred').checked);
 
-    const markets = ['home_win', 'draw', 'away_win'];
-    const names   = ['Home Win', 'Draw', 'Away Win'];
+    const markets = ['home_win','draw','away_win'];
+    const names   = ['Home Win','Draw','Away Win'];
 
     document.querySelectorAll('.pinnacle-table tbody tr').forEach(row => {
       let show = true;
 
-      // 2) League predictability filter
-      const rowPred = row.cells[1].innerText.trim();
-      if (selectedPreds.length > 0 && !selectedPreds.includes(rowPred)) {
-        show = false;
+      // 1) predictability filter
+      if (selPred.length) {
+        const rp = row.cells[1].innerText.trim().toLowerCase();
+        if (!selPred.includes(rp)) show = false;
       }
 
-      // 3) Market filters
+      // 2) market and numeric filters
       if (show) {
-        const marketText = row.cells[4].innerText.trim();
+        const mtxt = row.cells[4].innerText.trim();
         for (let i = 0; i < markets.length; i++) {
-          if (marketText === names[i]) {
-            const include = document.getElementById(`${markets[i]}_include`).checked;
-            if (!include) {
+          if (mtxt === names[i]) {
+            const inc = document.getElementById(`${markets[i]}_include`).checked;
+            if (!inc) {
               show = false;
             } else {
               const prob = parseFloat(row.cells[5].innerText);
@@ -141,10 +139,9 @@
               const dMin = parseFloat(document.getElementById(`${markets[i]}_diff_min`).value);
               const dMax = parseFloat(document.getElementById(`${markets[i]}_diff_max`).value);
 
-              show =
-                prob >= pMin && prob <= pMax &&
-                odds >= oMin && odds <= oMax &&
-                diff >= dMin && diff <= dMax;
+              show = prob>=pMin && prob<=pMax &&
+                     odds>=oMin && odds<=oMax &&
+                     diff>=dMin && diff<=dMax;
             }
             break;
           }
@@ -158,22 +155,20 @@
   function sortTableByOddsDifference() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
-      .sort((a, b) => parseFloat(b.cells[10].innerText) - parseFloat(a.cells[10].innerText))
-      .forEach(r => tbody.appendChild(r));
+         .sort((a,b)=> parseFloat(b.cells[10].innerText)-parseFloat(a.cells[10].innerText))
+         .forEach(r=>tbody.appendChild(r));
   }
-
   function sortTableByPinnacleOdds() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
-      .sort((a, b) => parseFloat(b.cells[7].innerText) - parseFloat(a.cells[7].innerText))
-      .forEach(r => tbody.appendChild(r));
+         .sort((a,b)=> parseFloat(b.cells[7].innerText)-parseFloat(a.cells[7].innerText))
+         .forEach(r=>tbody.appendChild(r));
   }
-
   function sortTableByBookmakerOdds() {
     const tbody = document.querySelector('.pinnacle-table tbody');
     Array.from(tbody.rows)
-      .sort((a, b) => parseFloat(b.cells[9].innerText) - parseFloat(a.cells[9].innerText))
-      .forEach(r => tbody.appendChild(r));
+         .sort((a,b)=> parseFloat(b.cells[9].innerText)-parseFloat(a.cells[9].innerText))
+         .forEach(r=>tbody.appendChild(r));
   }
 </script>
 {% endblock %}
