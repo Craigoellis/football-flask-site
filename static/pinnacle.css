@@ -7,8 +7,35 @@
     padding: 20px;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     overflow-x: auto;
+}
+
+/* --------------------------------------
+   Header: center title & button
+   -------------------------------------- */
+.pinnacle-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.pinnacle-header h1 {
+    margin: 0 0 12px;
+    font-size: 1.8em;
+}
+.filter-button {
+    background-color: #007BFF;
+    color: #FFF;
+    font-size: 1.1em;
+    font-weight: bold;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.filter-button:hover,
+.filter-button:focus {
+    background-color: #0056b3;
+    outline: none;
 }
 
 /* --------------------------------------
@@ -20,32 +47,26 @@
     font-size: 16px;
     text-align: center;
 }
-
 .pinnacle-table thead {
     background-color: #007BFF;
     color: white;
 }
-
 .pinnacle-table th,
 .pinnacle-table td {
     padding: 12px;
     border: 1px solid #ddd;
     white-space: nowrap;
 }
-
 .pinnacle-table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
-
 .pinnacle-table tbody tr:hover {
     background-color: #eef4ff;
 }
-
 .pinnacle-table a {
     color: #007BFF;
     text-decoration: none;
 }
-
 .pinnacle-table a:hover {
     text-decoration: underline;
 }
@@ -62,17 +83,14 @@
     border-radius: 6px;
     text-align: center;
 }
-
 #filterPopup h3 {
     margin-bottom: 12px;
     font-size: 1.25em;
     font-weight: bold;
 }
-
 #filterPopup details {
     margin-bottom: 10px;
 }
-
 #filterPopup summary {
     font-weight: bold;
     user-select: none;
@@ -80,11 +98,9 @@
     border-radius: 4px;
     cursor: pointer;
 }
-
 #filterPopup summary.sub-header {
     margin-bottom: 8px;
 }
-
 #filterPopup button {
     margin: 8px 6px 0;
     padding: 6px 12px;
@@ -95,12 +111,10 @@
     border-radius: 4px;
     cursor: pointer;
 }
-
 #filterPopup button:hover {
     background: #0056b3;
     border-color: #0056b3;
 }
-
 #filterPopup input:focus,
 #filterPopup button:focus,
 #filterPopup summary:focus {
@@ -109,7 +123,7 @@
 }
 
 /* --------------------------------------
-   Color‐coded group headers
+   Color-coded group headers
    -------------------------------------- */
 #filterPopup summary.group-header.ft   { background: #007bff; color: #fff; }
 #filterPopup summary.group-header.ht   { background: #28a745; color: #fff; }
@@ -120,7 +134,7 @@
 #filterPopup summary.group-header.cr   { background: #007bff; color: #fff; }
 
 /* --------------------------------------
-   Filter‐Grid: equal‐width, aligned inputs
+   Filter-Grid: equal-width, aligned inputs
    -------------------------------------- */
 #filterPopup .filter-grid {
     display: grid;
@@ -129,42 +143,19 @@
     row-gap: 12px;
     margin-top: 12px;
 }
-
 #filterPopup .filter-group {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 6px;
 }
-
 #filterPopup .filter-group label {
     font-size: 0.95em;
     text-align: left;
 }
-
 #filterPopup .filter-group input {
     width: 100%;
     box-sizing: border-box;
     padding: 4px 6px;
     font-size: 0.95em;
 }
-
-/* make the Filter-Options button big, blue and obvious */
-.filter-button {
-  background-color: #007BFF;
-  color: #FFF;
-  font-size: 1.1em;
-  font-weight: bold;
-  padding: 10px 24px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-left: 15px; /* you can adjust or remove */
-}
-
-.filter-button:hover,
-.filter-button:focus {
-  background-color: #0056b3;
-  outline: none;
-}
-
