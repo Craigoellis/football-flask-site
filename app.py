@@ -1257,132 +1257,83 @@ def pinnacle_comparisons():
 # Then insert this new route (anywhere among your Flask routes):
 @app.route('/filter_pinnacle', methods=['POST'])
 def filter_pinnacle():
-    """Filter Pinnacle comparison rows based on bookmaker, predictability, market and odds/value ranges."""
+    data = request.get_json()
+    selected_bookmakers = data.get('bookmakers', [])
+    selected_predictability = data.get('predictability', [])
+    exclude_cups = data.get('exclude_cup_friendly', False)
+    filters = data.get('filters', {})
+
+    rows = []
+
+    for fixture_id, fixture in game_details_cache.items():
+        fixture_name = fixture.get("fixture_name", "")
+        kickoff = fixture.get("kickoff", 0)
+        ko_human = format_kickoff(kickoff)
+        predictability = fixture.get("competition_predictability", "")
+        competition_name = fixture.get("competition_name", "")
+        country = fixture.get("competition_country", "")
+
+        if exclude_cups and 'cup' in competition_name.lower():
+            continue
+        if selected_predictability and predictability not in selected_predictability:
+            continue
+
+        for market in fixture.get("markets", []):
+            market_name = market.get("market_name", "")
+            probability = float(market.get("probability", 0))
+            bookmaker_odds = float(market.get("bookmaker_odds", 0))
+            implied_odds = float(market.get("implied_odds", 0))
+            bookmaker = market.get("bookmaker", "")
+
+            if selected_bookmakers and bookmaker not in selected_bookmakers:
+                continue
+
+            # Skip bad data
+            if not bookmaker_odds or not implied_odds:
+                continue
+
+            odds_diff = ((bookmaker_odds - implied_odds) / implied_odds * 100)
+
+            mkt_filters = filters.get(market_name, {})
+            def in_range(val, min_val, max_val):
+                if min_val is not None and val < min_val:
+                    return False
+                if max_val is not None and val > max_val:
+                    return False
+                return True
+
+            if not in_range(probability, mkt_filters.get('min_prob'), mkt_filters.get('max_prob')):
+                continue
+            if not in_range(bookmaker_odds, mkt_filters.get('min_odds'), mkt_filters.get('max_odds')):
+                continue
+            if not in_range(odds_diff, mkt_filters.get('min_value'), mkt_filters.get('max_value')):
+                continue
+
+            rows.append({
+                "fixture": fixture_name,
+                "kickoff": kickoff,
+                "ko_human": ko_human,
+                "competition_name": competition_name,
+                "competition_country": country,
+                "predictability": predictability,
+                "market": market_name,
+                "probability": round(probability, 2),
+                "implied_odds": round(implied_odds, 2),
+                "bookmaker_odds": round(bookmaker_odds, 2),
+                "bookmaker": bookmaker,
+                "odds_difference": round(odds_diff, 2),
+                "fixture_id": fixture_id
+            })
+
+    return jsonify(rows)
+
+def format_kickoff(unix_timestamp):
     try:
-        with open(GAME_DETAILS_CACHE_FILE, "r") as f:
-            game_data = json.load(f)
-
-        # Build the full comparison list (similar to /pinnacle)
-        valid_bookmakers = {
-            "williamhill_odds": "William Hill",
-            "onexbet_odds": "1xBet",
-            "betfair_exchange_odds": "Betfair Exchange",
-            "actual_odds": "Bet365"
-        }
-        market_label_mapping = { ... }  # same as in /pinnacle_comparisons
-        label_to_slug = {label: slug for slug, label in market_label_mapping.items()}
-        slug_to_filter_key = { ... }  # mapping from slug to filter key (home_win_filters, o15_filters, etc.)
-
-        comparisons = []
-        for fixture_id, fixture_data in game_data.items():
-            fixture_name = fixture_data.get("fixture_name", fixture_id)
-            predictability = fixture_data.get("competition_predictability", "N/A")
-            competition_name = fixture_data.get("competition_name", "N/A")
-            competition_country = fixture_data.get("competition_country", "N/A")
-            kickoff_unix = fixture_data.get("unix")
-            for market_key, data in fixture_data.items():
-                if not isinstance(data, dict):
-                    continue
-                pinnacle_odds_val = data.get("pinnacle_odds")
-                if pinnacle_odds_val is None:
-                    continue
-                for bookmaker_key, bookmaker_label in valid_bookmakers.items():
-                    odds = data.get(bookmaker_key)
-                    if odds is None:
-                        continue
-                    bookmaker_odds = float(odds)
-                    pinnacle_odds = float(pinnacle_odds_val)
-                    if bookmaker_odds > pinnacle_odds:
-                        diff_percent = round(((bookmaker_odds - pinnacle_odds) / abs(pinnacle_odds)) * 100, 2)
-                        comparisons.append({
-                            "fixture_id": int(fixture_id),
-                            "fixture": fixture_name,
-                            "predictability": predictability,
-                            "competition_name": competition_name,
-                            "competition_country": competition_country,
-                            "market": market_label_mapping.get(market_key, market_key),
-                            "probability": data.get("probability"),
-                            "implied_odds": data.get("implied_odds"),
-                            "pinnacle_odds": pinnacle_odds,
-                            "bookmaker": bookmaker_label,
-                            "bookmaker_odds": bookmaker_odds,
-                            "kickoff": kickoff_unix,
-                            "odds_difference": diff_percent
-                        })
-
-        # Parse filter payload from the request
-        request_data = request.get_json() or {}
-        selected_bookmakers = request_data.get("bookmakers", [])
-        selected_predictability = [p.lower() for p in request_data.get("predictability", [])]
-        exclude_cups = request_data.get("exclude_cups", False)
-        exclude_friendlies = request_data.get("exclude_friendlies", False)
-
-        def get_filter_for_slug(slug):
-            key = slug_to_filter_key.get(slug)
-            return request_data.get(key, {}) if key else {}
-
-        # Apply filters
-        filtered = []
-        london_tz = pytz.timezone('Europe/London')
-        for item in comparisons:
-            # Check bookmaker filter
-            if selected_bookmakers and item["bookmaker"] not in selected_bookmakers:
-                continue
-            # Check predictability
-            pred_value = str(item.get("predictability", "")).lower()
-            if selected_predictability and pred_value not in selected_predictability:
-                continue
-            # Exclude cups and friendlies
-            comp_name = item.get("competition_name", "").lower()
-            if exclude_cups and "cup" in comp_name:
-                continue
-            if exclude_friendlies and "friendly" in comp_name:
-                continue
-
-            market_label = item.get("market")
-            slug = label_to_slug.get(market_label)
-            if slug:
-                cfg = get_filter_for_slug(slug)
-                if cfg.get("include", True) is False:
-                    continue
-                prob_value = float(item.get("probability", 0) or 0.0)
-                prob_min = cfg.get("probability_min", 0)
-                prob_max = cfg.get("probability_max", 100)
-                if prob_value < prob_min or prob_value > prob_max:
-                    continue
-                odds_value = float(item.get("bookmaker_odds", 0))
-                odds_min = cfg.get("odds_min", 1.00)
-                odds_max = cfg.get("odds_max", 10.00)
-                if odds_value < odds_min or odds_value > odds_max:
-                    continue
-                diff_value = float(item.get("odds_difference", 0))
-                diff_min = cfg.get("value_min", 0)
-                diff_max = cfg.get("value_max", 100)
-                if diff_value < diff_min or diff_value > diff_max:
-                    continue
-
-            # Build human-friendly kickoff string
-            kickoff_ts = item.get("kickoff")
-            if kickoff_ts:
-                dt = datetime.fromtimestamp(kickoff_ts, pytz.utc).astimezone(london_tz)
-                today = datetime.now(london_tz).date()
-                if dt.date() == today:
-                    ko_human = dt.strftime("%H:%M")
-                else:
-                    day = dt.day
-                    suffix = 'th' if 11 <= day <= 13 else {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
-                    ko_human = dt.strftime(f"%a {day}{suffix}, %H:%M")
-            else:
-                ko_human = "N/A"
-            new_item = item.copy()
-            new_item["ko_human"] = ko_human
-            filtered.append(new_item)
-
-        return jsonify(filtered)
-    except Exception:
-        return jsonify([]), 500
-
-
+        dt = datetime.fromtimestamp(unix_timestamp, pytz.timezone('Europe/London'))
+        return dt.strftime('%H:%M')
+    except:
+        return "-"
+    
 @app.route('/filter_value_bets', methods=['POST'])
 def filter_value_bets():
     """Filters cached value bets based on selected bookmakers, predictability levels, markets, and exclusions."""
