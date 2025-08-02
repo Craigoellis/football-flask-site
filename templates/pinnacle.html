@@ -41,17 +41,21 @@
       {% set bks = comparisons | map(attribute='bookmaker') | unique %}
       {% for bk in bks if bk != 'Pinnacle' %}
         {% set html_id = 'bk_' + bk.lower().replace(' ', '_') %}
-        <input type="checkbox"
-               class="bm-filter"
-               data-bk="{{ bk }}"
-               id="{{ html_id }}">
+        <input
+          type="checkbox"
+          class="bm-filter"
+          data-bk="{{ bk }}"
+          id="{{ html_id }}"
+        >
         <label for="{{ html_id }}">{{ bk }}</label>
       {% endfor %}
     </div>
 
     <!-- FT Market Results -->
     <details open style="margin-bottom:10px;">
-      <summary style="background:#007bff; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">FT Market Results</summary>
+      <summary style="background:#007bff; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">
+        FT Market Results
+      </summary>
       <div style="padding-left:20px; margin-top:8px;">
         {% for label,key,col in [
           ['Home Win','home_win','#cce5ff'],
@@ -61,11 +65,13 @@
         <details open style="margin-bottom:8px;">
           <summary style="background:{{ col }}; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
-              <input type="checkbox"
-                     class="market-include"
-                     data-market="{{ label }}"
-                     id="{{ key }}_include"
-                     checked>
+              <input
+                type="checkbox"
+                class="market-include"
+                data-market="{{ label }}"
+                id="{{ key }}_include"
+                checked
+              >
               Include {{ label }}
             </label>
           </summary>
@@ -84,7 +90,9 @@
 
     <!-- HT Market Results -->
     <details open style="margin-bottom:10px;">
-      <summary style="background:#28a745; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">HT Market Results</summary>
+      <summary style="background:#28a745; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">
+        HT Market Results
+      </summary>
       <div style="padding-left:20px; margin-top:8px;">
         {% for label,key in [
           ['HT Home Win','ht_home_win'],
@@ -94,11 +102,13 @@
         <details open style="margin-bottom:8px;">
           <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
-              <input type="checkbox"
-                     class="market-include"
-                     data-market="{{ label }}"
-                     id="{{ key }}_include"
-                     checked>
+              <input
+                type="checkbox"
+                class="market-include"
+                data-market="{{ label }}"
+                id="{{ key }}_include"
+                checked
+              >
               Include {{ label }}
             </label>
           </summary>
@@ -117,7 +127,9 @@
 
     <!-- Double Chance Markets -->
     <details open style="margin-bottom:10px;">
-      <summary style="background:#ffc107; color:#212529; padding:8px; cursor:pointer; border-radius:4px;">Double Chance Markets</summary>
+      <summary style="background:#ffc107; color:#212529; padding:8px; cursor:pointer; border-radius:4px;">
+        Double Chance Markets
+      </summary>
       <div style="padding-left:20px; margin-top:8px;">
         {% for label,key in [
           ['Home or Draw','home_or_draw'],
@@ -127,11 +139,13 @@
         <details open style="margin-bottom:8px;">
           <summary style="background:#fff3cd; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
-              <input type="checkbox"
-                     class="market-include"
-                     data-market="{{ label }}"
-                     id="{{ key }}_include"
-                     checked>
+              <input
+                type="checkbox"
+                class="market-include"
+                data-market="{{ label }}"
+                id="{{ key }}_include"
+                checked
+              >
               Include {{ label }}
             </label>
           </summary>
@@ -150,7 +164,9 @@
 
     <!-- Both Teams To Score -->
     <details open style="margin-bottom:10px;">
-      <summary style="background:#17a2b8; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">Both Teams To Score</summary>
+      <summary style="background:#17a2b8; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">
+        Both Teams To Score
+      </summary>
       <div style="padding-left:20px; margin-top:8px;">
         {% for label,key in [
           ['BTTS: Yes','btts_yes'],
@@ -159,11 +175,13 @@
         <details open style="margin-bottom:8px;">
           <summary style="background:#d1ecf1; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
-              <input type="checkbox"
-                     class="market-include"
-                     data-market="{{ label }}"
-                     id="{{ key }}_include"
-                     checked>
+              <input
+                type="checkbox"
+                class="market-include"
+                data-market="{{ label }}"
+                id="{{ key }}_include"
+                checked
+              >
               Include {{ label }}
             </label>
           </summary>
@@ -182,7 +200,9 @@
 
     <!-- Over/Under Goals -->
     <details open style="margin-bottom:10px;">
-      <summary style="background:#6c757d; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">Over/Under Goals</summary>
+      <summary style="background:#6c757d; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">
+        Over/Under Goals
+      </summary>
       <div style="padding-left:20px; margin-top:8px;">
         {% for label,key in [
           ['Over 1.5 Goals','over_1_5_goals'],
@@ -195,11 +215,13 @@
         <details open style="margin-bottom:8px;">
           <summary style="background:#e9ecef; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
-              <input type="checkbox"
-                     class="market-include"
-                     data-market="{{ label }}"
-                     id="{{ key }}_include"
-                     checked>
+              <input
+                type="checkbox"
+                class="market-include"
+                data-market="{{ label }}"
+                id="{{ key }}_include"
+                checked
+              >
               Include {{ label }}
             </label>
           </summary>
@@ -218,7 +240,9 @@
 
     <!-- Team Goals -->
     <details open style="margin-bottom:10px;">
-      <summary style="background:#343a40; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">Team Goals</summary>
+      <summary style="background:#343a40; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">
+        Team Goals
+      </summary>
       <div style="padding-left:20px; margin-top:8px;">
         {% for label,key in [
           ['Home Over 0.5 Goals','home_over_0_5_goals'],
@@ -233,11 +257,13 @@
         <details open style="margin-bottom:8px;">
           <summary style="background:#dee2e6; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
-              <input type="checkbox"
-                     class="market-include"
-                     data-market="{{ label }}"
-                     id="{{ key }}_include"
-                     checked>
+              <input
+                type="checkbox"
+                class="market-include"
+                data-market="{{ label }}"
+                id="{{ key }}_include"
+                checked
+              >
               Include {{ label }}
             </label>
           </summary>
@@ -256,7 +282,9 @@
 
     <!-- Corners -->
     <details open style="margin-bottom:10px;">
-      <summary style="background:#007bff; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">Corners</summary>
+      <summary style="background:#007bff; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">
+        Corners
+      </summary>
       <div style="padding-left:20px; margin-top:8px;">
         {% for t in [7.5,8.5,9.5,10.5,11.5] %}
           {% set over_id = 'over_' + (t|string).replace('.','_') + '_corners' %}
@@ -264,11 +292,13 @@
         <details open style="margin-bottom:8px;">
           <summary style="background:#cce5ff; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
-              <input type="checkbox"
-                     class="market-include"
-                     data-market="Over {{ t }} Corners"
-                     id="{{ over_id }}_include"
-                     checked>
+              <input
+                type="checkbox"
+                class="market-include"
+                data-market="Over {{ t }} Corners"
+                id="{{ over_id }}_include"
+                checked
+              >
               Include Over {{ t }} Corners
             </label>
           </summary>
@@ -284,11 +314,13 @@
         <details open style="margin-bottom:8px;">
           <summary style="background:#f8d7da; padding:6px; cursor:pointer; border-radius:4px;">
             <label>
-              <input type="checkbox"
-                     class="market-include"
-                     data-market="Under {{ t }} Corners"
-                     id="{{ under_id }}_include"
-                     checked>
+              <input
+                type="checkbox"
+                class="market-include"
+                data-market="Under {{ t }} Corners"
+                id="{{ under_id }}_include"
+                checked
+              >
               Include Under {{ t }} Corners
             </label>
           </summary>
@@ -333,7 +365,11 @@
           <td>{{ item.competition_country }}</td>
           <td>{{ item.competition_name }}</td>
           <td>{{ item.predictability|capitalize }}</td>
-          <td><a href="{{ item.fixture_url }}" target="_blank">{{ item.fixture }}</a></td>
+          <td>
+            <a href="{{ url_for('fixture_detail', fixture_id=item.fixture_id) }}" target="_blank">
+              {{ item.fixture }}
+            </a>
+          </td>
           <td>{{ item.kickoff | format_kickoff }}</td>
           <td>{{ item.market }}</td>
           <td>{{ item.probability }}%</td>
@@ -350,31 +386,30 @@
 </div>
 
 <script>
-  // 1) On page load, build a JS array of all rows + their parsed values
+  // Pre-cache row data for fast filtering
   const rowData = Array.from(
     document.querySelectorAll('.pinnacle-table tbody tr')
   ).map(r => {
-    const cells = r.cells;
+    const c = r.cells;
     return {
       el: r,
-      country: cells[0].innerText.trim(),
-      competition: cells[1].innerText.trim(),
-      predict: cells[2].innerText.trim().toLowerCase(),
-      market: cells[5].innerText.trim(),
-      prob:    parseFloat(cells[6].innerText),
-      implied: parseFloat(cells[7].innerText),
-      pinn:    parseFloat(cells[8].innerText),
-      bk:      cells[9].innerText.trim(),
-      odds:    parseFloat(cells[10].innerText),
-      diff:    parseFloat(cells[11].innerText)
+      country: c[0].innerText.trim(),
+      competition: c[1].innerText.trim(),
+      predict: c[2].innerText.trim().toLowerCase(),
+      market: c[5].innerText.trim(),
+      prob:    parseFloat(c[6].innerText),
+      implied: parseFloat(c[7].innerText),
+      pinn:    parseFloat(c[8].innerText),
+      bk:      c[9].innerText.trim(),
+      odds:    parseFloat(c[10].innerText),
+      diff:    parseFloat(c[11].innerText)
     };
   });
 
   function toggleValueOnly() {
     const only = document.getElementById('valueOnlyToggle').checked;
     rowData.forEach(d => {
-      if (!only || d.odds > d.implied) d.el.style.display = '';
-      else d.el.style.display = 'none';
+      d.el.style.display = (!only || d.odds > d.implied) ? '' : 'none';
     });
   }
 
@@ -386,7 +421,6 @@
   }
 
   function applyFilters() {
-    // grab filters once
     const selPred = new Set(
       ['high','good','medium','poor']
         .filter(l => document.getElementById(l + '_pred').checked)
@@ -403,16 +437,10 @@
     rowData.forEach(d => {
       let show = true;
 
-      //  a) predictability
       if (selPred.size && !selPred.has(d.predict)) show = false;
-
-      //  b) bookmaker
       if (show && selBook.size && !selBook.has(d.bk)) show = false;
-
-      //  c) market inclusion
       if (show && allowed.size && !allowed.has(d.market)) show = false;
 
-      //  d) threshold checks
       if (show && allowed.has(d.market)) {
         const key = d.market.toLowerCase().replace(/[^a-z0-9]+/g,'_');
         const pMin = parseFloat(document.getElementById(key + '_prob_min').value),
@@ -421,9 +449,9 @@
               oMax = parseFloat(document.getElementById(key + '_odds_max').value),
               dMin = parseFloat(document.getElementById(key + '_diff_min').value),
               dMax = parseFloat(document.getElementById(key + '_diff_max').value);
-        if (!(d.prob  >= pMin && d.prob  <= pMax &&
-              d.odds  >= oMin && d.odds  <= oMax &&
-              d.diff  >= dMin && d.diff  <= dMax)) {
+        if (!(d.prob >= pMin && d.prob <= pMax &&
+              d.odds >= oMin && d.odds <= oMax &&
+              d.diff >= dMin && d.diff <= dMax)) {
           show = false;
         }
       }
@@ -433,17 +461,13 @@
   }
 
   function sortTableByOddsDifference() {
-    rowData.sort((a,b)=>b.diff - a.diff)
-           .forEach(d=>d.el.parentNode.appendChild(d.el));
+    rowData.sort((a,b)=>b.diff - a.diff).forEach(d=>d.el.parentNode.appendChild(d.el));
   }
   function sortTableByPinnacleOdds() {
-    rowData.sort((a,b)=>b.pinn - a.pinn)
-           .forEach(d=>d.el.parentNode.appendChild(d.el));
+    rowData.sort((a,b)=>b.pinn - a.pinn).forEach(d=>d.el.parentNode.appendChild(d.el));
   }
   function sortTableByBookmakerOdds() {
-    rowData.sort((a,b)=>b.odds - a.odds)
-           .forEach(d=>d.el.parentNode.appendChild(d.el));
+    rowData.sort((a,b)=>b.odds - a.odds).forEach(d => d.el.parentNode.appendChild(d.el));
   }
 </script>
-
 {% endblock %}
