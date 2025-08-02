@@ -1,109 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Probability Rankings</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h2 { margin-top: 30px; }
-        .filter-section { margin-bottom: 20px; }
-        .filter-section input[type="number"] { width: 60px; margin-right: 10px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; border: 1px solid #ccc; text-align: center; }
-        th { background-color: #007bff; color: white; }
-        .highlight { color: green; font-weight: bold; }
-        .collapsible { background-color: #007bff; color: white; cursor: pointer; padding: 10px; border: none; width: 100%; text-align: left; font-size: 16px; margin-top: 10px; }
-        .content { display: none; padding: 10px; border: 1px solid #007bff; border-top: none; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Value Bets</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    .filter-section {
+      margin-bottom: 20px;
+    }
+    .filter-toggle {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      padding: 10px;
+      cursor: pointer;
+      border: none;
+      margin: 10px 0;
+    }
+    .filter-container {
+      display: none;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #f8f8f8;
+    }
+  </style>
 </head>
 <body>
 
-<h2>▼ Filter Options</h2>
+<h3>▼ Filter Options</h3>
 <div class="filter-section">
-    <label><input type="checkbox" id="valueOnly" checked> Value Only</label>
+  <input type="checkbox" id="value-only" checked> Value Only
 </div>
 
-<h2 class="collapsible">▼ FT Result</h2>
-<div class="content">
-    <div class="filter-section">
-        <label><input type="checkbox" id="includeHome" checked> Home Win</label>
-        <label><input type="checkbox" id="includeDraw"> Draw</label>
-        <label><input type="checkbox" id="includeAway"> Away Win</label>
-    </div>
-    <div class="filter-section">
-        <label>Min Probability (%): <input type="number" id="minProb" value="0"></label>
-        <label>Max Probability (%): <input type="number" id="maxProb" value="100"></label>
-    </div>
-    <div class="filter-section">
-        <label>Min Latest Odds: <input type="number" step="0.01" id="minOdds" value="1.00"></label>
-        <label>Max Latest Odds: <input type="number" step="0.01" id="maxOdds" value="10.00"></label>
-    </div>
-    <div class="filter-section">
-        <label>Min Odds Difference (%): <input type="number" step="0.1" id="minDiff" value="0"></label>
-        <label>Max Odds Difference (%): <input type="number" step="0.1" id="maxDiff" value="100"></label>
-    </div>
-    <button onclick="applyFilters()">Apply Filters</button>
+<button class="filter-toggle" onclick="toggleFilter('ft-result-filter')">▼ FT Result</button>
+<div id="ft-result-filter" class="filter-container">
+  <input type="checkbox" id="home-win" checked> Home Win
+  <input type="checkbox" id="draw"> Draw
+  <input type="checkbox" id="away-win"> Away Win
+  <br><br>
+  Min Probability (%): <input type="number" id="min-probability" value="0">
+  Max Probability (%): <input type="number" id="max-probability" value="100">
+  <br>
+  Min Latest Odds: <input type="number" id="min-odds" value="1.00">
+  Max Latest Odds: <input type="number" id="max-odds" value="10.00">
+  <br>
+  Min Odds Diff (%): <input type="number" id="min-diff" value="0">
+  Max Odds Diff (%): <input type="number" id="max-diff" value="100">
+  <br><br>
+  <button onclick="applyFilters()">Apply Filters</button>
 </div>
 
-<table id="data-table">
-    <thead>
-        <tr>
-            <th>Competition</th>
-            <th>Predictability</th>
-            <th>Fixture</th>
-            <th>Kick Off</th>
-            <th>Market</th>
-            <th>Probability (%)</th>
-            <th>Implied Odds</th>
-            <th>Pinnacle Odds</th>
-            <th>Bookmaker</th>
-            <th>Bookmaker Odds</th>
-            <th>Odds Difference (%)</th>
-        </tr>
-    </thead>
-    <tbody id="table-body">
-    </tbody>
+<table id="value-bets-table">
+  <thead>
+    <tr>
+      <th>Competition</th>
+      <th>Predictability</th>
+      <th>Fixture</th>
+      <th>Kick Off</th>
+      <th>Market</th>
+      <th>Probability (%)</th>
+      <th>Implied Odds</th>
+      <th>Pinnacle Odds</th>
+      <th>Bookmaker</th>
+      <th>Bookmaker Odds</th>
+      <th>Odds Difference (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Data rows populated here -->
+  </tbody>
 </table>
 
 <script>
-function applyFilters() {
-    const includeHome = document.getElementById('includeHome').checked;
-    const includeDraw = document.getElementById('includeDraw').checked;
-    const includeAway = document.getElementById('includeAway').checked;
-    const minProb = parseFloat(document.getElementById('minProb').value);
-    const maxProb = parseFloat(document.getElementById('maxProb').value);
-    const minOdds = parseFloat(document.getElementById('minOdds').value);
-    const maxOdds = parseFloat(document.getElementById('maxOdds').value);
-    const minDiff = parseFloat(document.getElementById('minDiff').value);
-    const maxDiff = parseFloat(document.getElementById('maxDiff').value);
-    const valueOnly = document.getElementById('valueOnly').checked;
-
-    const rows = document.querySelectorAll('#data-table tbody tr');
-    rows.forEach(row => {
-        const market = row.children[4].textContent.trim();
-        const probability = parseFloat(row.children[5].textContent);
-        const odds = parseFloat(row.children[9].textContent);
-        const diff = parseFloat(row.children[10].textContent);
-
-        const isMarketIncluded = (market === 'Home Win' && includeHome) ||
-                                 (market === 'Draw' && includeDraw) ||
-                                 (market === 'Away Win' && includeAway);
-        const isProbInRange = probability >= minProb && probability <= maxProb;
-        const isOddsInRange = odds >= minOdds && odds <= maxOdds;
-        const isDiffInRange = diff >= minDiff && diff <= maxDiff;
-        const isValue = !valueOnly || diff > 0;
-
-        row.style.display = (isMarketIncluded && isProbInRange && isOddsInRange && isDiffInRange && isValue) ? '' : 'none';
-    });
+function toggleFilter(id) {
+  const filter = document.getElementById(id);
+  filter.style.display = filter.style.display === 'block' ? 'none' : 'block';
 }
 
-document.querySelectorAll(".collapsible").forEach(btn => {
-    btn.addEventListener("click", function() {
-        this.classList.toggle("active");
-        const content = this.nextElementSibling;
-        content.style.display = content.style.display === "block" ? "none" : "block";
-    });
-});
+function applyFilters() {
+  const rows = document.querySelectorAll('#value-bets-table tbody tr');
+  const valueOnly = document.getElementById('value-only').checked;
+  const homeWin = document.getElementById('home-win').checked;
+  const draw = document.getElementById('draw').checked;
+  const awayWin = document.getElementById('away-win').checked;
+  const minProb = parseFloat(document.getElementById('min-probability').value);
+  const maxProb = parseFloat(document.getElementById('max-probability').value);
+  const minOdds = parseFloat(document.getElementById('min-odds').value);
+  const maxOdds = parseFloat(document.getElementById('max-odds').value);
+  const minDiff = parseFloat(document.getElementById('min-diff').value);
+  const maxDiff = parseFloat(document.getElementById('max-diff').value);
+
+  rows.forEach(row => {
+    const market = row.children[4].textContent.trim();
+    const prob = parseFloat(row.children[5].textContent);
+    const latestOdds = parseFloat(row.children[9].textContent);
+    const oddsDiff = parseFloat(row.children[10].textContent);
+
+    let show = true;
+    if (valueOnly && oddsDiff <= 0) show = false;
+    if (market === 'Home Win' && !homeWin) show = false;
+    if (market === 'Draw' && !draw) show = false;
+    if (market === 'Away Win' && !awayWin) show = false;
+    if (prob < minProb || prob > maxProb) show = false;
+    if (latestOdds < minOdds || latestOdds > maxOdds) show = false;
+    if (oddsDiff < minDiff || oddsDiff > maxDiff) show = false;
+
+    row.style.display = show ? '' : 'none';
+  });
+}
 </script>
 
 </body>
