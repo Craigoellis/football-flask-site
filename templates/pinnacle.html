@@ -14,7 +14,7 @@
     <label>
       <input type="checkbox" id="valueOnlyToggle" onchange="toggleValueOnly()"> Value Only
     </label>
-    <button onclick="document.getElementById('filterPopup').style.display='block'" style="margin-left:15px;">
+    <button onclick="openFilter()" style="margin-left:15px;">
       Filter
     </button>
   </div>
@@ -40,12 +40,10 @@
       {% for bk in bks %}
         {% if bk != 'Pinnacle' %}
           {% set html_id = 'bk_' + bk.lower().replace(' ', '_') %}
-          <input
-            type="checkbox"
-            class="bm-filter"
-            data-bk="{{ bk }}"
-            id="{{ html_id }}"
-          >
+          <input type="checkbox"
+                 class="bm-filter"
+                 data-bk="{{ bk }}"
+                 id="{{ html_id }}">
           <label for="{{ html_id }}">{{ bk }}</label>
         {% endif %}
       {% endfor %}
@@ -57,48 +55,25 @@
         FT Market Results
       </summary>
       <div style="padding-left:20px; margin-top:8px;">
-        <!-- Home Win -->
+        {% for market,label,colour in [
+          ('home_win','Home Win','#cce5ff'),
+          ('draw','Draw','#cce5ff'),
+          ('away_win','Away Win','#cce5ff')
+        ] %}
         <details open style="margin-bottom:8px;">
-          <summary style="background:#cce5ff; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="home_win_include" checked> Include Home Win</label>
+          <summary style="background:{{ colour }}; padding:6px; cursor:pointer; border-radius:4px;">
+            <label><input type="checkbox" id="{{ market }}_include" checked> Include {{ label }}</label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="home_win_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="home_win_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="home_win_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="home_win_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="home_win_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="home_win_diff_max" value="100" step="0.1"></label><br>
+            <label>Min Probability (%): <input type="number" id="{{ market }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ market }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ market }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ market }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ market }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ market }}_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-        <!-- Draw -->
-        <details open style="margin-bottom:8px;">
-          <summary style="background:#cce5ff; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="draw_include" checked> Include Draw</label>
-          </summary>
-          <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="draw_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="draw_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="draw_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="draw_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="draw_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="draw_diff_max" value="100" step="0.1"></label><br>
-          </div>
-        </details>
-        <!-- Away Win -->
-        <details open style="margin-bottom:8px;">
-          <summary style="background:#cce5ff; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="away_win_include" checked> Include Away Win</label>
-          </summary>
-          <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="away_win_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="away_win_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="away_win_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="away_win_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="away_win_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="away_win_diff_max" value="100" step="0.1"></label><br>
-          </div>
-        </details>
+        {% endfor %}
       </div>
     </details>
 
@@ -108,48 +83,25 @@
         HT Market Results
       </summary>
       <div style="padding-left:20px; margin-top:8px;">
-        <!-- HT Home Win -->
+        {% for market,label in [
+          ('ht_home_win','HT Home Win'),
+          ('ht_draw','HT Draw'),
+          ('ht_away_win','HT Away Win')
+        ] %}
         <details open style="margin-bottom:8px;">
           <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="ht_home_win_include" checked> Include HT Home Win</label>
+            <label><input type="checkbox" id="{{ market }}_include" checked> Include {{ label }}</label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="ht_home_win_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="ht_home_win_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="ht_home_win_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="ht_home_win_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="ht_home_win_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="ht_home_win_diff_max" value="100" step="0.1"></label><br>
+            <label>Min Probability (%): <input type="number" id="{{ market }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ market }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ market }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ market }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ market }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ market }}_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-        <!-- HT Draw -->
-        <details open style="margin-bottom:8px;">
-          <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="ht_draw_include" checked> Include HT Draw</label>
-          </summary>
-          <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="ht_draw_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="ht_draw_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="ht_draw_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="ht_draw_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="ht_draw_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="ht_draw_diff_max" value="100" step="0.1"></label><br>
-          </div>
-        </details>
-        <!-- HT Away Win -->
-        <details open style="margin-bottom:8px;">
-          <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="ht_away_win_include" checked> Include HT Away Win</label>
-          </summary>
-          <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="ht_away_win_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="ht_away_win_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="ht_away_win_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="ht_away_win_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="ht_away_win_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="ht_away_win_diff_max" value="100" step="0.1"></label><br>
-          </div>
-        </details>
+        {% endfor %}
       </div>
     </details>
 
@@ -159,48 +111,25 @@
         Double Chance Markets
       </summary>
       <div style="padding-left:20px; margin-top:8px;">
-        <!-- Home Or Draw -->
+        {% for market,label in [
+          ('home_or_draw','Home Or Draw'),
+          ('draw_or_away','Draw Or Away'),
+          ('home_or_away','Home Or Away')
+        ] %}
         <details open style="margin-bottom:8px;">
           <summary style="background:#fff3cd; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="home_or_draw_include" checked> Include Home Or Draw</label>
+            <label><input type="checkbox" id="{{ market }}_include" checked> Include {{ label }}</label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="home_or_draw_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="home_or_draw_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="home_or_draw_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="home_or_draw_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="home_or_draw_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="home_or_draw_diff_max" value="100" step="0.1"></label><br>
+            <label>Min Probability (%): <input type="number" id="{{ market }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ market }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ market }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ market }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ market }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ market }}_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-        <!-- Draw Or Away -->
-        <details open style="margin-bottom:8px;">
-          <summary style="background:#fff3cd; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="draw_or_away_include" checked> Include Draw Or Away</label>
-          </summary>
-          <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="draw_or_away_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="draw_or_away_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="draw_or_away_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="draw_or_away_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="draw_or_away_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="draw_or_away_diff_max" value="100" step="0.1"></label><br>
-          </div>
-        </details>
-        <!-- Home Or Away -->
-        <details open style="margin-bottom:8px;">
-          <summary style="background:#fff3cd; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="home_or_away_include" checked> Include Home Or Away</label>
-          </summary>
-          <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="home_or_away_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="home_or_away_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="home_or_away_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="home_or_away_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="home_or_away_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="home_or_away_diff_max" value="100" step="0.1"></label><br>
-          </div>
-        </details>
+        {% endfor %}
       </div>
     </details>
 
@@ -210,34 +139,24 @@
         Both Teams To Score
       </summary>
       <div style="padding-left:20px; margin-top:8px;">
-        <!-- BTTS: Yes -->
+        {% for market,label in [
+          ('btts_yes','BTTS: Yes'),
+          ('btts_no','BTTS: No')
+        ] %}
         <details open style="margin-bottom:8px;">
           <summary style="background:#d1ecf1; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="btts_yes_include" checked> Include BTTS: Yes</label>
+            <label><input type="checkbox" id="{{ market }}_include" checked> Include {{ label }}</label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="btts_yes_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="btts_yes_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="btts_yes_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="btts_yes_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="btts_yes_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="btts_yes_diff_max" value="100" step="0.1"></label><br>
+            <label>Min Probability (%): <input type="number" id="{{ market }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ market }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ market }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ market }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ market }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ market }}_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-        <!-- BTTS: No -->
-        <details open style="margin-bottom:8px;">
-          <summary style="background:#d1ecf1; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="btts_no_include" checked> Include BTTS: No</label>
-          </summary>
-          <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="btts_no_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="btts_no_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="btts_no_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="btts_no_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="btts_no_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="btts_no_diff_max" value="100" step="0.1"></label><br>
-          </div>
-        </details>
+        {% endfor %}
       </div>
     </details>
 
@@ -247,90 +166,61 @@
         Over/Under Goals
       </summary>
       <div style="padding-left:20px; margin-top:8px;">
-        <!-- Over 1.5 Goals -->
+        {% for market,label in [
+          ('over_1_5_goals','Over 1.5 Goals'),
+          ('over_2_5_goals','Over 2.5 Goals'),
+          ('over_3_5_goals','Over 3.5 Goals'),
+          ('under_1_5_goals','Under 1.5 Goals'),
+          ('under_2_5_goals','Under 2.5 Goals'),
+          ('under_3_5_goals','Under 3.5 Goals')
+        ] %}
         <details open style="margin-bottom:8px;">
           <summary style="background:#e9ecef; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="over_1_5_goals_include" checked> Include Over 1.5 Goals</label>
+            <label><input type="checkbox" id="{{ market }}_include" checked> Include {{ label }}</label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="over_1_5_goals_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="over_1_5_goals_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="over_1_5_goals_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="over_1_5_goals_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="over_1_5_goals_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="over_1_5_goals_diff_max" value="100" step="0.1"></label><br>
+            <label>Min Probability (%): <input type="number" id="{{ market }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ market }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ market }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ market }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ market }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ market }}_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-        <!-- Over 2.5 Goals -->
+        {% endfor %}
+      </div>
+    </details>
+
+    <!-- Team Goals grouping -->
+    <details open style="margin-bottom:10px;">
+      <summary style="background:#343a40; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">
+        Team Goals
+      </summary>
+      <div style="padding-left:20px; margin-top:8px;">
+        {% for market,label in [
+          ('home_over_0_5_goals','Home Over 0.5 Goals'),
+          ('home_over_1_5_goals','Home Over 1.5 Goals'),
+          ('home_under_0_5_goals','Home Under 0.5 Goals'),
+          ('home_under_1_5_goals','Home Under 1.5 Goals'),
+          ('away_over_0_5_goals','Away Over 0.5 Goals'),
+          ('away_over_1_5_goals','Away Over 1.5 Goals'),
+          ('away_under_0_5_goals','Away Under 0.5 Goals'),
+          ('away_under_1_5_goals','Away Under 1.5 Goals')
+        ] %}
         <details open style="margin-bottom:8px;">
-          <summary style="background:#e9ecef; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="over_2_5_goals_include" checked> Include Over 2.5 Goals</label>
+          <summary style="background:#dee2e6; padding:6px; cursor:pointer; border-radius:4px;">
+            <label><input type="checkbox" id="{{ market }}_include" checked> Include {{ label }}</label>
           </summary>
           <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="over_2_5_goals_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="over_2_5_goals_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="over_2_5_goals_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="over_2_5_goals_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="over_2_5_goals_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="over_2_5_goals_diff_max" value="100" step="0.1"></label><br>
+            <label>Min Probability (%): <input type="number" id="{{ market }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ market }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ market }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ market }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ market }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ market }}_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-        <!-- Over 3.5 Goals -->
-        <details open style="margin-bottom:8px;">
-          <summary style="background:#e9ecef; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="over_3_5_goals_include" checked> Include Over 3.5 Goals</label>
-          </summary>
-          <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="over_3_5_goals_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="over_3_5_goals_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="over_3_5_goals_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="over_3_5_goals_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="over_3_5_goals_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="over_3_5_goals_diff_max" value="100" step="0.1"></label><br>
-          </div>
-        </details>
-        <!-- Under 1.5 Goals -->
-        <details open style="margin-bottom:8px;">
-          <summary style="background:#e9ecef; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="under_1_5_goals_include" checked> Include Under 1.5 Goals</label>
-          </summary>
-          <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="under_1_5_goals_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="under_1_5_goals_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="under_1_5_goals_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="under_1_5_goals_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="under_1_5_goals_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="under_1_5_goals_diff_max" value="100" step="0.1"></label><br>
-          </div>
-        </details>
-        <!-- Under 2.5 Goals -->
-        <details open style="margin-bottom:8px;">
-          <summary style="background:#e9ecef; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="under_2_5_goals_include" checked> Include Under 2.5 Goals</label>
-          </summary>
-          <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="under_2_5_goals_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="under_2_5_goals_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="under_2_5_goals_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="under_2_5_goals_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="under_2_5_goals_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="under_2_5_goals_diff_max" value="100" step="0.1"></label><br>
-          </div>
-        </details>
-        <!-- Under 3.5 Goals -->
-        <details open style="margin-bottom:8px;">
-          <summary style="background:#e9ecef; padding:6px; cursor:pointer; border-radius:4px;">
-            <label><input type="checkbox" id="under_3_5_goals_include" checked> Include Under 3.5 Goals</label>
-          </summary>
-          <div style="padding-left:20px; margin-top:5px;">
-            <label>Min Probability (%): <input type="number" id="under_3_5_goals_prob_min" value="0" min="0" max="100"></label><br>
-            <label>Max Probability (%): <input type="number" id="under_3_5_goals_prob_max" value="100" min="0" max="100"></label><br>
-            <label>Min Bookmaker Odds: <input type="number" id="under_3_5_goals_odds_min" value="1.00" step="0.01"></label><br>
-            <label>Max Bookmaker Odds: <input type="number" id="under_3_5_goals_odds_max" value="10.00" step="0.01"></label><br>
-            <label>Min Odds Difference (%): <input type="number" id="under_3_5_goals_diff_min" value="0" step="0.1"></label><br>
-            <label>Max Odds Difference (%): <input type="number" id="under_3_5_goals_diff_max" value="100" step="0.1"></label><br>
-          </div>
-        </details>
+        {% endfor %}
       </div>
     </details>
 
@@ -386,68 +276,74 @@
     });
   }
 
+  function openFilter() {
+    const popup = document.getElementById('filterPopup');
+    // collapse all groups
+    popup.querySelectorAll('details').forEach(d => d.removeAttribute('open'));
+    // clear all checkboxes
+    popup.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    // show popup
+    popup.style.display = 'block';
+  }
+
   function applyFilters() {
-    // 1) Predictabilities
+    // Predictability
     const predLevels = ['high','good','medium','poor'];
     const selPred = predLevels.filter(l => document.getElementById(l + '_pred').checked);
 
-    // 2) Bookmakers
+    // Bookmakers
     const selBook = Array.from(
       document.querySelectorAll('.bm-filter:checked')
     ).map(el => el.dataset.bk);
 
-    // 3) All markets & keys
+    // Market/keys list
     const markets = [
       'Home Win','Draw','Away Win',
       'HT Home Win','HT Draw','HT Away Win',
       'Home Or Draw','Draw Or Away','Home Or Away',
       'BTTS: Yes','BTTS: No',
       'Over 1.5 Goals','Over 2.5 Goals','Over 3.5 Goals',
-      'Under 1.5 Goals','Under 2.5 Goals','Under 3.5 Goals'
+      'Under 1.5 Goals','Under 2.5 Goals','Under 3.5 Goals',
+      'Home Over 0.5 Goals','Home Over 1.5 Goals',
+      'Home Under 0.5 Goals','Home Under 1.5 Goals',
+      'Away Over 0.5 Goals','Away Over 1.5 Goals',
+      'Away Under 0.5 Goals','Away Under 1.5 Goals'
     ];
-    const keys = [
-      'home_win','draw','away_win',
-      'ht_home_win','ht_draw','ht_away_win',
-      'home_or_draw','draw_or_away','home_or_away',
-      'btts_yes','btts_no',
-      'over_1_5_goals','over_2_5_goals','over_3_5_goals',
-      'under_1_5_goals','under_2_5_goals','under_3_5_goals'
-    ];
+    const keys = markets.map(m => m.toLowerCase().replace(/[^a-z0-9]+/g,'_'));
 
     document.querySelectorAll('.pinnacle-table tbody tr').forEach(row => {
       let show = true;
 
-      // a) Predictability
+      // a) filter predictability
       if (selPred.length) {
         const rp = row.cells[1].innerText.trim().toLowerCase();
         if (!selPred.includes(rp)) show = false;
       }
 
-      // b) Bookmaker
+      // b) filter bookmaker
       if (show && selBook.length) {
         const bk = row.cells[8].innerText.trim();
         if (!selBook.includes(bk)) show = false;
       }
 
-      // c) Market & thresholds
+      // c) filter markets
       if (show) {
         const mtxt = row.cells[4].innerText.trim();
         for (let i = 0; i < markets.length; i++) {
           if (mtxt === markets[i]) {
-            if (!document.getElementById(keys[i] + '_include').checked) {
+            const key = keys[i];
+            if (!document.getElementById(key + '_include').checked) {
               show = false;
             } else {
               const prob = parseFloat(row.cells[5].innerText),
                     odds = parseFloat(row.cells[9].innerText),
                     diff = parseFloat(row.cells[10].innerText);
-
-              const pMin = parseFloat(document.getElementById(keys[i] + '_prob_min').value),
-                    pMax = parseFloat(document.getElementById(keys[i] + '_prob_max').value),
-                    oMin = parseFloat(document.getElementById(keys[i] + '_odds_min').value),
-                    oMax = parseFloat(document.getElementById(keys[i] + '_odds_max').value),
-                    dMin = parseFloat(document.getElementById(keys[i] + '_diff_min').value),
-                    dMax = parseFloat(document.getElementById(keys[i] + '_diff_max').value);
-
+              const pMin = parseFloat(document.getElementById(key + '_prob_min').value),
+                    pMax = parseFloat(document.getElementById(key + '_prob_max').value),
+                    oMin = parseFloat(document.getElementById(key + '_odds_min').value),
+                    oMax = parseFloat(document.getElementById(key + '_odds_max').value),
+                    dMin = parseFloat(document.getElementById(key + '_diff_min').value),
+                    dMax = parseFloat(document.getElementById(key + '_diff_max').value);
               show = prob >= pMin && prob <= pMax &&
                      odds >= oMin && odds <= oMax &&
                      diff >= dMin && diff <= dMax;
