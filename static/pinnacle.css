@@ -148,3 +148,23 @@
     padding: 4px 6px;
     font-size: 0.95em;
 }
+
+/* make the Filter-Options button big, blue and obvious */
+.filter-button {
+  background-color: #007BFF;
+  color: #FFF;
+  font-size: 1.1em;
+  font-weight: bold;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 15px; /* you can adjust or remove */
+}
+
+.filter-button:hover,
+.filter-button:focus {
+  background-color: #0056b3;
+  outline: none;
+}
+
