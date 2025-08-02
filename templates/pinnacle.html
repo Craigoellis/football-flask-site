@@ -69,9 +69,7 @@
         <td>{{ item.competition_name }}</td>
         <td>{{ item.predictability }}</td>
         <td>
-          <a href="{{ url_for('fixture_detail', fixture_id=item.fixture_id) }}" target="_blank">
-            {{ item.fixture }}
-          </a>
+          <a href="{{ item.fixture_url }}" target="_blank">{{ item.fixture }}</a>
         </td>
         <td>{{ item.kickoff | format_kickoff }}</td>
         <td>{{ item.market }}</td>
