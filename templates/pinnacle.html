@@ -1,107 +1,157 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Value Bets</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #fff; }
-        .filter-section { margin-bottom: 20px; background: #f0f0f0; padding: 15px; border-radius: 5px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
-        th { background-color: #007bff; color: white; }
-        .highlight { color: green; font-weight: bold; }
-    </style>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<div class="filter-section">
-    <label><input type="checkbox" id="valueOnly" checked> Value Only</label><br><br>
-    <label><input type="checkbox" id="homeWinOnly" checked> Home Win</label><br><br>
+{% block title %}Pinnacle Comparison{% endblock %}
 
-    <label>Min Probability (%): <input type="number" id="minProb" value="40"></label>
-    <label>Max Probability (%): <input type="number" id="maxProb" value="100"></label><br><br>
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='pinnacle.css') }}">
+{% endblock %}
 
-    <label>Min Odds: <input type="number" id="minOdds" value="1.00" step="0.01"></label>
-    <label>Max Odds: <input type="number" id="maxOdds" value="10.00" step="0.01"></label><br><br>
+{% block content %}
+<div class="pinnacle-container">
+    <h1>Pinnacle Comparison</h1>
 
-    <label>Min Odds Diff (%): <input type="number" id="minDiff" value="1"></label>
-    <label>Max Odds Diff (%): <input type="number" id="maxDiff" value="100"></label><br><br>
+    <div style="margin-bottom: 15px;">
+        <label>
+            <input type="checkbox" id="valueOnlyToggle" onchange="toggleValueOnly()"> Value Only
+        </label>
+        <button onclick="document.getElementById('filterPopup').style.display = 'block'" style="margin-left: 15px;">
+            Filter Options
+        </button>
+    </div>
 
-    <button onclick="applyFilters()">Apply Filters</button>
+    <!-- Filter Popup -->
+    <div id="filterPopup" style="display:none; background:#f9f9f9; padding:15px; border:1px solid #ccc;">
+        <h3>Filter Options</h3>
+
+        {% for market in ['Home Win', 'Draw', 'Away Win'] %}
+        <fieldset style="margin-bottom: 20px; border: 1px solid #aaa; padding: 10px;">
+            <legend><strong>{{ market }} (FT Result)</strong></legend>
+            <label>Min Probability (%): <input type="number" id="{{ market | lower | replace(' ', '_') }}_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="{{ market | lower | replace(' ', '_') }}_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="{{ market | lower | replace(' ', '_') }}_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="{{ market | lower | replace(' ', '_') }}_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="{{ market | lower | replace(' ', '_') }}_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="{{ market | lower | replace(' ', '_') }}_diff_max" value="100" step="0.1"></label><br>
+        </fieldset>
+        {% endfor %}
+
+        <button onclick="applyFilters()">Apply Filter</button>
+        <button onclick="document.getElementById('filterPopup').style.display = 'none'">Close</button>
+    </div>
+
+    {% if comparisons %}
+        <table class="pinnacle-table">
+            <thead>
+                <tr>
+                    <th>Competition</th>
+                    <th>Predictability</th>
+                    <th>Fixture</th>
+                    <th>Kick Off</th>
+                    <th>Market</th>
+                    <th>Probability (%)</th>
+                    <th>Implied Odds</th>
+                    <th onclick="sortTableByPinnacleOdds()">Pinnacle Odds</th>
+                    <th>Bookmaker</th>
+                    <th onclick="sortTableByBookmakerOdds()">Bookmaker Odds</th>
+                    <th onclick="sortTableByOddsDifference()">Odds Difference (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in comparisons %}
+                    <tr>
+                        <td>{{ item.competition_country }} — {{ item.competition_name }}</td>
+                        <td>{{ item.predictability | capitalize }}</td>
+                        <td>
+                            <a href="{{ url_for('game_details', fixture_id=item.fixture_id) }}" target="_blank">
+                                {{ item.fixture }}
+                            </a>
+                        </td>
+                        <td>{{ item.kickoff | format_kickoff }}</td>
+                        <td>{{ item.market }}</td>
+                        <td>{{ item.probability }}%</td>
+                        <td>{{ item.implied_odds }}</td>
+                        <td>{{ item.pinnacle_odds }}</td>
+                        <td>{{ item.bookmaker }}</td>
+                        <td style="font-weight: bold; color: green;">{{ item.bookmaker_odds }}</td>
+                        <td>{{ item.odds_difference }}%</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="margin-top: 30px;">No comparisons found where bookmakers beat Pinnacle odds.</p>
+    {% endif %}
 </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Competition</th>
-            <th>Predictability</th>
-            <th>Fixture</th>
-            <th>Kick Off</th>
-            <th>Market</th>
-            <th>Probability (%)</th>
-            <th>Implied Odds</th>
-            <th>Pinnacle Odds</th>
-            <th>Bookmaker</th>
-            <th>Bookmaker Odds</th>
-            <th>Odds Difference (%)</th>
-        </tr>
-    </thead>
-    <tbody id="betsBody">
-        <!-- Data rows will be inserted here -->
-    </tbody>
-</table>
-
 <script>
-    const sampleData = []; // Fill with actual bet data objects from backend
+function sortTableByOddsDifference() {
+    const table = document.querySelector(".pinnacle-table tbody");
+    const rows = Array.from(table.rows);
+    rows.sort((a, b) => parseFloat(b.cells[10].innerText) - parseFloat(a.cells[10].innerText));
+    rows.forEach(row => table.appendChild(row));
+}
 
-    function applyFilters() {
-        const valueOnly = document.getElementById("valueOnly").checked;
-        const homeWinOnly = document.getElementById("homeWinOnly").checked;
-        const minProb = parseFloat(document.getElementById("minProb").value);
-        const maxProb = parseFloat(document.getElementById("maxProb").value);
-        const minOdds = parseFloat(document.getElementById("minOdds").value);
-        const maxOdds = parseFloat(document.getElementById("maxOdds").value);
-        const minDiff = parseFloat(document.getElementById("minDiff").value);
-        const maxDiff = parseFloat(document.getElementById("maxDiff").value);
+function sortTableByPinnacleOdds() {
+    const table = document.querySelector(".pinnacle-table tbody");
+    const rows = Array.from(table.rows);
+    rows.sort((a, b) => parseFloat(b.cells[7].innerText) - parseFloat(a.cells[7].innerText));
+    rows.forEach(row => table.appendChild(row));
+}
 
-        const tbody = document.getElementById("betsBody");
-        tbody.innerHTML = "";
+function sortTableByBookmakerOdds() {
+    const table = document.querySelector(".pinnacle-table tbody");
+    const rows = Array.from(table.rows);
+    rows.sort((a, b) => parseFloat(b.cells[9].innerText) - parseFloat(a.cells[9].innerText));
+    rows.forEach(row => table.appendChild(row));
+}
 
-        sampleData.forEach(bet => {
-            if (homeWinOnly && bet.market !== "Home Win") return;
-            if (valueOnly && bet.odds_difference <= 0) return;
+function toggleValueOnly() {
+    const checkbox = document.getElementById("valueOnlyToggle");
+    const showValueOnly = checkbox.checked;
+    const rows = document.querySelectorAll(".pinnacle-table tbody tr");
 
-            const prob = parseFloat(bet.probability);
-            const odds = parseFloat(bet.latest_odds);
-            const diff = parseFloat(bet.odds_difference);
+    rows.forEach(row => {
+        const implied = parseFloat(row.cells[6].innerText.trim());
+        const actual = parseFloat(row.cells[9].innerText.trim());
+        const isValue = actual > implied;
+        row.style.display = (showValueOnly && !isValue) ? "none" : "";
+    });
+}
 
-            if (
-                prob >= minProb && prob <= maxProb &&
-                odds >= minOdds && odds <= maxOdds &&
-                diff >= minDiff && diff <= maxDiff
-            ) {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${bet.competition}</td>
-                    <td>${bet.predictability}</td>
-                    <td>${bet.fixture}</td>
-                    <td>${bet.kick_off}</td>
-                    <td>${bet.market}</td>
-                    <td>${prob.toFixed(2)}%</td>
-                    <td>${bet.implied_odds}</td>
-                    <td>${bet.pinnacle_odds}</td>
-                    <td>${bet.bookmaker}</td>
-                    <td class="highlight">${bet.latest_odds}</td>
-                    <td>${diff.toFixed(2)}%</td>
-                `;
-                tbody.appendChild(row);
+function applyFilters() {
+    const rows = document.querySelectorAll(".pinnacle-table tbody tr");
+
+    rows.forEach(row => {
+        const market = row.cells[4].innerText.trim();
+        const prob = parseFloat(row.cells[5].innerText);
+        const odds = parseFloat(row.cells[9].innerText);
+        const diff = parseFloat(row.cells[10].innerText);
+
+        let show = true;
+
+        const markets = ['home_win', 'draw', 'away_win'];
+        const names = ['Home Win', 'Draw', 'Away Win'];
+
+        for (let i = 0; i < markets.length; i++) {
+            if (market === names[i]) {
+                const probMin = parseFloat(document.getElementById(`${markets[i]}_prob_min`).value);
+                const probMax = parseFloat(document.getElementById(`${markets[i]}_prob_max`).value);
+                const oddsMin = parseFloat(document.getElementById(`${markets[i]}_odds_min`).value);
+                const oddsMax = parseFloat(document.getElementById(`${markets[i]}_odds_max`).value);
+                const diffMin = parseFloat(document.getElementById(`${markets[i]}_diff_min`).value);
+                const diffMax = parseFloat(document.getElementById(`${markets[i]}_diff_max`).value);
+
+                show = (
+                    prob >= probMin && prob <= probMax &&
+                    odds >= oddsMin && odds <= oddsMax &&
+                    diff >= diffMin && diff <= diffMax
+                );
+                break;
             }
-        });
-    }
+        }
 
-    // Auto run once on load
-    applyFilters();
+        row.style.display = show ? "" : "none";
+    });
+}
 </script>
-
-</body>
-</html>
+{% endblock %}
