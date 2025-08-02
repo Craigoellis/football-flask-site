@@ -23,6 +23,15 @@
   <div id="filterPopup" style="display:none; background:#f9f9f9; padding:15px; border:1px solid #ccc; margin-bottom:15px;">
     <h3>Filter Options</h3>
 
+    <!-- New: League Predictability -->
+    <div style="margin-bottom:10px;">
+      <strong>Select Predictability</strong><br>
+      <label><input type="checkbox" id="high_pred"> High</label>
+      <label><input type="checkbox" id="good_pred"> Good</label>
+      <label><input type="checkbox" id="medium_pred"> Medium</label>
+      <label><input type="checkbox" id="poor_pred"> Poor</label>
+    </div>
+
     {% for market in ['Home Win', 'Draw', 'Away Win'] %}
       {% set id = market.lower().replace(' ', '_') %}
       <details open style="margin-bottom: 10px;">
@@ -96,39 +105,49 @@
   }
 
   function applyFilters() {
+    // 1) Gather selected predictabilities
+    const preds = ['High','Good','Medium','Poor'];
+    const selectedPreds = preds.filter(p => document.getElementById(p.toLowerCase() + '_pred').checked);
+
     const markets = ['home_win', 'draw', 'away_win'];
     const names   = ['Home Win', 'Draw', 'Away Win'];
 
     document.querySelectorAll('.pinnacle-table tbody tr').forEach(row => {
-      const marketText = row.cells[4].innerText.trim();
       let show = true;
 
-      for (let i = 0; i < markets.length; i++) {
-        if (marketText === names[i]) {
-          const include = document.getElementById(`${markets[i]}_include`).checked;
+      // 2) League predictability filter
+      const rowPred = row.cells[1].innerText.trim();
+      if (selectedPreds.length > 0 && !selectedPreds.includes(rowPred)) {
+        show = false;
+      }
 
-          if (!include) {
-            // If unchecked, hide all rows for this market
-            show = false;
-          } else {
-            // Otherwise apply numeric filters
-            const prob = parseFloat(row.cells[5].innerText);
-            const odds = parseFloat(row.cells[9].innerText);
-            const diff = parseFloat(row.cells[10].innerText);
+      // 3) Market filters
+      if (show) {
+        const marketText = row.cells[4].innerText.trim();
+        for (let i = 0; i < markets.length; i++) {
+          if (marketText === names[i]) {
+            const include = document.getElementById(`${markets[i]}_include`).checked;
+            if (!include) {
+              show = false;
+            } else {
+              const prob = parseFloat(row.cells[5].innerText);
+              const odds = parseFloat(row.cells[9].innerText);
+              const diff = parseFloat(row.cells[10].innerText);
 
-            const pMin = parseFloat(document.getElementById(`${markets[i]}_prob_min`).value);
-            const pMax = parseFloat(document.getElementById(`${markets[i]}_prob_max`).value);
-            const oMin = parseFloat(document.getElementById(`${markets[i]}_odds_min`).value);
-            const oMax = parseFloat(document.getElementById(`${markets[i]}_odds_max`).value);
-            const dMin = parseFloat(document.getElementById(`${markets[i]}_diff_min`).value);
-            const dMax = parseFloat(document.getElementById(`${markets[i]}_diff_max`).value);
+              const pMin = parseFloat(document.getElementById(`${markets[i]}_prob_min`).value);
+              const pMax = parseFloat(document.getElementById(`${markets[i]}_prob_max`).value);
+              const oMin = parseFloat(document.getElementById(`${markets[i]}_odds_min`).value);
+              const oMax = parseFloat(document.getElementById(`${markets[i]}_odds_max`).value);
+              const dMin = parseFloat(document.getElementById(`${markets[i]}_diff_min`).value);
+              const dMax = parseFloat(document.getElementById(`${markets[i]}_diff_max`).value);
 
-            show =
-              prob >= pMin && prob <= pMax &&
-              odds >= oMin && odds <= oMax &&
-              diff >= dMin && diff <= dMax;
+              show =
+                prob >= pMin && prob <= pMax &&
+                odds >= oMin && odds <= oMax &&
+                diff >= dMin && diff <= dMax;
+            }
+            break;
           }
-          break;
         }
       }
 
