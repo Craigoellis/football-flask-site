@@ -45,3 +45,91 @@
 .pinnacle-table a:hover {
     text-decoration: underline;
 }
+
+/* --------------------------------------
+   Filter Popup Styles
+   -------------------------------------- */
+
+/* Center the popup and constrain its width */
+#filterPopup {
+    max-width: 900px;
+    margin: 0 auto 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* Stylize the popup heading */
+#filterPopup h3 {
+    margin-bottom: 12px;
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+/* Make each parameter-row a responsive grid */
+#filterPopup .sub-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px 12px;
+    justify-items: center;
+    align-items: start;
+    margin-top: 8px;
+}
+
+/* Stack label/input pairs vertically and center them */
+#filterPopup .sub-body label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    font-size: 0.95em;
+}
+
+/* Tidy up the <summary> headers */
+#filterPopup summary {
+    font-weight: bold;
+    user-select: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+}
+
+/* Adjust spacing inside each <details> section */
+#filterPopup details {
+    margin-bottom: 10px;
+}
+
+/* Style the action buttons */
+#filterPopup button {
+    margin: 8px 6px 0;
+    padding: 6px 12px;
+    font-size: 0.95em;
+    border: 1px solid #007BFF;
+    background: #007BFF;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#filterPopup button:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Specific colour overrides for group headers if needed */
+#filterPopup summary.group-header.ft { background: #007BFF; color: #fff; }
+#filterPopup summary.group-header.ht { background: #28a745; color: #fff; }
+#filterPopup summary.group-header.dc { background: #ffc107; color: #212529; }
+#filterPopup summary.group-header.btts { background: #17a2b8; color: #fff; }
+#filterPopup summary.group-header.ou { background: #6c757d; color: #fff; }
+#filterPopup summary.group-header.tg { background: #343a40; color: #fff; }
+#filterPopup summary.group-header.cr { background: #007bff; color: #fff; }
+
+/* Accessibility focus styles */
+#filterPopup input:focus,
+#filterPopup button:focus,
+#filterPopup summary:focus {
+    outline: 2px dashed #007BFF;
+    outline-offset: 2px;
+}
