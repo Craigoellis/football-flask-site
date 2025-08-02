@@ -350,96 +350,100 @@
 </div>
 
 <script>
+  // 1) On page load, build a JS array of all rows + their parsed values
+  const rowData = Array.from(
+    document.querySelectorAll('.pinnacle-table tbody tr')
+  ).map(r => {
+    const cells = r.cells;
+    return {
+      el: r,
+      country: cells[0].innerText.trim(),
+      competition: cells[1].innerText.trim(),
+      predict: cells[2].innerText.trim().toLowerCase(),
+      market: cells[5].innerText.trim(),
+      prob:    parseFloat(cells[6].innerText),
+      implied: parseFloat(cells[7].innerText),
+      pinn:    parseFloat(cells[8].innerText),
+      bk:      cells[9].innerText.trim(),
+      odds:    parseFloat(cells[10].innerText),
+      diff:    parseFloat(cells[11].innerText)
+    };
+  });
+
   function toggleValueOnly() {
-    const showOnly = document.getElementById('valueOnlyToggle').checked;
-    document.querySelectorAll('.pinnacle-table tbody tr').forEach(r => {
-      const implied = parseFloat(r.cells[7].innerText),
-            actual  = parseFloat(r.cells[10].innerText);
-      r.style.display = (showOnly && actual <= implied) ? 'none' : '';
+    const only = document.getElementById('valueOnlyToggle').checked;
+    rowData.forEach(d => {
+      if (!only || d.odds > d.implied) d.el.style.display = '';
+      else d.el.style.display = 'none';
     });
   }
 
   function openFilter() {
-    const popup = document.getElementById('filterPopup');
-    popup.querySelectorAll('details').forEach(d => d.removeAttribute('open'));
-    popup.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-    popup.style.display = 'block';
+    const pop = document.getElementById('filterPopup');
+    pop.querySelectorAll('details').forEach(d => d.removeAttribute('open'));
+    pop.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    pop.style.display = 'block';
   }
 
   function applyFilters() {
-    // 1) League Predictability
-    const predLevels = ['high','good','medium','poor'];
-    const selPred = predLevels.filter(l => document.getElementById(l + '_pred').checked);
+    // grab filters once
+    const selPred = new Set(
+      ['high','good','medium','poor']
+        .filter(l => document.getElementById(l + '_pred').checked)
+    );
+    const selBook = new Set(
+      Array.from(document.querySelectorAll('.bm-filter:checked'))
+           .map(cb => cb.dataset.bk)
+    );
+    const allowed = new Set(
+      Array.from(document.querySelectorAll('#filterPopup input.market-include:checked'))
+           .map(cb => cb.dataset.market)
+    );
 
-    // 2) Bookmakers
-    const selBook = Array.from(
-      document.querySelectorAll('.bm-filter:checked')
-    ).map(el => el.dataset.bk);
-
-    // 3) Allowed Markets
-    const allowedMarkets = Array.from(
-      document.querySelectorAll('#filterPopup input.market-include:checked')
-    ).map(cb => cb.dataset.market);
-
-    document.querySelectorAll('.pinnacle-table tbody tr').forEach(row => {
+    rowData.forEach(d => {
       let show = true;
 
-      // a) Predictability
-      if (selPred.length) {
-        const rp = row.cells[2].innerText.trim().toLowerCase();
-        if (!selPred.includes(rp)) show = false;
-      }
+      //  a) predictability
+      if (selPred.size && !selPred.has(d.predict)) show = false;
 
-      // b) Bookmaker
-      if (show && selBook.length) {
-        const bk = row.cells[9].innerText.trim();
-        if (!selBook.includes(bk)) show = false;
-      }
+      //  b) bookmaker
+      if (show && selBook.size && !selBook.has(d.bk)) show = false;
 
-      // c) Market inclusion
-      const market = row.cells[5].innerText.trim();
-      if (show && allowedMarkets.length && !allowedMarkets.includes(market)) {
-        show = false;
-      }
+      //  c) market inclusion
+      if (show && allowed.size && !allowed.has(d.market)) show = false;
 
-      // d) Thresholds
-      if (show && allowedMarkets.includes(market)) {
-        const key = market.toLowerCase().replace(/[^a-z0-9]+/g,'_');
-        const prob = parseFloat(row.cells[6].innerText),
-              odds = parseFloat(row.cells[10].innerText),
-              diff = parseFloat(row.cells[11].innerText);
+      //  d) threshold checks
+      if (show && allowed.has(d.market)) {
+        const key = d.market.toLowerCase().replace(/[^a-z0-9]+/g,'_');
         const pMin = parseFloat(document.getElementById(key + '_prob_min').value),
               pMax = parseFloat(document.getElementById(key + '_prob_max').value),
               oMin = parseFloat(document.getElementById(key + '_odds_min').value),
               oMax = parseFloat(document.getElementById(key + '_odds_max').value),
               dMin = parseFloat(document.getElementById(key + '_diff_min').value),
               dMax = parseFloat(document.getElementById(key + '_diff_max').value);
-        show = prob >= pMin && prob <= pMax &&
-               odds >= oMin && odds <= oMax &&
-               diff >= dMin && diff <= dMax;
+        if (!(d.prob  >= pMin && d.prob  <= pMax &&
+              d.odds  >= oMin && d.odds  <= oMax &&
+              d.diff  >= dMin && d.diff  <= dMax)) {
+          show = false;
+        }
       }
 
-      row.style.display = show ? '' : 'none';
+      d.el.style.display = show ? '' : 'none';
     });
   }
 
   function sortTableByOddsDifference() {
-    const tbody = document.querySelector('.pinnacle-table tbody');
-    Array.from(tbody.rows)
-      .sort((a,b) => parseFloat(b.cells[11].innerText) - parseFloat(a.cells[11].innerText))
-      .forEach(r => tbody.appendChild(r));
+    rowData.sort((a,b)=>b.diff - a.diff)
+           .forEach(d=>d.el.parentNode.appendChild(d.el));
   }
   function sortTableByPinnacleOdds() {
-    const tbody = document.querySelector('.pinnacle-table tbody');
-    Array.from(tbody.rows)
-      .sort((a,b) => parseFloat(b.cells[8].innerText) - parseFloat(a.cells[8].innerText))
-      .forEach(r => tbody.appendChild(r));
+    rowData.sort((a,b)=>b.pinn - a.pinn)
+           .forEach(d=>d.el.parentNode.appendChild(d.el));
   }
   function sortTableByBookmakerOdds() {
-    const tbody = document.querySelector('.pinnacle-table tbody');
-    Array.from(tbody.rows)
-      .sort((a,b) => parseFloat(b.cells[10].innerText) - parseFloat(a.cells[10].innerText))
-      .forEach(r => tbody.appendChild(r));
+    rowData.sort((a,b)=>b.odds - a.odds)
+           .forEach(d=>d.el.parentNode.appendChild(d.el));
   }
 </script>
+
 {% endblock %}
