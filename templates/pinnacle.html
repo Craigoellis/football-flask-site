@@ -40,12 +40,10 @@
       {% for bk in bks %}
         {% if bk != 'Pinnacle' %}
           {% set html_id = 'bk_' + bk.lower().replace(' ', '_') %}
-          <input
-            type="checkbox"
-            class="bm-filter"
-            data-bk="{{ bk }}"
-            id="{{ html_id }}"
-          >
+          <input type="checkbox"
+                 class="bm-filter"
+                 data-bk="{{ bk }}"
+                 id="{{ html_id }}">
           <label for="{{ html_id }}">{{ bk }}</label>
         {% endif %}
       {% endfor %}
@@ -57,7 +55,6 @@
         FT Market Results
       </summary>
       <div style="padding-left:20px; margin-top:8px;">
-
         <!-- Home Win -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#cce5ff; padding:6px; cursor:pointer; border-radius:4px;">
@@ -72,7 +69,6 @@
             <label>Max Odds Difference (%): <input type="number" id="home_win_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-
         <!-- Draw -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#cce5ff; padding:6px; cursor:pointer; border-radius:4px;">
@@ -87,7 +83,6 @@
             <label>Max Odds Difference (%): <input type="number" id="draw_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-
         <!-- Away Win -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#cce5ff; padding:6px; cursor:pointer; border-radius:4px;">
@@ -102,7 +97,6 @@
             <label>Max Odds Difference (%): <input type="number" id="away_win_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-
       </div>
     </details>
 
@@ -112,7 +106,6 @@
         HT Market Results
       </summary>
       <div style="padding-left:20px; margin-top:8px;">
-
         <!-- HT Home Win -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
@@ -127,7 +120,6 @@
             <label>Max Odds Difference (%): <input type="number" id="ht_home_win_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-
         <!-- HT Draw -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
@@ -142,7 +134,6 @@
             <label>Max Odds Difference (%): <input type="number" id="ht_draw_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-
         <!-- HT Away Win -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#d4edda; padding:6px; cursor:pointer; border-radius:4px;">
@@ -157,7 +148,6 @@
             <label>Max Odds Difference (%): <input type="number" id="ht_away_win_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-
       </div>
     </details>
 
@@ -167,7 +157,6 @@
         Double Chance Markets
       </summary>
       <div style="padding-left:20px; margin-top:8px;">
-
         <!-- Home Or Draw -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#fff3cd; padding:6px; cursor:pointer; border-radius:4px;">
@@ -182,7 +171,6 @@
             <label>Max Odds Difference (%): <input type="number" id="home_or_draw_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-
         <!-- Draw Or Away -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#fff3cd; padding:6px; cursor:pointer; border-radius:4px;">
@@ -197,7 +185,6 @@
             <label>Max Odds Difference (%): <input type="number" id="draw_or_away_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
-
         <!-- Home Or Away -->
         <details open style="margin-bottom:8px;">
           <summary style="background:#fff3cd; padding:6px; cursor:pointer; border-radius:4px;">
@@ -212,7 +199,43 @@
             <label>Max Odds Difference (%): <input type="number" id="home_or_away_diff_max" value="100" step="0.1"></label><br>
           </div>
         </details>
+      </div>
+    </details>
 
+    <!-- Both Teams To Score grouping -->
+    <details open style="margin-bottom:10px;">
+      <summary style="background:#17a2b8; color:#fff; padding:8px; cursor:pointer; border-radius:4px;">
+        Both Teams To Score
+      </summary>
+      <div style="padding-left:20px; margin-top:8px;">
+        <!-- BTTS: Yes -->
+        <details open style="margin-bottom:8px;">
+          <summary style="background:#d1ecf1; padding:6px; cursor:pointer; border-radius:4px;">
+            <label><input type="checkbox" id="btts_yes_include" checked> Include BTTS: Yes</label>
+          </summary>
+          <div style="padding-left:20px; margin-top:5px;">
+            <label>Min Probability (%): <input type="number" id="btts_yes_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="btts_yes_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="btts_yes_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="btts_yes_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="btts_yes_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="btts_yes_diff_max" value="100" step="0.1"></label><br>
+          </div>
+        </details>
+        <!-- BTTS: No -->
+        <details open style="margin-bottom:8px;">
+          <summary style="background:#d1ecf1; padding:6px; cursor:pointer; border-radius:4px;">
+            <label><input type="checkbox" id="btts_no_include" checked> Include BTTS: No</label>
+          </summary>
+          <div style="padding-left:20px; margin-top:5px;">
+            <label>Min Probability (%): <input type="number" id="btts_no_prob_min" value="0" min="0" max="100"></label><br>
+            <label>Max Probability (%): <input type="number" id="btts_no_prob_max" value="100" min="0" max="100"></label><br>
+            <label>Min Bookmaker Odds: <input type="number" id="btts_no_odds_min" value="1.00" step="0.01"></label><br>
+            <label>Max Bookmaker Odds: <input type="number" id="btts_no_odds_max" value="10.00" step="0.01"></label><br>
+            <label>Min Odds Difference (%): <input type="number" id="btts_no_diff_min" value="0" step="0.1"></label><br>
+            <label>Max Odds Difference (%): <input type="number" id="btts_no_diff_max" value="100" step="0.1"></label><br>
+          </div>
+        </details>
       </div>
     </details>
 
@@ -278,39 +301,40 @@
       document.querySelectorAll('.bm-filter:checked')
     ).map(el => el.dataset.bk);
 
-    // 3) All markets and keys
+    // 3) All markets & keys
     const markets = [
       'Home Win','Draw','Away Win',
       'HT Home Win','HT Draw','HT Away Win',
-      'Home Or Draw','Draw Or Away','Home Or Away'
+      'Home Or Draw','Draw Or Away','Home Or Away',
+      'BTTS: Yes','BTTS: No'
     ];
     const keys = [
       'home_win','draw','away_win',
       'ht_home_win','ht_draw','ht_away_win',
-      'home_or_draw','draw_or_away','home_or_away'
+      'home_or_draw','draw_or_away','home_or_away',
+      'btts_yes','btts_no'
     ];
 
     document.querySelectorAll('.pinnacle-table tbody tr').forEach(row => {
       let show = true;
 
-      // a) predictability
+      // a) Predictability
       if (selPred.length) {
         const rp = row.cells[1].innerText.trim().toLowerCase();
         if (!selPred.includes(rp)) show = false;
       }
 
-      // b) bookmaker
+      // b) Bookmaker
       if (show && selBook.length) {
         const bk = row.cells[8].innerText.trim();
         if (!selBook.includes(bk)) show = false;
       }
 
-      // c) market logic
+      // c) Market & thresholds
       if (show) {
         const mtxt = row.cells[4].innerText.trim();
         for (let i = 0; i < markets.length; i++) {
           if (mtxt === markets[i]) {
-            // include checkbox?
             if (!document.getElementById(keys[i] + '_include').checked) {
               show = false;
             } else {
