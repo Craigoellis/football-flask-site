@@ -1,166 +1,172 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Pinnacle Market Filters</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .filter-modal {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 800px;
-            margin: auto;
-        }
-        .filter-group {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f0f0f0;
-            border-radius: 5px;
-        }
-        .pinnacle-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 40px;
-        }
-        .pinnacle-table th, .pinnacle-table td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-        .pinnacle-table th {
-            background-color: #007bff;
-            color: white;
-        }
-        button {
-            padding: 10px 20px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-    </style>
-</head>
-<body>
-    <div class="filter-modal">
-        <h2>Filter Options</h2>
+{% extends 'base.html' %}
 
-        <div class="filter-group">
-            <input type="checkbox" id="filter-home-ft-toggle"> Include Home Win FT Result<br>
-            Min Probability (%): <input type="number" id="filter-home-ft-prob-min" value="0">
-            Max Probability (%): <input type="number" id="filter-home-ft-prob-max" value="100"><br>
-            Min Latest Odds: <input type="number" id="filter-home-ft-odds-min" value="1.00">
-            Max Latest Odds: <input type="number" id="filter-home-ft-odds-max" value="10.00"><br>
-            Min Value %: <input type="number" id="filter-home-ft-val-min" value="0">
-            Max Value %: <input type="number" id="filter-home-ft-val-max" value="100">
-        </div>
+{% block title %}Pinnacle Comparison{% endblock %}
 
-        <div class="filter-group">
-            <input type="checkbox" id="filter-draw-ft-toggle"> Include Draw FT Result<br>
-            Min Probability (%): <input type="number" id="filter-draw-ft-prob-min" value="0">
-            Max Probability (%): <input type="number" id="filter-draw-ft-prob-max" value="100"><br>
-            Min Latest Odds: <input type="number" id="filter-draw-ft-odds-min" value="1.00">
-            Max Latest Odds: <input type="number" id="filter-draw-ft-odds-max" value="10.00"><br>
-            Min Value %: <input type="number" id="filter-draw-ft-val-min" value="0">
-            Max Value %: <input type="number" id="filter-draw-ft-val-max" value="100">
-        </div>
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='pinnacle.css') }}">
+{% endblock %}
 
-        <div class="filter-group">
-            <input type="checkbox" id="filter-away-ft-toggle"> Include Away Win FT Result<br>
-            Min Probability (%): <input type="number" id="filter-away-ft-prob-min" value="0">
-            Max Probability (%): <input type="number" id="filter-away-ft-prob-max" value="100"><br>
-            Min Latest Odds: <input type="number" id="filter-away-ft-odds-min" value="1.00">
-            Max Latest Odds: <input type="number" id="filter-away-ft-odds-max" value="10.00"><br>
-            Min Value %: <input type="number" id="filter-away-ft-val-min" value="0">
-            Max Value %: <input type="number" id="filter-away-ft-val-max" value="100">
-        </div>
+{% block content %}
+<div class="pinnacle-container">
+    <h1>Pinnacle Comparison</h1>
 
-        <button onclick="applyFilters()">Apply Filters</button>
+    <div style="margin-bottom: 15px;">
+        <label>
+            <input type="checkbox" id="valueOnlyToggle" onchange="toggleValueOnly()"> Value Only
+        </label>
     </div>
 
-    <table class="pinnacle-table">
-        <thead>
-            <tr>
-                <th>Market</th>
-                <th>Probability (%)</th>
-                <th>Latest Odds</th>
-                <th>Value %</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>Home Win (FT Result)</td><td>45</td><td>2.10</td><td>20</td></tr>
-            <tr><td>Draw (FT Result)</td><td>28</td><td>3.60</td><td>15</td></tr>
-            <tr><td>Away Win (FT Result)</td><td>30</td><td>3.20</td><td>10</td></tr>
-        </tbody>
-    </table>
+    <details class="filter-section">
+        <summary class="filter-toggle">Filter Options</summary>
+        <div class="filter-options">
 
-    <script>
-        function applyFilters() {
-            const rows = document.querySelectorAll(".pinnacle-table tbody tr");
+            <!-- FT Result Filters -->
+            <details>
+                <summary class="market-header">FT Result</summary>
+                <div class="filter-group">
+                    <label><input type="checkbox" id="include_home_win"> Home Win</label>
+                    <label><input type="checkbox" id="include_draw"> Draw</label>
+                    <label><input type="checkbox" id="include_away_win"> Away Win</label><br><br>
+                    <label>Min Probability (%): <input type="number" id="min_probability" value="0"></label>
+                    <label>Max Probability (%): <input type="number" id="max_probability" value="100"></label><br>
+                    <label>Min Latest Odds: <input type="number" step="0.01" id="min_odds" value="1.00"></label>
+                    <label>Max Latest Odds: <input type="number" step="0.01" id="max_odds" value="10.00"></label><br>
+                    <label>Min Value %: <input type="number" id="min_value" value="0"></label>
+                    <label>Max Value %: <input type="number" id="max_value" value="100"></label><br>
+                    <button onclick="applyFilters()">Apply Filters</button>
+                </div>
+            </details>
 
-            const markets = [
-                {
-                    key: "Home Win (FT Result)",
-                    enabled: document.getElementById("filter-home-ft-toggle").checked,
-                    probMin: parseFloat(document.getElementById("filter-home-ft-prob-min").value),
-                    probMax: parseFloat(document.getElementById("filter-home-ft-prob-max").value),
-                    oddsMin: parseFloat(document.getElementById("filter-home-ft-odds-min").value),
-                    oddsMax: parseFloat(document.getElementById("filter-home-ft-odds-max").value),
-                    valMin: parseFloat(document.getElementById("filter-home-ft-val-min").value),
-                    valMax: parseFloat(document.getElementById("filter-home-ft-val-max").value)
-                },
-                {
-                    key: "Draw (FT Result)",
-                    enabled: document.getElementById("filter-draw-ft-toggle").checked,
-                    probMin: parseFloat(document.getElementById("filter-draw-ft-prob-min").value),
-                    probMax: parseFloat(document.getElementById("filter-draw-ft-prob-max").value),
-                    oddsMin: parseFloat(document.getElementById("filter-draw-ft-odds-min").value),
-                    oddsMax: parseFloat(document.getElementById("filter-draw-ft-odds-max").value),
-                    valMin: parseFloat(document.getElementById("filter-draw-ft-val-min").value),
-                    valMax: parseFloat(document.getElementById("filter-draw-ft-val-max").value)
-                },
-                {
-                    key: "Away Win (FT Result)",
-                    enabled: document.getElementById("filter-away-ft-toggle").checked,
-                    probMin: parseFloat(document.getElementById("filter-away-ft-prob-min").value),
-                    probMax: parseFloat(document.getElementById("filter-away-ft-prob-max").value),
-                    oddsMin: parseFloat(document.getElementById("filter-away-ft-odds-min").value),
-                    oddsMax: parseFloat(document.getElementById("filter-away-ft-odds-max").value),
-                    valMin: parseFloat(document.getElementById("filter-away-ft-val-min").value),
-                    valMax: parseFloat(document.getElementById("filter-away-ft-val-max").value)
-                }
-            ];
+        </div>
+    </details>
 
-            rows.forEach(row => {
-                const market = row.cells[0].innerText.trim();
-                const prob = parseFloat(row.cells[1].innerText);
-                const odds = parseFloat(row.cells[2].innerText);
-                const val = parseFloat(row.cells[3].innerText);
+    {% if comparisons %}
+        <table class="pinnacle-table">
+            <thead>
+                <tr>
+                    <th>Competition</th>
+                    <th>Predictability</th>
+                    <th>Fixture</th>
+                    <th>Kick Off</th>
+                    <th>Market</th>
+                    <th>Probability (%)</th>
+                    <th>Implied Odds</th>
+                    <th onclick="sortTableByPinnacleOdds()">Pinnacle Odds</th>
+                    <th>Bookmaker</th>
+                    <th onclick="sortTableByBookmakerOdds()">Bookmaker Odds</th>
+                    <th onclick="sortTableByOddsDifference()">Odds Difference (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in comparisons %}
+                    <tr>
+                        <td>{{ item.competition_country }} — {{ item.competition_name }}</td>
+                        <td>{{ item.predictability | capitalize }}</td>
+                        <td>
+                            <a href="{{ url_for('game_details', fixture_id=item.fixture_id) }}" target="_blank">
+                                {{ item.fixture }}
+                            </a>
+                        </td>
+                        <td>{{ item.kickoff | format_kickoff }}</td>
+                        <td>{{ item.market }}</td>
+                        <td>{{ item.probability }}%</td> 
+                        <td>{{ item.implied_odds }}</td>
+                        <td>{{ item.pinnacle_odds }}</td>
+                        <td>{{ item.bookmaker }}</td>
+                        <td style="font-weight: bold; color: green;">{{ item.bookmaker_odds }}</td>
+                        <td>{{ item.odds_difference }}%</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="margin-top: 30px;">No comparisons found where bookmakers beat Pinnacle odds.</p>
+    {% endif %}
+</div>
 
-                const filter = markets.find(m => m.key === market);
+<script>
+function sortTableByOddsDifference() {
+    const table = document.querySelector(".pinnacle-table tbody");
+    const rows = Array.from(table.rows);
+    const sortedRows = rows.sort((a, b) => {
+        const aVal = parseFloat(a.cells[10].innerText.replace('%', '').trim());
+        const bVal = parseFloat(b.cells[10].innerText.replace('%', '').trim());
+        return bVal - aVal;
+    });
+    while (table.firstChild) table.removeChild(table.firstChild);
+    sortedRows.forEach(row => table.appendChild(row));
+}
 
-                if (!filter || !filter.enabled) {
-                    row.style.display = "none";
-                    return;
-                }
+function sortTableByPinnacleOdds() {
+    const table = document.querySelector(".pinnacle-table tbody");
+    const rows = Array.from(table.rows);
+    const sortedRows = rows.sort((a, b) => {
+        const aVal = parseFloat(a.cells[7].innerText.trim());
+        const bVal = parseFloat(b.cells[7].innerText.trim());
+        return bVal - aVal;
+    });
+    while (table.firstChild) table.removeChild(table.firstChild);
+    sortedRows.forEach(row => table.appendChild(row));
+}
 
-                const pass = prob >= filter.probMin && prob <= filter.probMax &&
-                             odds >= filter.oddsMin && odds <= filter.oddsMax &&
-                             val >= filter.valMin && val <= filter.valMax;
+function sortTableByBookmakerOdds() {
+    const table = document.querySelector(".pinnacle-table tbody");
+    const rows = Array.from(table.rows);
+    const sortedRows = rows.sort((a, b) => {
+        const aVal = parseFloat(a.cells[9].innerText.trim());
+        const bVal = parseFloat(b.cells[9].innerText.trim());
+        return bVal - aVal;
+    });
+    while (table.firstChild) table.removeChild(table.firstChild);
+    sortedRows.forEach(row => table.appendChild(row));
+}
 
-                row.style.display = pass ? "" : "none";
-            });
-        }
-    </script>
-</body>
-</html>
+function toggleValueOnly() {
+    const checkbox = document.getElementById("valueOnlyToggle");
+    const showValueOnly = checkbox.checked;
+    const rows = document.querySelectorAll(".pinnacle-table tbody tr");
+
+    rows.forEach(row => {
+        const implied = parseFloat(row.cells[6].innerText.trim());
+        const actual = parseFloat(row.cells[9].innerText.trim());
+        const isValue = actual > implied;
+        row.style.display = (showValueOnly && !isValue) ? "none" : "";
+    });
+}
+
+function applyFilters() {
+    const rows = document.querySelectorAll(".pinnacle-table tbody tr");
+    const includeHome = document.getElementById("include_home_win").checked;
+    const includeDraw = document.getElementById("include_draw").checked;
+    const includeAway = document.getElementById("include_away_win").checked;
+
+    const minProb = parseFloat(document.getElementById("min_probability").value);
+    const maxProb = parseFloat(document.getElementById("max_probability").value);
+    const minOdds = parseFloat(document.getElementById("min_odds").value);
+    const maxOdds = parseFloat(document.getElementById("max_odds").value);
+    const minValue = parseFloat(document.getElementById("min_value").value);
+    const maxValue = parseFloat(document.getElementById("max_value").value);
+
+    rows.forEach(row => {
+        const market = row.cells[4].innerText.trim();
+        const prob = parseFloat(row.cells[5].innerText.replace('%', ''));
+        const odds = parseFloat(row.cells[9].innerText);
+        const implied = parseFloat(row.cells[6].innerText);
+        const value = ((odds - implied) / implied) * 100;
+
+        const marketAllowed = (
+            (includeHome && market === "Home Win") ||
+            (includeDraw && market === "Draw") ||
+            (includeAway && market === "Away Win")
+        );
+
+        const showRow = marketAllowed &&
+            prob >= minProb && prob <= maxProb &&
+            odds >= minOdds && odds <= maxOdds &&
+            value >= minValue && value <= maxValue;
+
+        row.style.display = showRow ? "" : "none";
+    });
+}
+</script>
+{% endblock %}
