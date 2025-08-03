@@ -436,42 +436,55 @@
 
   // 5) Apply all active filters
   function applyFilters() {
+    const valueOnly = document.getElementById('valueOnlyToggle').checked;
+
     const selPred = new Set(
       ['high','good','medium','poor']
         .filter(l => document.getElementById(l + '_pred').checked)
     );
     const selBook = new Set(
       Array.from(document.querySelectorAll('.bm-filter:checked'))
-           .map(cb => cb.dataset.bk)
+          .map(cb => cb.dataset.bk)
     );
     const allowed = new Set(
       Array.from(document.querySelectorAll('#filterPopup input.market-include:checked'))
-           .map(cb => cb.dataset.market)
+          .map(cb => cb.dataset.market)
     );
 
     rowData.forEach(d => {
       let show = true;
-      if (selPred.size && !selPred.has(d.predict)) show = false;
-      if (show && selBook.size && !selBook.has(d.bk)) show = false;
-      if (show && allowed.size && !allowed.has(d.market)) show = false;
 
+      // NEW: if Value Only is ticked, hide anything that isn't true value
+      if (valueOnly && !(d.odds > d.implied && d.odds > d.pinn)) {
+        show = false;
+      }
+
+      // existing filters
+      if (show && selPred.size && !selPred.has(d.predict)) show = false;
+      if (show && selBook.size && !selBook.has(d.bk))       show = false;
+      if (show && allowed.size && !allowed.has(d.market))   show = false;
+
+      // now the per-market numeric ranges
       if (show && allowed.has(d.market)) {
-        const key = d.market.toLowerCase().replace(/[^a-z0-9]+/g,'_');
+        const key  = d.market.toLowerCase().replace(/[^a-z0-9]+/g,'_');
         const pMin = parseFloat(document.getElementById(key + '_prob_min').value),
               pMax = parseFloat(document.getElementById(key + '_prob_max').value),
               oMin = parseFloat(document.getElementById(key + '_odds_min').value),
               oMax = parseFloat(document.getElementById(key + '_odds_max').value),
               dMin = parseFloat(document.getElementById(key + '_diff_min').value),
               dMax = parseFloat(document.getElementById(key + '_diff_max').value);
+
         if (!(d.prob  >= pMin && d.prob  <= pMax &&
               d.odds  >= oMin && d.odds  <= oMax &&
               d.diff  >= dMin && d.diff  <= dMax)) {
           show = false;
         }
       }
+
       d.el.style.display = show ? '' : 'none';
     });
   }
+
 
   // 6) Sorting helpers
   function sortTableByOddsDifference() {
