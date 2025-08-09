@@ -3,7 +3,6 @@ import requests
 import json
 import os
 import pytz
-import
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from datetime import datetime, timedelta, timezone
