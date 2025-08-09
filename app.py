@@ -952,18 +952,13 @@ def datetimeformat(value):
 @app.route('/game/<int:fixture_id>')
 def game_details(fixture_id):
     fixture_id_str = str(fixture_id)
-
-    # 🔁 Always load latest fixtures data from disk (optional but harmless)
     load_fixtures_cache_from_disk()
 
-    # 🔍 Check if game data for this fixture is in memory
     if fixture_id_str not in game_details_cache:
-        # 🧠 Try loading the latest game details cache from disk
         if os.path.exists(GAME_DETAILS_CACHE_FILE):
             try:
                 with open(GAME_DETAILS_CACHE_FILE, "r", encoding="utf-8") as f:
                     disk_data = json.load(f)
-                    # If this fixture exists on disk, update memory
                     if fixture_id_str in disk_data:
                         game_details_cache[fixture_id_str] = disk_data[fixture_id_str]
                     else:
@@ -973,17 +968,11 @@ def game_details(fixture_id):
         else:
             return f"No data found for Fixture ID: {fixture_id}", 404
 
-    fixture_name = None
-    kick_off_time = None
-    home_team = None
-    away_team = None
-    season_id = None
-    home_id = None
-    away_id = None
-    home_position = None
-    away_position = None
+    # — Find the fixture in the fixtures cache —
+    fixture_name = kick_off_time = None
+    season_id = home_id = away_id = home_position = away_position = None
+    home_team = away_team = None
 
-    # 🔍 Find the fixture info from the fixture cache
     for date_fixtures in cached_fixtures.values():
         for country_fixtures in date_fixtures.values():
             for league_fixtures in country_fixtures.values():
@@ -1003,43 +992,45 @@ def game_details(fixture_id):
     if fixture_name is None:
         return f"No data found for Fixture ID: {fixture_id}", 404
 
-    # ✅ Get the game data from memory (now guaranteed to exist)
     game_data = game_details_cache.get(fixture_id_str, {})
 
-    # 📊 Load season stats for each team (both full-season and last-25 if available)
+    # — Load season stats (fixing ID comparisons) —
     home_stats = {}
     away_stats = {}
-    home_stats_full, away_stats_full = {}, {}
-    home_stats_last25, away_stats_last25 = {}, {}
+    home_stats_full = {}
+    away_stats_full = {}
+    home_stats_last25 = {}
+    away_stats_last25 = {}
 
     if season_id:
         season_entry = season_stats_cache.get(str(season_id), {})
-        full_list = season_entry.get("data", [])
+        full_list = season_entry.get("data", []) or season_entry.get("teams", [])
         last25_list = season_entry.get("last25", [])
 
-        # Full-season
+        # normalize IDs to strings for comparison
+        hid = str(home_id) if home_id is not None else None
+        aid = str(away_id) if away_id is not None else None
+
         for team_data in full_list:
-            tid = team_data.get("team_id")
-            if tid == home_id:
+            tid = str(team_data.get("team_id"))
+            if hid and tid == hid:
                 home_stats_full = team_data
-            elif tid == away_id:
+            if aid and tid == aid:
                 away_stats_full = team_data
 
-        # Last 25
         for team_data in last25_list:
-            tid = team_data.get("team_id")
-            if tid == home_id:
+            tid = str(team_data.get("team_id"))
+            if hid and tid == hid:
                 home_stats_last25 = team_data
-            elif tid == away_id:
+            if aid and tid == aid:
                 away_stats_last25 = team_data
 
-        # Keep existing names pointing to full-season so nothing changes visually yet
-        home_stats = home_stats_full
-        away_stats = away_stats_full
+        # what the template currently reads
+        home_stats = home_stats_full or {}
+        away_stats = away_stats_full or {}
 
-    # 🧾 Render the page with all available data
     return render_template(
-        'game_details.html',
+        "game_details.html",
         fixture_name=fixture_name,
         kick_off_time=kick_off_time,
         home_team=home_team,
