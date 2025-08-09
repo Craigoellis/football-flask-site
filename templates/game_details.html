@@ -10,21 +10,20 @@
 
 <!-- Generate Simulations Button -->
 <button id="generateSimulationsBtn" style="margin-bottom: 20px;">
-  Generate Simulations
+    Generate Simulations
 </button>
 
 <!-- Bookmaker Selector Dropdown -->
 <div style="margin-bottom: 10px; text-align: left;">
-  <label for="bookmaker-select"><strong>Select Bookmaker:</strong></label>
-  <select id="bookmaker-select">
-    <option value="actual_odds">Bet365</option>
-    <option value="pinnacle_odds">Pinnacle</option>
-    <option value="onexbet_odds">1xBet</option>
-    <option value="williamhill_odds">William Hill</option>
-    <option value="betfair_exchange_odds">Betfair Exchange</option>
-  </select>
+    <label for="bookmaker-select"><strong>Select Bookmaker:</strong></label>
+    <select id="bookmaker-select">
+        <option value="actual_odds">Bet365</option>
+        <option value="pinnacle_odds">Pinnacle</option>
+        <option value="onexbet_odds">1xBet</option>
+        <option value="williamhill_odds">William Hill</option>
+        <option value="betfair_exchange_odds">Betfair Exchange</option>
+    </select>
 </div>
-
 
 <!-- Simulation Modal (Hidden by default) -->
 <div id="simulationModal" style="
@@ -36,66 +35,74 @@
     overflow: auto;
     background-color: rgba(0,0,0,0.6);
 ">
-  <div style="
-      background-color: #fff;
-      margin: 10% auto;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 600px;
-      position: relative;
-  ">
-    <span id="closeModal" style="
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        font-size: 24px;
-        cursor: pointer;
-    ">&times;</span>
+    <div style="
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 600px;
+        position: relative;
+    ">
+        <span id="closeModal" style="
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        ">&times;</span>
 
-    <div id="simulationResults" class="simulation-container">
-      <h5><strong>Simulation Results</strong></h5>
-      <p>Total Simulations: <strong>10,000</strong></p>
+        <div id="simulationResults" class="simulation-container">
+            <h5><strong>Simulation Results</strong></h5>
+            <p>Total Simulations: <strong>10,000</strong></p>
 
-      <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-        <div style="flex: 1; min-width: 45%; text-align: left;">
-          <p>🏠 <strong>Home Win:</strong> <span id="homeWin"></span></p>
-          <p>🤝 <strong>Draw:</strong> <span id="draw"></span></p>
-          <p>🚩 <strong>Away Win:</strong> <span id="awayWin"></span></p>
-          <p>⚽ <strong>BTTS:</strong> <span id="btts"></span></p>
+            <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 45%; text-align: left;">
+                    <p>🏠 <strong>Home Win:</strong> <span id="homeWin"></span></p>
+                    <p>🤝 <strong>Draw:</strong> <span id="draw"></span></p>
+                    <p>🚩 <strong>Away Win:</strong> <span id="awayWin"></span></p>
+                    <p>⚽ <strong>BTTS:</strong> <span id="btts"></span></p>
+                </div>
+                <div style="flex: 1; min-width: 45%; text-align: left;">
+                    <p>📈 <strong>Over 1.5 Goals:</strong> <span id="o15"></span></p>
+                    <p>📈 <strong>Over 2.5 Goals:</strong> <span id="o25"></span></p>
+                    <p>📈 <strong>Over 3.5 Goals:</strong> <span id="o35"></span></p>
+                    <p>📈 <strong>Over 4.5 Goals:</strong> <span id="o45"></span></p>
+                </div>
+            </div>
+
+            <div style="margin-top: 16px; text-align: left;">
+                <p>📊 <strong>Avg Home Goals:</strong> <span id="avgHomeGoals"></span></p>
+                <p>📊 <strong>Avg Away Goals:</strong> <span id="avgAwayGoals"></span></p>
+                <p>📊 <strong>Avg Total Goals:</strong> <span id="avgTotalGoals"></span></p>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <h6><strong>Top Scorelines:</strong></h6>
+                <div id="topScorelines" style="display: flex; flex-direction: column; gap: 8px; align-items: center;"></div>
+            </div>
         </div>
-        <div style="flex: 1; min-width: 45%; text-align: left;">
-          <p>📈 <strong>Over 1.5 Goals:</strong> <span id="o15"></span></p>
-          <p>📈 <strong>Over 2.5 Goals:</strong> <span id="o25"></span></p>
-          <p>📈 <strong>Over 3.5 Goals:</strong> <span id="o35"></span></p>
-          <p>📈 <strong>Over 4.5 Goals:</strong> <span id="o45"></span></p>
-        </div>
-      </div>
-
-      <div style="margin-top: 16px; text-align: left;">
-        <p>📊 <strong>Avg Home Goals:</strong> <span id="avgHomeGoals"></span></p>
-        <p>📊 <strong>Avg Away Goals:</strong> <span id="avgAwayGoals"></span></p>
-        <p>📊 <strong>Avg Total Goals:</strong> <span id="avgTotalGoals"></span></p>
-      </div>
-
-      <div style="margin-top: 24px;">
-        <h6><strong>Top Scorelines:</strong></h6>
-        <div id="topScorelines" style="display: flex; flex-direction: column; gap: 8px; align-items: center;"></div>
-      </div>
     </div>
-  </div>
 </div>
 
 <div class="game-details-container">
-<div style="text-align: center; margin-bottom: 20px;">
-    <h2 style="margin: 0;">
-        {{ home_team }}{% if home_position is not none %} ({{ home_position|ordinal }}){% endif %} 
-        vs 
-        {{ away_team }}{% if away_position is not none %} ({{ away_position|ordinal }}){% endif %}
-    </h2>
-    <p style="margin-top: 5px;">Kick-Off Time: {{ kick_off_time | datetimeformat }}</p>
-    <p style="text-align: center;">League Predictability: {{ game_data.competition_predictability | capitalize }}</p>
-</div>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="margin: 0;">
+            {{ home_team }}{% if home_position is not none %} ({{ home_position|ordinal }}){% endif %}
+            vs
+            {{ away_team }}{% if away_position is not none %} ({{ away_position|ordinal }}){% endif %}
+        </h2>
+        <p style="margin-top: 5px;">Kick-Off Time: {{ kick_off_time | datetimeformat }}</p>
+        <p style="text-align: center;">League Predictability: {{ game_data.competition_predictability | capitalize }}</p>
+    </div>
+
+    <div style="display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap;">
+        <!-- Toggle buttons for Season Stats vs Last 25 -->
+        <div style="margin-bottom: 12px; display: flex; gap: 8px;">
+            <button id="btnFull" type="button">Season Stats</button>
+            <button id="btnLast25" type="button">Last 25 Games</button>
+        </div>
+
 
     <div style="display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap;">
 
@@ -1353,6 +1360,37 @@
     });
   }
 
+  // --- NEW: Season stats toggle (Full vs Last 25) ---
+  (function setupSeasonStatsToggle() {
+    const btnFull = document.getElementById('btnFull');
+    const btnLast25 = document.getElementById('btnLast25');
+    const full = document.getElementById('seasonStatsFull');     // add this container in your HTML
+    const last25 = document.getElementById('seasonStatsLast25'); // add this container in your HTML
+
+    // If the containers aren't present yet, bail quietly (so page doesn't break).
+    if (!btnFull || !btnLast25 || !full || !last25) return;
+
+    function showFull() {
+      full.style.display = '';
+      last25.style.display = 'none';
+      btnFull.disabled = true;
+      btnLast25.disabled = false;
+    }
+
+    function showLast25() {
+      full.style.display = 'none';
+      last25.style.display = '';
+      btnFull.disabled = false;
+      btnLast25.disabled = true;
+    }
+
+    // default to Full Season on load
+    showFull();
+
+    btnFull.addEventListener('click', showFull);
+    btnLast25.addEventListener('click', showLast25);
+  })();
+
   // Run once on page load for default bookmaker
   window.addEventListener('DOMContentLoaded', function () {
     const defaultBookmaker = document.getElementById('bookmaker-select').value;
@@ -1365,6 +1403,7 @@
     updateOddsDisplay(selected);
   });
 </script>
+
 
     <br>
     <a href="{{ url_for('fixtures_page') }}">Back to Fixtures</a>
