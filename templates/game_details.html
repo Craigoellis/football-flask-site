@@ -99,34 +99,6 @@
 
     <div style="display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap;">
 
-      <!-- ===== Season Stats Controls ===== -->
-<div id="season-stats-controls" style="margin: 10px 0; display:flex; gap:8px;">
-  <button id="btnFull" type="button" style="padding:8px 12px; border-radius:8px; border:1px solid #ccc; background:#111; color:#fff; cursor:pointer;">
-    Season Stats
-  </button>
-  <button id="btnLast25" type="button" style="padding:8px 12px; border-radius:8px; border:1px solid #ccc; background:#fff; color:#111; cursor:pointer;">
-    Last 25 Games
-  </button>
-</div>
-
-<script>
-  // Make both datasets available to the toggle script (safe defaults)
-  window.__SEASON_FULL__ = {
-    home: {{ home_stats|default({})|tojson }},
-    away: {{ away_stats|default({})|tojson }}
-  };
-  window.__SEASON_LAST25__ = {
-    home: {{ home_stats_25|default({})|tojson }},
-    away: {{ away_stats_25|default({})|tojson }}
-  };
-  // Convenience flag
-  window.__HAS_LAST25__ = {{ (has_last25|default(false)) and 'true' or 'false' }};
-</script>
-
-
-<!-- ===== End Season Stats Controls ===== -->
-
-
         <!-- LEFT SIDE: Season Stats -->
         <div style="flex: 1;">
 
@@ -1309,10 +1281,8 @@
 </div>
 
 <script>
-  // =========================
   // Simulation Generator
-  // =========================
-  document.getElementById('generateSimulationsBtn')?.addEventListener('click', async function () {
+  document.getElementById('generateSimulationsBtn').addEventListener('click', async function () {
     const fixtureId = "{{ fixture_id }}";  // Flask will inject the actual fixture ID here
     console.log("Fixture ID:", fixtureId);
 
@@ -1361,13 +1331,11 @@
   });
 
   // Close Modal
-  document.getElementById('closeModal')?.addEventListener('click', function () {
+  document.getElementById('closeModal').addEventListener('click', function () {
     document.getElementById('simulationModal').style.display = 'none';
   });
 
-  // =========================
-  // Odds Display + Highlighting
-  // =========================
+  // Function to update odds and apply green highlighting
   function updateOddsDisplay(bookmaker) {
     document.querySelectorAll('.odds-value').forEach(td => {
       const oddsStr = td.getAttribute(`data-${bookmaker}`);
@@ -1387,125 +1355,16 @@
 
   // Run once on page load for default bookmaker
   window.addEventListener('DOMContentLoaded', function () {
-    const defaultBookmaker = document.getElementById('bookmaker-select')?.value;
-    if (defaultBookmaker) updateOddsDisplay(defaultBookmaker);
+    const defaultBookmaker = document.getElementById('bookmaker-select').value;
+    updateOddsDisplay(defaultBookmaker);
   });
 
   // Update odds on dropdown change
-  document.getElementById('bookmaker-select')?.addEventListener('change', function () {
+  document.getElementById('bookmaker-select').addEventListener('change', function () {
     const selected = this.value;
     updateOddsDisplay(selected);
   });
-
-  // =========================
-  // NEW: Season Stats Toggle (Step 4)
-  // =========================
-  (function () {
-    const btnFull = document.getElementById('btnFull');
-    const btnLast25 = document.getElementById('btnLast25');
-
-    // Safety guards
-    if (!btnFull || !btnLast25) return;
-
-    // Find all season-stats tables in the left column.
-    // This will gracefully skip tables that don't match our mapped labels.
-    const tables = document.querySelectorAll('.game-details-container table');
-
-    function formatWithPct(value, pct) {
-      const v = (value === undefined || value === null) ? 'N/A' : value;
-      const p = (pct === undefined || pct === null) ? 'N/A' : pct;
-      return `${v} (${p}%)`;
-    }
-
-    // Update all mapped rows in all detected tables
-    function updateTables(dataset) {
-      if (!dataset) return;
-
-      tables.forEach(table => {
-        const rows = table.querySelectorAll('tbody tr');
-        rows.forEach(row => {
-          const labelCell = row.querySelector('td');
-          if (!labelCell) return;
-          const label = labelCell.textContent.trim();
-
-          let vals = null;
-
-          // Minimal mapping for the rows shown in your snippet.
-          // You can extend this switch with more labels later (Lost, Goals For, etc.).
-          switch (label) {
-            case 'Played':
-              vals = [
-                dataset.home?.played?.home, dataset.home?.played?.away, dataset.home?.played?.total,
-                dataset.away?.played?.home, dataset.away?.played?.away, dataset.away?.played?.total
-              ];
-              break;
-
-            case 'Won':
-              vals = [
-                formatWithPct(dataset.home?.won?.home, dataset.home?.won?.home_percentage),
-                formatWithPct(dataset.home?.won?.away, dataset.home?.won?.away_percentage),
-                formatWithPct(dataset.home?.won?.total, dataset.home?.won?.total_percentage),
-                formatWithPct(dataset.away?.won?.home, dataset.away?.won?.home_percentage),
-                formatWithPct(dataset.away?.won?.away, dataset.away?.won?.away_percentage),
-                formatWithPct(dataset.away?.won?.total, dataset.away?.won?.total_percentage)
-              ];
-              break;
-
-            case 'Drawn':
-              vals = [
-                formatWithPct(dataset.home?.drawn?.home, dataset.home?.drawn?.home_percentage),
-                formatWithPct(dataset.home?.drawn?.away, dataset.home?.drawn?.away_percentage),
-                formatWithPct(dataset.home?.drawn?.total, dataset.home?.drawn?.total_percentage),
-                formatWithPct(dataset.away?.drawn?.home, dataset.away?.drawn?.home_percentage),
-                formatWithPct(dataset.away?.drawn?.away, dataset.away?.drawn?.away_percentage),
-                formatWithPct(dataset.away?.drawn?.total, dataset.away?.drawn?.total_percentage)
-              ];
-              break;
-
-            default:
-              // Unknown label for this simple pass — skip row
-              return;
-          }
-
-          // If we produced a values array, write it into the 6 data cells
-          if (vals) {
-            const cells = row.querySelectorAll('td');
-            for (let i = 1; i <= 6; i++) {
-              const val = vals[i - 1];
-              cells[i].textContent = (val === undefined || val === null) ? 'N/A' : val;
-            }
-          }
-        });
-      });
-    }
-
-    function setActive(activeBtn, inactiveBtn) {
-      activeBtn.style.background = '#111';
-      activeBtn.style.color = '#fff';
-      inactiveBtn.style.background = '#fff';
-      inactiveBtn.style.color = '#111';
-    }
-
-    btnFull.addEventListener('click', () => {
-      updateTables(window.__SEASON_FULL__);
-      setActive(btnFull, btnLast25);
-    });
-
-    btnLast25.addEventListener('click', () => {
-      if (!window.__HAS_LAST25__) return;
-      updateTables(window.__SEASON_LAST25__);
-      setActive(btnLast25, btnFull);
-    });
-
-    // Disable Last 25 button if not available
-    if (!window.__HAS_LAST25__) {
-      btnLast25.disabled = true;
-      btnLast25.style.opacity = '0.5';
-      setActive(btnFull, btnLast25);
-    }
-  })();
 </script>
-
 
     <br>
     <a href="{{ url_for('fixtures_page') }}">Back to Fixtures</a>
