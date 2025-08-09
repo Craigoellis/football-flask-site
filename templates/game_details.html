@@ -110,18 +110,19 @@
 </div>
 
 <script>
-  // Make both datasets available to the upcoming toggle script
+  // Make both datasets available to the toggle script (safe defaults)
   window.__SEASON_FULL__ = {
-    home: {{ home_stats|tojson }},
-    away: {{ away_stats|tojson }}
+    home: {{ home_stats|default({})|tojson }},
+    away: {{ away_stats|default({})|tojson }}
   };
   window.__SEASON_LAST25__ = {
-    home: {{ home_stats_25|tojson }},
-    away: {{ away_stats_25|tojson }}
+    home: {{ home_stats_25|default({})|tojson }},
+    away: {{ away_stats_25|default({})|tojson }}
   };
-  // Optional convenience flag, already computed server-side:
-  window.__HAS_LAST25__ = {{ 'true' if has_last25 else 'false' }};
+  // Convenience flag
+  window.__HAS_LAST25__ = {{ (has_last25|default(false)) and 'true' or 'false' }};
 </script>
+
 
 <!-- ===== End Season Stats Controls ===== -->
 
