@@ -174,6 +174,8 @@ load_fixtures_cache_from_disk()
 
 def refresh_fixtures_cache():
     global cached_fixtures
+    global season_stats_cache  # so we can refresh in-memory after writing the file
+
     print("[CACHE] Starting full cache refresh...")
 
     # Step 1: Fetch Fixtures and Season IDs
@@ -189,10 +191,24 @@ def refresh_fixtures_cache():
     update_predictability_cache_from_fixtures(cached_fixtures)
     print("[CACHE] Predictability Cache Updated from Fixtures.")
 
-    # Step 2: Fetch Season Stats
+    # Step 2: Fetch Season Stats (full season)
     print("[CACHE] Fetching Season Stats...")
     fetch_season_stats(unique_season_ids, API_TOKEN)
     print("[CACHE] Season Stats Cache Updated.")
+
+    # Step 2b: Fetch Season Stats (Last 25 games)
+    print("[CACHE] Fetching Season Stats (Last 25)...")
+    fetch_season_stats_last25(unique_season_ids, API_TOKEN)
+    print("[CACHE] Season Stats (Last 25) Cache Updated.")
+
+    # Reload in-memory season_stats_cache so routes see latest data now
+    try:
+        with open(SEASON_STATS_CACHE_FILE, 'r') as f:
+            season_stats_cache = json.load(f)
+            print("[CACHE] season_stats_cache reloaded in memory.")
+    except json.JSONDecodeError:
+        season_stats_cache = {}
+        print("[CACHE] season_stats_cache reload failed (JSONDecodeError); using empty dict.")
 
     # Step 3: Fetch Game Details
     print("[CACHE] Fetching Game Details...")
@@ -378,6 +394,105 @@ def fetch_season_stats(season_ids, api_token):
 
     print(f"[CACHE] Fetched and cached season stats for {len(season_stats)} Season IDs.")
     return season_stats
+
+def fetch_season_stats_last25(season_ids, api_token):
+    """
+    Fetch 'last_x=25_overall' season stats and store them alongside the
+    full-season dataset inside SEASON_STATS_CACHE_FILE.
+    Keeps the existing 'data' (full-season) intact, and adds:
+      - 'last25_last_updated'
+      - 'last25' (list of team-season dicts)
+    """
+    cache_file = SEASON_STATS_CACHE_FILE
+    cache_expiry_days = 3
+    season_stats = {}
+
+    # Load existing cache if it exists
+    if os.path.exists(cache_file):
+        with open(cache_file, 'r') as f:
+            try:
+                season_stats = json.load(f)
+                print(f"[CACHE] (Last25) Loaded {len(season_stats)} seasons from cache.")
+            except json.JSONDecodeError:
+                season_stats = {}
+
+    current_time = datetime.utcnow().replace(tzinfo=timezone.utc)
+
+    for season_id in season_ids:
+        season_id_str = str(season_id)
+        entry = season_stats.get(season_id_str, {})
+
+        # TTL check only for the last25 branch
+        last25_last_updated_str = entry.get("last25_last_updated")
+        if last25_last_updated_str:
+            try:
+                last_updated = datetime.fromisoformat(last25_last_updated_str)
+                if (current_time - last_updated).days < cache_expiry_days:
+                    # still fresh — skip
+                    continue
+            except Exception:
+                pass  # if parse fails, we’ll refetch
+
+        # Fetch last 25 dataset (with pagination)
+        retries = 0
+        base_url = f"https://data.oddalerts.com/api/stats/season/{season_id}?api_token={api_token}&last_x=25_overall"
+        url = base_url
+        collected = []
+
+        while retries < 5:
+            try:
+                response = requests.get(url, headers=HEADERS)
+                if response.status_code == 429:
+                    time.sleep(15)
+                    retries += 1
+                    continue
+
+                response.raise_for_status()
+                data = response.json()
+                collected.extend(data.get('data', []))
+
+                # Handle pagination
+                info = data.get('info', {})
+                current_page = info.get('page', 1)
+                total_pages = info.get('pages', 1)
+
+                while current_page < total_pages:
+                    current_page += 1
+                    paginated_url = f"{base_url}&page={current_page}"
+                    paginated_response = requests.get(paginated_url, headers=HEADERS)
+                    paginated_response.raise_for_status()
+                    paginated_data = paginated_response.json()
+                    collected.extend(paginated_data.get('data', []))
+
+                # Write back (preserve any existing 'data' key for full-season)
+                entry["last25_last_updated"] = current_time.isoformat()
+                entry["last25"] = collected
+                season_stats[season_id_str] = entry
+
+                # save after each season
+                with open(cache_file, 'w') as f:
+                    json.dump(season_stats, f)
+
+                print(f"[CACHE] (Last25) Cached Season ID {season_id}")
+                break
+
+            except requests.RequestException:
+                print(f"[ERROR] (Last25) Failed to fetch Season ID {season_id}. Retry {retries + 1}/5.")
+                retries += 1
+                time.sleep(5)
+
+    # Remove seasons not in use (same cleanup rule as full fetcher)
+    existing_ids = set(str(sid) for sid in season_ids)
+    cached_ids = set(season_stats.keys())
+    for unused_id in (cached_ids - existing_ids):
+        del season_stats[unused_id]
+        print(f"[CACHE] (Last25) Removed stale Season ID {unused_id}")
+    with open(cache_file, 'w') as f:
+        json.dump(season_stats, f)
+
+    print(f"[CACHE] (Last25) Fetched and cached last-25 stats for {len(season_stats)} seasons.")
+    return season_stats
+
 
 API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"
 GAME_DETAILS_CACHE_FILE = '/data/game_details_cache.json'
@@ -891,17 +1006,36 @@ def game_details(fixture_id):
     # ✅ Get the game data from memory (now guaranteed to exist)
     game_data = game_details_cache.get(fixture_id_str, {})
 
-    # 📊 Load season stats for each team (if available)
+    # 📊 Load season stats for each team (both full-season and last-25 if available)
     home_stats = {}
     away_stats = {}
+    home_stats_full, away_stats_full = {}, {}
+    home_stats_last25, away_stats_last25 = {}, {}
+
     if season_id:
-        season_stats_data = season_stats_cache.get(str(season_id), {}).get("data", [])
-        for team_data in season_stats_data:
-            team_id = team_data.get("team_id")
-            if team_id == home_id:
-                home_stats = team_data
-            elif team_id == away_id:
-                away_stats = team_data
+        season_entry = season_stats_cache.get(str(season_id), {})
+        full_list = season_entry.get("data", [])
+        last25_list = season_entry.get("last25", [])
+
+        # Full-season
+        for team_data in full_list:
+            tid = team_data.get("team_id")
+            if tid == home_id:
+                home_stats_full = team_data
+            elif tid == away_id:
+                away_stats_full = team_data
+
+        # Last 25
+        for team_data in last25_list:
+            tid = team_data.get("team_id")
+            if tid == home_id:
+                home_stats_last25 = team_data
+            elif tid == away_id:
+                away_stats_last25 = team_data
+
+        # Keep existing names pointing to full-season so nothing changes visually yet
+        home_stats = home_stats_full
+        away_stats = away_stats_full
 
     # 🧾 Render the page with all available data
     return render_template(
@@ -915,6 +1049,10 @@ def game_details(fixture_id):
         game_data=game_data,
         home_stats=home_stats,
         away_stats=away_stats,
+        home_stats_full=home_stats_full,
+        away_stats_full=away_stats_full,
+        home_stats_last25=home_stats_last25,
+        away_stats_last25=away_stats_last25,
         fixture_id=fixture_id,
         api_token=API_TOKEN
     )
