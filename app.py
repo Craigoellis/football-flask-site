@@ -214,24 +214,6 @@ def debug_fixtures_cache():
                 return jsonify({})
     return jsonify({})
 
-import os
-import json
-from flask import Response
-
-@app.route("/debug/season-stats")
-def debug_season_stats():
-    cache_path = "/data/season_stats_cache.json"
-    if not os.path.exists(cache_path):
-        return Response("No season stats cache file found.", mimetype="text/plain"), 404
-
-    with open(cache_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    return Response(
-        json.dumps(data, indent=2),
-        mimetype="application/json"
-    )
-
 # =========================
 # Value Bets Fetch & Cache
 # =========================

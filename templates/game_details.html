@@ -10,20 +10,21 @@
 
 <!-- Generate Simulations Button -->
 <button id="generateSimulationsBtn" style="margin-bottom: 20px;">
-    Generate Simulations
+  Generate Simulations
 </button>
 
 <!-- Bookmaker Selector Dropdown -->
 <div style="margin-bottom: 10px; text-align: left;">
-    <label for="bookmaker-select"><strong>Select Bookmaker:</strong></label>
-    <select id="bookmaker-select">
-        <option value="actual_odds">Bet365</option>
-        <option value="pinnacle_odds">Pinnacle</option>
-        <option value="onexbet_odds">1xBet</option>
-        <option value="williamhill_odds">William Hill</option>
-        <option value="betfair_exchange_odds">Betfair Exchange</option>
-    </select>
+  <label for="bookmaker-select"><strong>Select Bookmaker:</strong></label>
+  <select id="bookmaker-select">
+    <option value="actual_odds">Bet365</option>
+    <option value="pinnacle_odds">Pinnacle</option>
+    <option value="onexbet_odds">1xBet</option>
+    <option value="williamhill_odds">William Hill</option>
+    <option value="betfair_exchange_odds">Betfair Exchange</option>
+  </select>
 </div>
+
 
 <!-- Simulation Modal (Hidden by default) -->
 <div id="simulationModal" style="
@@ -35,706 +36,151 @@
     overflow: auto;
     background-color: rgba(0,0,0,0.6);
 ">
-    <div style="
-        background-color: #fff;
-        margin: 10% auto;
-        padding: 20px;
-        border-radius: 8px;
-        width: 90%;
-        max-width: 600px;
-        position: relative;
-    ">
-        <span id="closeModal" style="
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-        ">&times;</span>
+  <div style="
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      position: relative;
+  ">
+    <span id="closeModal" style="
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 24px;
+        cursor: pointer;
+    ">&times;</span>
 
-        <div id="simulationResults" class="simulation-container">
-            <h5><strong>Simulation Results</strong></h5>
-            <p>Total Simulations: <strong>10,000</strong></p>
+    <div id="simulationResults" class="simulation-container">
+      <h5><strong>Simulation Results</strong></h5>
+      <p>Total Simulations: <strong>10,000</strong></p>
 
-            <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 45%; text-align: left;">
-                    <p>🏠 <strong>Home Win:</strong> <span id="homeWin"></span></p>
-                    <p>🤝 <strong>Draw:</strong> <span id="draw"></span></p>
-                    <p>🚩 <strong>Away Win:</strong> <span id="awayWin"></span></p>
-                    <p>⚽ <strong>BTTS:</strong> <span id="btts"></span></p>
-                </div>
-                <div style="flex: 1; min-width: 45%; text-align: left;">
-                    <p>📈 <strong>Over 1.5 Goals:</strong> <span id="o15"></span></p>
-                    <p>📈 <strong>Over 2.5 Goals:</strong> <span id="o25"></span></p>
-                    <p>📈 <strong>Over 3.5 Goals:</strong> <span id="o35"></span></p>
-                    <p>📈 <strong>Over 4.5 Goals:</strong> <span id="o45"></span></p>
-                </div>
-            </div>
-
-            <div style="margin-top: 16px; text-align: left;">
-                <p>📊 <strong>Avg Home Goals:</strong> <span id="avgHomeGoals"></span></p>
-                <p>📊 <strong>Avg Away Goals:</strong> <span id="avgAwayGoals"></span></p>
-                <p>📊 <strong>Avg Total Goals:</strong> <span id="avgTotalGoals"></span></p>
-            </div>
-
-            <div style="margin-top: 24px;">
-                <h6><strong>Top Scorelines:</strong></h6>
-                <div id="topScorelines" style="display: flex; flex-direction: column; gap: 8px; align-items: center;"></div>
-            </div>
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 45%; text-align: left;">
+          <p>🏠 <strong>Home Win:</strong> <span id="homeWin"></span></p>
+          <p>🤝 <strong>Draw:</strong> <span id="draw"></span></p>
+          <p>🚩 <strong>Away Win:</strong> <span id="awayWin"></span></p>
+          <p>⚽ <strong>BTTS:</strong> <span id="btts"></span></p>
         </div>
-    </div>
-</div>
-
-<div class="game-details-container">
-    <div style="text-align: center; margin-bottom: 20px;">
-        <h2 style="margin: 0;">
-            {{ home_team }}{% if home_position is not none %} ({{ home_position|ordinal }}){% endif %} 
-            vs 
-            {{ away_team }}{% if away_position is not none %} ({{ away_position|ordinal }}){% endif %}
-        </h2>
-        <p style="margin-top: 5px;">Kick-Off Time: {{ kick_off_time | datetimeformat }}</p>
-        <p style="text-align: center;">League Predictability: {{ game_data.competition_predictability | capitalize }}</p>
-    </div>
-
-    <div style="display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap;">
-
-        <!-- Season Stats Toggle Buttons -->
-        <div id="statsToggle" class="stats-toggle" style="text-align:center; margin-bottom: 12px;">
-            <button id="btnFull" class="stats-btn active">Season Stats</button>
-            <button id="btnLast25" class="stats-btn" {% if not has_last25 %}disabled title="Last 25 data isn’t cached yet"{% endif %}>
-                Last 25 Games
-            </button>
+        <div style="flex: 1; min-width: 45%; text-align: left;">
+          <p>📈 <strong>Over 1.5 Goals:</strong> <span id="o15"></span></p>
+          <p>📈 <strong>Over 2.5 Goals:</strong> <span id="o25"></span></p>
+          <p>📈 <strong>Over 3.5 Goals:</strong> <span id="o35"></span></p>
+          <p>📈 <strong>Over 4.5 Goals:</strong> <span id="o45"></span></p>
         </div>
+      </div>
 
-        <!-- === START SEASON STATS BLOCK (FULL) === -->
-        <div id="seasonStatsFull">
-            <!-- LEFT SIDE: Season Stats -->
-            <div style="flex: 1;">
+      <div style="margin-top: 16px; text-align: left;">
+        <p>📊 <strong>Avg Home Goals:</strong> <span id="avgHomeGoals"></span></p>
+        <p>📊 <strong>Avg Away Goals:</strong> <span id="avgAwayGoals"></span></p>
+        <p>📊 <strong>Avg Total Goals:</strong> <span id="avgTotalGoals"></span></p>
+      </div>
 
-                <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
-                    <thead>
-                        <!-- Main Title Row -->
-                        <tr style="background-color: #007bff; color: white;">
-                            <th colspan="7" style="font-size: 18px;">Full Time Result</th>
-                        </tr>
-                        <!-- Team Names Row -->
-                        <tr style="background-color: #007bff; color: white;">
-                            <th rowspan="2">Statistic</th>
-                            <th colspan="3">{{ home_team }}</th>
-                            <th colspan="3">{{ away_team }}</th>
-                        </tr>
-                        <!-- Home | Away | Overall Labels Row -->
-                        <tr style="background-color: #007bff; color: white;">
-                            <th>Home</th>
-                            <th>Away</th>
-                            <th>Overall</th>
-                            <th>Home</th>
-                            <th>Away</th>
-                            <th>Overall</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Played</td>
-                            <td>{{ home_stats.get('played', {}).get('home', 'N/A') }}</td>
-                            <td>{{ home_stats.get('played', {}).get('away', 'N/A') }}</td>
-                            <td>{{ home_stats.get('played', {}).get('total', 'N/A') }}</td>
-                            <td>{{ away_stats.get('played', {}).get('home', 'N/A') }}</td>
-                            <td>{{ away_stats.get('played', {}).get('away', 'N/A') }}</td>
-                            <td>{{ away_stats.get('played', {}).get('total', 'N/A') }}</td>
-                        </tr>
-                        <tr>
-                            <td>Won</td>
-                            <td>{{ home_stats.get('won', {}).get('home', 'N/A') }} ({{ home_stats.get('won', {}).get('home_percentage', 'N/A') }}%)</td>
-                            <td>{{ home_stats.get('won', {}).get('away', 'N/A') }} ({{ home_stats.get('won', {}).get('away_percentage', 'N/A') }}%)</td>
-                            <td>{{ home_stats.get('won', {}).get('total', 'N/A') }} ({{ home_stats.get('won', {}).get('total_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('won', {}).get('home', 'N/A') }} ({{ away_stats.get('won', {}).get('home_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('won', {}).get('away', 'N/A') }} ({{ away_stats.get('won', {}).get('away_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('won', {}).get('total', 'N/A') }} ({{ away_stats.get('won', {}).get('total_percentage', 'N/A') }}%)</td>
-                        </tr>
-                        <tr>
-                            <td>Drawn</td>
-                            <td>{{ home_stats.get('drawn', {}).get('home', 'N/A') }} ({{ home_stats.get('drawn', {}).get('home_percentage', 'N/A') }}%)</td>
-                            <td>{{ home_stats.get('drawn', {}).get('away', 'N/A') }} ({{ home_stats.get('drawn', {}).get('away_percentage', 'N/A') }}%)</td>
-                            <td>{{ home_stats.get('drawn', {}).get('total', 'N/A') }} ({{ home_stats.get('drawn', {}).get('total_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('drawn', {}).get('home', 'N/A') }} ({{ away_stats.get('drawn', {}).get('home_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('drawn', {}).get('away', 'N/A') }} ({{ away_stats.get('drawn', {}).get('away_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('drawn', {}).get('total', 'N/A') }} ({{ away_stats.get('drawn', {}).get('total_percentage', 'N/A') }}%)</td>
-                        </tr>
-                        <tr>
-                            <td>Lost</td>
-                            <td>{{ home_stats.get('lost', {}).get('home', 'N/A') }} ({{ home_stats.get('lost', {}).get('home_percentage', 'N/A') }}%)</td>
-                            <td>{{ home_stats.get('lost', {}).get('away', 'N/A') }} ({{ home_stats.get('lost', {}).get('away_percentage', 'N/A') }}%)</td>
-                            <td>{{ home_stats.get('lost', {}).get('total', 'N/A') }} ({{ home_stats.get('lost', {}).get('total_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('lost', {}).get('home', 'N/A') }} ({{ away_stats.get('lost', {}).get('home_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('lost', {}).get('away', 'N/A') }} ({{ away_stats.get('lost', {}).get('away_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('lost', {}).get('total', 'N/A') }} ({{ away_stats.get('lost', {}).get('total_percentage', 'N/A') }}%)</td>
-                        </tr>
-                        <tr>
-                            <td>Total Points</td>
-                            <td>{{ home_stats.get('points', {}).get('home', 'N/A') }}</td>
-                            <td>{{ home_stats.get('points', {}).get('away', 'N/A') }}</td>
-                            <td>{{ home_stats.get('points', {}).get('total', 'N/A') }}</td>
-                            <td>{{ away_stats.get('points', {}).get('home', 'N/A') }}</td>
-                            <td>{{ away_stats.get('points', {}).get('away', 'N/A') }}</td>
-                            <td>{{ away_stats.get('points', {}).get('total', 'N/A') }}</td>
-                        </tr>
-                        <tr>
-                            <td>Average Points Per Game</td>
-                            <td>{{ home_stats.get('points', {}).get('home_avg', 'N/A') }}</td>
-                            <td>{{ home_stats.get('points', {}).get('away_avg', 'N/A') }}</td>
-                            <td>{{ home_stats.get('points', {}).get('total_avg', 'N/A') }}</td>
-                            <td>{{ away_stats.get('points', {}).get('home_avg', 'N/A') }}</td>
-                            <td>{{ away_stats.get('points', {}).get('away_avg', 'N/A') }}</td>
-                            <td>{{ away_stats.get('points', {}).get('total_avg', 'N/A') }}</td>
-                        </tr>
-                    </tbody>
-                </table>  <!-- Closing the Full Time Result Table -->
-
-
-<br>  <!-- Add this to drop the next table below -->
-
-<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
-    <thead>
-        <!-- Main Title Row -->
-        <tr style="background-color: #007bff; color: white;">
-            <th colspan="7" style="font-size: 18px;">Goals Statistics</th>
-        </tr>
-        <!-- Team Names Row -->
-        <tr style="background-color: #007bff; color: white;">
-            <th rowspan="2">Statistic</th>
-            <th colspan="3">{{ home_team }}</th>
-            <th colspan="3">{{ away_team }}</th>
-        </tr>
-        <!-- Home | Away | Overall Labels Row -->
-        <tr style="background-color: #007bff; color: white;">
-            <th>Home</th>
-            <th>Away</th>
-            <th>Overall</th>
-            <th>Home</th>
-            <th>Away</th>
-            <th>Overall</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-<tr>
-    <td>Over 0.5 Goals</td>
-    <td>{{ home_stats.get('goals_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-<tr>
-    <td>Over 1.5 Goals</td>
-    <td>{{ home_stats.get('goals_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-<tr>
-    <td>Over 2.5 Goals</td>
-    <td>{{ home_stats.get('goals_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-<tr>
-    <td>Over 3.5 Goals</td>
-    <td>{{ home_stats.get('goals_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-<tr>
-    <td>Goals (Avg)</td>
-    <td>{{ home_stats.get('goals_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('goals_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('goals_total', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goals_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goals_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goals_total', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-
-<tr>
-    <td>Goals For (Avg)</td>
-    <td>{{ home_stats.get('goals_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('goals_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('goals_for', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goals_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goals_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goals_for', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Goals Against (Avg)</td>
-    <td>{{ home_stats.get('goals_against', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('goals_against', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('goals_against', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goals_against', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goals_against', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goals_against', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Both Teams To Score</td>
-    <td>{{ home_stats.get('btts', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('btts', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('btts', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('btts', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('btts', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('btts', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-<tr>
-    <td>Scored Over 0.5 Goals</td>
-    <td>{{ home_stats.get('goals_for_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_for_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_for_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_for_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_for_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_for_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-<tr>
-    <td>Scored Over 1.5 Goals</td>
-    <td>{{ home_stats.get('goals_for_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_for_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_for_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_for_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_for_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_for_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-<tr>
-    <td>Scored Over 2.5 Goals</td>
-    <td>{{ home_stats.get('goals_for_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_for_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_for_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_for_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_for_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_for_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-<tr>
-    <td>Scored Over 3.5 Goals</td>
-    <td>{{ home_stats.get('goals_for_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_for_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_for_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_for_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_for_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_for_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-<tr>
-    <td>Conceded Over 0.5 Goals</td>
-    <td>{{ home_stats.get('goals_against_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_against_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_against_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_against_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_against_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_against_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-<tr>
-    <td>Conceded Over 1.5 Goals</td>
-    <td>{{ home_stats.get('goals_against_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_against_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_against_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_against_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_against_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_against_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-<tr>
-    <td>Conceded Over 2.5 Goals</td>
-    <td>{{ home_stats.get('goals_against_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_against_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_against_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_against_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_against_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_against_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-<tr>
-    <td>Conceded Over 3.5 Goals</td>
-    <td>{{ home_stats.get('goals_against_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_against_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ home_stats.get('goals_against_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_against_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_against_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
-    <td>{{ away_stats.get('goals_against_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
-</tr>
-
-<tr>
-    <td>xG (Avg)</td>
-    <td>{{ home_stats.get('xg_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('xg_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('xg_total', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('xg_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('xg_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('xg_total', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>xG For (Avg)</td>
-    <td>{{ home_stats.get('xg_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('xg_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('xg_for', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('xg_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('xg_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('xg_for', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>xG Against (Avg)</td>
-    <td>{{ home_stats.get('xg_against', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('xg_against', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('xg_against', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('xg_against', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('xg_against', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('xg_against', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-
-</tr>
-    </tbody>
-</table>
-
-<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
-    <thead>
-        <tr style="background-color: #007bff; color: white;">
-            <th colspan="7" style="font-size: 18px;">Fouls, Tackles, Offsides, Goal Kicks, and Throw-Ins</th>
-        </tr>
-        <tr style="background-color: #007bff; color: white;">
-            <th rowspan="2">Statistic</th>
-            <th colspan="3">{{ home_team }}</th>
-            <th colspan="3">{{ away_team }}</th>
-        </tr>
-        <tr style="background-color: #007bff; color: white;">
-            <th>Home</th>
-            <th>Away</th>
-            <th>Overall</th>
-            <th>Home</th>
-            <th>Away</th>
-            <th>Overall</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-<tr>
-    <td>Fouls (Total Avg)</td>
-    <td>{{ home_stats.get('fouls_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('fouls_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('fouls_total', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('fouls_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('fouls_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('fouls_total', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Fouls Won (Avg)</td>
-    <td>{{ home_stats.get('fouls_won', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('fouls_won', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('fouls_won', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('fouls_won', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('fouls_won', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('fouls_won', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Fouls Committed (Avg)</td>
-    <td>{{ home_stats.get('fouls_committed', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('fouls_committed', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('fouls_committed', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('fouls_committed', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('fouls_committed', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('fouls_committed', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Tackles (Total Avg)</td>
-    <td>{{ home_stats.get('tackles_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('tackles_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('tackles_total', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('tackles_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('tackles_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('tackles_total', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Tackles For (Avg)</td>
-    <td>{{ home_stats.get('tackles_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('tackles_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('tackles_for', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('tackles_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('tackles_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('tackles_for', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Tackles Against (Avg)</td>
-    <td>{{ home_stats.get('tackles_opponent', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('tackles_opponent', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('tackles_opponent', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('tackles_opponent', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('tackles_opponent', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('tackles_opponent', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-
-        </tr>
-<!-- Offsides Section -->
-<tr>
-    <td>Offsides (Total Avg)</td>
-    <td>{{ home_stats.get('offsides_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('offsides_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('offsides_total', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('offsides_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('offsides_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('offsides_total', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Offsides For (Avg)</td>
-    <td>{{ home_stats.get('offsides_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('offsides_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('offsides_for', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('offsides_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('offsides_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('offsides_for', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Offsides Against (Avg)</td>
-    <td>{{ home_stats.get('offsides_opponent', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('offsides_opponent', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('offsides_opponent', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('offsides_opponent', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('offsides_opponent', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('offsides_opponent', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-
-<!-- Goal Kicks Section -->
-<tr>
-    <td>Goal Kicks (Total Avg)</td>
-    <td>{{ home_stats.get('goal_kicks_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('goal_kicks_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('goal_kicks_total', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goal_kicks_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goal_kicks_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goal_kicks_total', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Goal Kicks For (Avg)</td>
-    <td>{{ home_stats.get('goal_kicks_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('goal_kicks_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('goal_kicks_for', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goal_kicks_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goal_kicks_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goal_kicks_for', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Goal Kicks Against (Avg)</td>
-    <td>{{ home_stats.get('goal_kicks_opponent', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('goal_kicks_opponent', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('goal_kicks_opponent', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goal_kicks_opponent', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goal_kicks_opponent', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('goal_kicks_opponent', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-
-<!-- Throw-Ins Section -->
-<tr>
-    <td>Throw-Ins (Total Avg)</td>
-    <td>{{ home_stats.get('throw_ins_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('throw_ins_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('throw_ins_total', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('throw_ins_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('throw_ins_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('throw_ins_total', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Throw-Ins For (Avg)</td>
-    <td>{{ home_stats.get('throw_ins_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('throw_ins_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('throw_ins_for', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('throw_ins_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('throw_ins_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('throw_ins_for', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Throw-Ins Against (Avg)</td>
-    <td>{{ home_stats.get('throw_ins_opponent', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('throw_ins_opponent', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('throw_ins_opponent', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('throw_ins_opponent', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('throw_ins_opponent', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('throw_ins_opponent', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-
-</tr>
-    </tbody>
-</table>
-
-<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
-    <thead>
-        <tr style="background-color: #007bff; color: white;">
-            <th colspan="7" style="font-size: 18px;">Shots Statistics</th>
-        </tr>
-        <tr style="background-color: #007bff; color: white;">
-            <th rowspan="2">Statistic</th>
-            <th colspan="3">{{ home_team }}</th>
-            <th colspan="3">{{ away_team }}</th>
-        </tr>
-        <tr style="background-color: #007bff; color: white;">
-            <th>Home</th>
-            <th>Away</th>
-            <th>Overall</th>
-            <th>Home</th>
-            <th>Away</th>
-            <th>Overall</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-<tr>
-    <td>Total Shots (Avg)</td>
-    <td>{{ home_stats.get('shots_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('shots_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('shots_total', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_total', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Shots For (Avg)</td>
-    <td>{{ home_stats.get('shots_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('shots_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('shots_for', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_for', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Shots Against (Avg)</td>
-    <td>{{ home_stats.get('shots_against', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('shots_against', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('shots_against', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_against', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_against', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_against', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Total Shots on Target (Avg)</td>
-    <td>{{ home_stats.get('shots_on_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('shots_on_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('shots_on_total', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_on_total', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_on_total', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_on_total', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Shots on Target For (Avg)</td>
-    <td>{{ home_stats.get('shots_on_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('shots_on_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('shots_on_for', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_on_for', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_on_for', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_on_for', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-<tr>
-    <td>Shots on Target Against (Avg)</td>
-    <td>{{ home_stats.get('shots_on_against', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('shots_on_against', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ home_stats.get('shots_on_against', {}).get('total_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_on_against', {}).get('home_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_on_against', {}).get('away_avg', 'N/A') }}</td>
-    <td>{{ away_stats.get('shots_on_against', {}).get('total_avg', 'N/A') }}</td>
-</tr>
-
-        </tr>
-    </tbody>
-</table>
-
-<!-- === START SEASON STATS BLOCK (LAST25) === -->
-<div id="seasonStatsLast25" style="display:none;">
-  <div style="flex: 1;">
-    {% set home_stats = home_stats_last25 %}
-    {% set away_stats = away_stats_last25 %}
-
-    <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
-      <thead>
-        <!-- Main Title Row -->
-        <tr style="background-color: #007bff; color: white;">
-          <th colspan="7" style="font-size: 18px;">Full Time Result</th>
-        </tr>
-        <!-- Team Names Row -->
-        <tr style="background-color: #007bff; color: white;">
-          <th rowspan="2">Statistic</th>
-          <th colspan="3">{{ home_team }}</th>
-          <th colspan="3">{{ away_team }}</th>
-        </tr>
-        <!-- Home | Away | Overall Labels Row -->
-        <tr style="background-color: #007bff; color: white;">
-          <th>Home</th>
-          <th>Away</th>
-          <th>Overall</th>
-          <th>Home</th>
-          <th>Away</th>
-          <th>Overall</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Played</td>
-          <td>{{ home_stats.get('played', {}).get('home', 'N/A') }}</td>
-          <td>{{ home_stats.get('played', {}).get('away', 'N/A') }}</td>
-          <td>{{ home_stats.get('played', {}).get('total', 'N/A') }}</td>
-          <td>{{ away_stats.get('played', {}).get('home', 'N/A') }}</td>
-          <td>{{ away_stats.get('played', {}).get('away', 'N/A') }}</td>
-          <td>{{ away_stats.get('played', {}).get('total', 'N/A') }}</td>
-        </tr>
-        <!-- add your other rows (Won/Drawn/Lost/etc.) here -->
-      </tbody>
-    </table>
+      <div style="margin-top: 24px;">
+        <h6><strong>Top Scorelines:</strong></h6>
+        <div id="topScorelines" style="display: flex; flex-direction: column; gap: 8px; align-items: center;"></div>
+      </div>
+    </div>
   </div>
 </div>
 
-                            <td>Won</td>
-                            <td>{{ home_stats.get('won', {}).get('home', 'N/A') }} ({{ home_stats.get('won', {}).get('home_percentage', 'N/A') }}%)</td>
-                            <td>{{ home_stats.get('won', {}).get('away', 'N/A') }} ({{ home_stats.get('won', {}).get('away_percentage', 'N/A') }}%)</td>
-                            <td>{{ home_stats.get('won', {}).get('total', 'N/A') }} ({{ home_stats.get('won', {}).get('total_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('won', {}).get('home', 'N/A') }} ({{ away_stats.get('won', {}).get('home_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('won', {}).get('away', 'N/A') }} ({{ away_stats.get('won', {}).get('away_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('won', {}).get('total', 'N/A') }} ({{ away_stats.get('won', {}).get('total_percentage', 'N/A') }}%)</td>
-                        </tr>
-                        <tr>
-                            <td>Drawn</td>
-                            <td>{{ home_stats.get('drawn', {}).get('home', 'N/A') }} ({{ home_stats.get('drawn', {}).get('home_percentage', 'N/A') }}%)</td>
-                            <td>{{ home_stats.get('drawn', {}).get('away', 'N/A') }} ({{ home_stats.get('drawn', {}).get('away_percentage', 'N/A') }}%)</td>
-                            <td>{{ home_stats.get('drawn', {}).get('total', 'N/A') }} ({{ home_stats.get('drawn', {}).get('total_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('drawn', {}).get('home', 'N/A') }} ({{ away_stats.get('drawn', {}).get('home_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('drawn', {}).get('away', 'N/A') }} ({{ away_stats.get('drawn', {}).get('away_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('drawn', {}).get('total', 'N/A') }} ({{ away_stats.get('drawn', {}).get('total_percentage', 'N/A') }}%)</td>
-                        </tr>
-                        <tr>
-                            <td>Lost</td>
-                            <td>{{ home_stats.get('lost', {}).get('home', 'N/A') }} ({{ home_stats.get('lost', {}).get('home_percentage', 'N/A') }}%)</td>
-                            <td>{{ home_stats.get('lost', {}).get('away', 'N/A') }} ({{ home_stats.get('lost', {}).get('away_percentage', 'N/A') }}%)</td>
-                            <td>{{ home_stats.get('lost', {}).get('total', 'N/A') }} ({{ home_stats.get('lost', {}).get('total_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('lost', {}).get('home', 'N/A') }} ({{ away_stats.get('lost', {}).get('home_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('lost', {}).get('away', 'N/A') }} ({{ away_stats.get('lost', {}).get('away_percentage', 'N/A') }}%)</td>
-                            <td>{{ away_stats.get('lost', {}).get('total', 'N/A') }} ({{ away_stats.get('lost', {}).get('total_percentage', 'N/A') }}%)</td>
-                        </tr>
-                        <tr>
-                            <td>Total Points</td>
-                            <td>{{ home_stats.get('points', {}).get('home', 'N/A') }}</td>
-                            <td>{{ home_stats.get('points', {}).get('away', 'N/A') }}</td>
-                            <td>{{ home_stats.get('points', {}).get('total', 'N/A') }}</td>
-                            <td>{{ away_stats.get('points', {}).get('home', 'N/A') }}</td>
-                            <td>{{ away_stats.get('points', {}).get('away', 'N/A') }}</td>
-                            <td>{{ away_stats.get('points', {}).get('total', 'N/A') }}</td>
-                        </tr>
-                        <tr>
-                            <td>Average Points Per Game</td>
-                            <td>{{ home_stats.get('points', {}).get('home_avg', 'N/A') }}</td>
-                            <td>{{ home_stats.get('points', {}).get('away_avg', 'N/A') }}</td>
-                            <td>{{ home_stats.get('points', {}).get('total_avg', 'N/A') }}</td>
-                            <td>{{ away_stats.get('points', {}).get('home_avg', 'N/A') }}</td>
-                            <td>{{ away_stats.get('points', {}).get('away_avg', 'N/A') }}</td>
-                            <td>{{ away_stats.get('points', {}).get('total_avg', 'N/A') }}</td>
-                        </tr>
-                    </tbody>
-                </table>  <!-- Closing the Full Time Result Table -->
+<div class="game-details-container">
+<div style="text-align: center; margin-bottom: 20px;">
+    <h2 style="margin: 0;">
+        {{ home_team }}{% if home_position is not none %} ({{ home_position|ordinal }}){% endif %} 
+        vs 
+        {{ away_team }}{% if away_position is not none %} ({{ away_position|ordinal }}){% endif %}
+    </h2>
+    <p style="margin-top: 5px;">Kick-Off Time: {{ kick_off_time | datetimeformat }}</p>
+    <p style="text-align: center;">League Predictability: {{ game_data.competition_predictability | capitalize }}</p>
+</div>
 
+    <div style="display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap;">
+
+        <!-- LEFT SIDE: Season Stats -->
+        <div style="flex: 1;">
+
+<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
+<thead>
+    <!-- Main Title Row -->
+    <tr style="background-color: #007bff; color: white;">
+        <th colspan="7" style="font-size: 18px;">Full Time Result</th>
+    </tr>
+    <!-- Team Names Row -->
+    <tr style="background-color: #007bff; color: white;">
+        <th rowspan="2">Statistic</th>
+        <th colspan="3">{{ home_team }}</th>
+        <th colspan="3">{{ away_team }}</th>
+    </tr>
+    <!-- Home | Away | Overall Labels Row -->
+    <tr style="background-color: #007bff; color: white;">
+        <th>Home</th>
+        <th>Away</th>
+        <th>Overall</th>
+        <th>Home</th>
+        <th>Away</th>
+        <th>Overall</th>
+    </tr>
+</thead>
+    <tbody>
+        <tr>
+    <td>Played</td>
+    <td>{{ home_stats.get('played', {}).get('home', 'N/A') }}</td>
+    <td>{{ home_stats.get('played', {}).get('away', 'N/A') }}</td>
+    <td>{{ home_stats.get('played', {}).get('total', 'N/A') }}</td>
+    <td>{{ away_stats.get('played', {}).get('home', 'N/A') }}</td>
+    <td>{{ away_stats.get('played', {}).get('away', 'N/A') }}</td>
+    <td>{{ away_stats.get('played', {}).get('total', 'N/A') }}</td>
+<tr>
+    <td>Won</td>
+    <td>{{ home_stats.get('won', {}).get('home', 'N/A') }} ({{ home_stats.get('won', {}).get('home_percentage', 'N/A') }}%)</td>
+    <td>{{ home_stats.get('won', {}).get('away', 'N/A') }} ({{ home_stats.get('won', {}).get('away_percentage', 'N/A') }}%)</td>
+    <td>{{ home_stats.get('won', {}).get('total', 'N/A') }} ({{ home_stats.get('won', {}).get('total_percentage', 'N/A') }}%)</td>
+    <td>{{ away_stats.get('won', {}).get('home', 'N/A') }} ({{ away_stats.get('won', {}).get('home_percentage', 'N/A') }}%)</td>
+    <td>{{ away_stats.get('won', {}).get('away', 'N/A') }} ({{ away_stats.get('won', {}).get('away_percentage', 'N/A') }}%)</td>
+    <td>{{ away_stats.get('won', {}).get('total', 'N/A') }} ({{ away_stats.get('won', {}).get('total_percentage', 'N/A') }}%)</td>
+</tr>
+<tr>
+    <td>Drawn</td>
+    <td>{{ home_stats.get('drawn', {}).get('home', 'N/A') }} ({{ home_stats.get('drawn', {}).get('home_percentage', 'N/A') }}%)</td>
+    <td>{{ home_stats.get('drawn', {}).get('away', 'N/A') }} ({{ home_stats.get('drawn', {}).get('away_percentage', 'N/A') }}%)</td>
+    <td>{{ home_stats.get('drawn', {}).get('total', 'N/A') }} ({{ home_stats.get('drawn', {}).get('total_percentage', 'N/A') }}%)</td>
+    <td>{{ away_stats.get('drawn', {}).get('home', 'N/A') }} ({{ away_stats.get('drawn', {}).get('home_percentage', 'N/A') }}%)</td>
+    <td>{{ away_stats.get('drawn', {}).get('away', 'N/A') }} ({{ away_stats.get('drawn', {}).get('away_percentage', 'N/A') }}%)</td>
+    <td>{{ away_stats.get('drawn', {}).get('total', 'N/A') }} ({{ away_stats.get('drawn', {}).get('total_percentage', 'N/A') }}%)</td>
+</tr>
+<tr>
+    <td>Lost</td>
+    <td>{{ home_stats.get('lost', {}).get('home', 'N/A') }} ({{ home_stats.get('lost', {}).get('home_percentage', 'N/A') }}%)</td>
+    <td>{{ home_stats.get('lost', {}).get('away', 'N/A') }} ({{ home_stats.get('lost', {}).get('away_percentage', 'N/A') }}%)</td>
+    <td>{{ home_stats.get('lost', {}).get('total', 'N/A') }} ({{ home_stats.get('lost', {}).get('total_percentage', 'N/A') }}%)</td>
+    <td>{{ away_stats.get('lost', {}).get('home', 'N/A') }} ({{ away_stats.get('lost', {}).get('home_percentage', 'N/A') }}%)</td>
+    <td>{{ away_stats.get('lost', {}).get('away', 'N/A') }} ({{ away_stats.get('lost', {}).get('away_percentage', 'N/A') }}%)</td>
+    <td>{{ away_stats.get('lost', {}).get('total', 'N/A') }} ({{ away_stats.get('lost', {}).get('total_percentage', 'N/A') }}%)</td>
+</tr>
+<tr>
+    <td>Total Points</td>
+    <td>{{ home_stats.get('points', {}).get('home', 'N/A') }}</td>
+    <td>{{ home_stats.get('points', {}).get('away', 'N/A') }}</td>
+    <td>{{ home_stats.get('points', {}).get('total', 'N/A') }}</td>
+    <td>{{ away_stats.get('points', {}).get('home', 'N/A') }}</td>
+    <td>{{ away_stats.get('points', {}).get('away', 'N/A') }}</td>
+    <td>{{ away_stats.get('points', {}).get('total', 'N/A') }}</td>
+</tr>
+<tr>
+    <td>Average Points Per Game</td>
+    <td>{{ home_stats.get('points', {}).get('home_avg', 'N/A') }}</td>
+    <td>{{ home_stats.get('points', {}).get('away_avg', 'N/A') }}</td>
+    <td>{{ home_stats.get('points', {}).get('total_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('points', {}).get('home_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('points', {}).get('away_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('points', {}).get('total_avg', 'N/A') }}</td>
+</tr>
+
+    </tbody>
+</table>  <!-- Closing the Full Time Result Table -->
 
 <br>  <!-- Add this to drop the next table below -->
 
@@ -1187,7 +633,7 @@
         </tr>
     </tbody>
 </table>
-  
+
 <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
     <thead>
         <tr style="background-color: #007bff; color: white;">
@@ -1835,113 +1281,67 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  // -------------------------------
-  // Utilities
-  // -------------------------------
-  const $ = (id) => document.getElementById(id);
-  const $$ = (sel) => document.querySelectorAll(sel);
-  const pct = (v) =>
-    v === null || v === undefined || isNaN(Number(v)) ? "N/A" : `${Number(v).toFixed(1)}%`;
-  const fmt = (v, d = 2) =>
-    v === null || v === undefined || isNaN(Number(v)) ? "N/A" : Number(v).toFixed(d);
+  // Simulation Generator
+  document.getElementById('generateSimulationsBtn').addEventListener('click', async function () {
+    const fixtureId = "{{ fixture_id }}";  // Flask will inject the actual fixture ID here
+    console.log("Fixture ID:", fixtureId);
 
-  // -------------------------------
-  // Simulations Modal
-  // -------------------------------
-  const fixtureId = "{{ fixture_id }}";
-  const btnSim = $("generateSimulationsBtn");
-  const modal = $("simulationModal");
-  const closeBtn = $("closeModal");
+    const url = `/simulate/${fixtureId}`;  // Calls your Flask backend
 
-  const slots = {
-    homeWin: $("homeWin"),
-    draw: $("draw"),
-    awayWin: $("awayWin"),
-    btts: $("btts"),
-    o15: $("o15"),
-    o25: $("o25"),
-    o35: $("o35"),
-    o45: $("o45"),
-    avgHomeGoals: $("avgHomeGoals"),
-    avgAwayGoals: $("avgAwayGoals"),
-    avgTotalGoals: $("avgTotalGoals"),
-    topScorelines: $("topScorelines"),
-  };
-
-  async function loadSimulations() {
-    const url = `/simulate/${fixtureId}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`API error: ${res.status}`);
-    const data = await res.json();
-    if (!data || !data.simulations) throw new Error("Simulation data not found in response");
-    return data.simulations;
-  }
-
-  function renderSim(sim) {
-    if (slots.homeWin) slots.homeWin.textContent = pct(sim.home_win_percentage);
-    if (slots.draw) slots.draw.textContent = pct(sim.draw_percentage);
-    if (slots.awayWin) slots.awayWin.textContent = pct(sim.away_win_percentage);
-    if (slots.btts) slots.btts.textContent = pct(sim.btts_percentage);
-
-    if (slots.o15) slots.o15.textContent = pct(sim.o15_goals_percentage);
-    if (slots.o25) slots.o25.textContent = pct(sim.o25_goals_percentage);
-    if (slots.o35) slots.o35.textContent = pct(sim.o35_goals_percentage);
-    if (slots.o45) slots.o45.textContent = pct(sim.o45_goals_percentage);
-
-    if (slots.avgHomeGoals) slots.avgHomeGoals.textContent = fmt(sim.home_goals_avg);
-    if (slots.avgAwayGoals) slots.avgAwayGoals.textContent = fmt(sim.away_goals_avg);
-    if (slots.avgTotalGoals) slots.avgTotalGoals.textContent = fmt(sim.total_goals_avg);
-
-    if (slots.topScorelines) {
-      const entries = sim.scorelines ? Object.entries(sim.scorelines) : [];
-      slots.topScorelines.innerHTML = entries
-        .sort((a, b) => Number(b[1]) - Number(a[1]))
-        .slice(0, 10)
-        .map(
-          ([score, p]) =>
-            `<div style="width:100%;display:flex;justify-content:space-between;gap:12px;">
-               <span>${score}</span><strong>${pct(p)}</strong>
-             </div>`
-        )
-        .join("");
-    }
-  }
-
-  function openModal() {
-    if (modal) modal.style.display = "block";
-  }
-  function closeModal() {
-    if (modal) modal.style.display = "none";
-  }
-
-  if (btnSim) {
-    btnSim.addEventListener("click", async () => {
-      try {
-        const sim = await loadSimulations();
-        renderSim(sim);
-        openModal();
-      } catch (err) {
-        console.error("Simulation Fetch Error:", err);
-        alert("Failed to generate simulations. Please try again in a moment.");
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
       }
-    });
-  }
-  if (closeBtn) closeBtn.addEventListener("click", closeModal);
-  window.addEventListener("keydown", (e) => e.key === "Escape" && closeModal());
-  window.addEventListener("click", (e) => e.target === modal && closeModal());
 
-  // -------------------------------
-  // Bookmaker odds highlighting
-  // -------------------------------
-  const bookmakerSelect = $("bookmaker-select");
+      const data = await response.json();
 
-  function updateOddsDisplay(bookmakerKey) {
-    $$(".odds-value").forEach((td) => {
-      const oddsStr = td.getAttribute(`data-${bookmakerKey}`);
+      if (!data.simulations) {
+        throw new Error("Simulation data not found in response");
+      }
+
+      const sim = data.simulations;
+
+      const resultsHTML = `
+        <p><strong>Total Simulations:</strong> ${sim.simulations}</p>
+        <p><strong>Home Win:</strong> ${sim.home_win_percentage}%</p>
+        <p><strong>Draw:</strong> ${sim.draw_percentage}%</p>
+        <p><strong>Away Win:</strong> ${sim.away_win_percentage}%</p>
+        <p><strong>BTTS:</strong> ${sim.btts_percentage}%</p>
+        <p><strong>Over 1.5 Goals:</strong> ${sim.o15_goals_percentage}%</p>
+        <p><strong>Over 2.5 Goals:</strong> ${sim.o25_goals_percentage}%</p>
+        <p><strong>Over 3.5 Goals:</strong> ${sim.o35_goals_percentage}%</p>
+        <p><strong>Over 4.5 Goals:</strong> ${sim.o45_goals_percentage}%</p>
+        <p><strong>Avg Home Goals:</strong> ${sim.home_goals_avg}</p>
+        <p><strong>Avg Away Goals:</strong> ${sim.away_goals_avg}</p>
+        <p><strong>Avg Total Goals:</strong> ${sim.total_goals_avg}</p>
+        <h3>Top Scorelines:</h3>
+        <ul>
+          ${Object.entries(sim.scorelines).map(([score, pct]) => `<li>${score}: ${pct}%</li>`).join("")}
+        </ul>
+      `;
+
+      document.getElementById("simulationResults").innerHTML = resultsHTML;
+      document.getElementById("simulationModal").style.display = "block";
+
+    } catch (error) {
+      console.error("Simulation Fetch Error:", error);
+      alert("Failed to generate simulations. See console for details.");
+    }
+  });
+
+  // Close Modal
+  document.getElementById('closeModal').addEventListener('click', function () {
+    document.getElementById('simulationModal').style.display = 'none';
+  });
+
+  // Function to update odds and apply green highlighting
+  function updateOddsDisplay(bookmaker) {
+    document.querySelectorAll('.odds-value').forEach(td => {
+      const oddsStr = td.getAttribute(`data-${bookmaker}`);
       const impliedStr = td.getAttribute("data-implied");
 
-      td.textContent = oddsStr && oddsStr !== "null" ? oddsStr : "N/A";
+      td.textContent = oddsStr || "N/A";
       td.style.backgroundColor = "";
 
       const odds = parseFloat(oddsStr);
@@ -1953,52 +1353,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (bookmakerSelect) {
-    updateOddsDisplay(bookmakerSelect.value); // initial on load
-    bookmakerSelect.addEventListener("change", function () {
-      updateOddsDisplay(this.value);
-    });
-  }
+  // Run once on page load for default bookmaker
+  window.addEventListener('DOMContentLoaded', function () {
+    const defaultBookmaker = document.getElementById('bookmaker-select').value;
+    updateOddsDisplay(defaultBookmaker);
+  });
 
-  // -------------------------------
-  // Season Stats Toggle (Full vs Last 25)
-  // -------------------------------
-  const btnFull = $("btnFull");
-  const btnLast25 = $("btnLast25");
-  const blockFull = $("seasonStatsFull");
-  const blockLast25 = $("seasonStatsLast25");
-
-  function show(el) {
-    if (el) el.style.display = "block";
-  }
-  function hide(el) {
-    if (el) el.style.display = "none";
-  }
-  function setActive(activeBtn, inactiveBtn) {
-    if (activeBtn) activeBtn.classList.add("active");
-    if (inactiveBtn) inactiveBtn.classList.remove("active");
-  }
-
-  if (btnFull) {
-    btnFull.addEventListener("click", () => {
-      show(blockFull);
-      hide(blockLast25);
-      setActive(btnFull, btnLast25);
-    });
-  }
-
-  if (btnLast25) {
-    btnLast25.addEventListener("click", () => {
-      if (btnLast25.disabled) return; // respect disabled state
-      hide(blockFull);
-      show(blockLast25);
-      setActive(btnLast25, btnFull);
-    });
-  }
-});
+  // Update odds on dropdown change
+  document.getElementById('bookmaker-select').addEventListener('change', function () {
+    const selected = this.value;
+    updateOddsDisplay(selected);
+  });
 </script>
-
-
 
     <br>
     <a href="{{ url_for('fixtures_page') }}">Back to Fixtures</a>
