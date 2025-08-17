@@ -937,29 +937,49 @@ from flask import render_template, request
 
 @app.route('/simulate/<fixture_id>')
 def simulate_game(fixture_id):
+    # Your OddAlerts API token
     api_token = 'jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub'
     url = f"https://data.oddalerts.com/api/predictions/generate/{fixture_id}?api_token={api_token}"
 
     try:
-        response = requests.get(url)
+        # Make the request to OddAlerts
+        resp = requests.get(url, timeout=30)
         print(f"URL Requested: {url}")
-        print(f"Status Code: {response.status_code}")
-        print(f"Response Body: {response.text}")
+        print(f"Status Code: {resp.status_code}")
+        # ⚠️ Only keep this log in dev; it can be very noisy in prod
+        print(f"Response Body: {resp.text}")
 
-        if response.status_code != 200:
-            return jsonify({"error": f"API error: {response.status_code}", "message": response.text}), response.status_code
+        # Handle HTTP errors
+        if resp.status_code != 200:
+            return jsonify({
+                "error": f"API error: {resp.status_code}",
+                "message": resp.text
+            }), resp.status_code
 
-        data = response.json()
+        # Parse JSON response safely
+        try:
+            payload = resp.json()
+        except ValueError:
+            return jsonify({"error": "Non-JSON response from API"}), 502
 
-        # ✅ Extract the actual simulation data using the fixture_id as a string
-        sim_data = data.get(str(fixture_id))
-        if not sim_data:
+        # Extract the "data" array from payload
+        items = payload.get("data", [])
+        if not items:
             return jsonify({"error": "Simulation data not found in response"}), 400
 
-        return jsonify({"simulations": sim_data})
+        # Find the object for this fixture_id if present, else fallback to first
+        sim_obj = next(
+            (it for it in items if str(it.get("fixture_id")) == str(fixture_id)),
+            items[0]
+        )
+
+        # Return the simulation object in a consistent shape
+        return jsonify({"simulations": sim_obj}), 200
 
     except requests.exceptions.RequestException as e:
+        # Handle network/connection errors
         return jsonify({"error": f"Request failed: {str(e)}"}), 500
+
 
 @app.route('/probability-rankings')
 def probability_rankings():
