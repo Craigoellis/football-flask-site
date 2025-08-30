@@ -9,15 +9,16 @@
 {% block content %}
 
 <!-- Generate Simulations Button -->
-<button id="generateSimulationsBtn" style="margin-bottom: 20px;">
+<button id="generateSimulationsBtn" type="button" style="margin-bottom: 20px;">
   Generate Simulations
 </button>
 
 <!-- H2H Button + Output -->
-<button id="h2h-btn" style="margin-bottom: 20px;">
+<button id="h2h-btn" type="button" style="margin-bottom: 20px;">
   H2H
 </button>
 <pre id="h2h-output" style="white-space: pre-wrap; margin-top: 12px;"></pre>
+
 
 <!-- Bookmaker Selector Dropdown -->
 <div style="margin-bottom: 10px; text-align: left;">
@@ -1288,7 +1289,7 @@
 
 <script>
   // Simulation Generator
-  document.getElementById('generateSimulationsBtn').addEventListener('click', async function () {
+  document.getElementById('generateSimulationsBtn')?.addEventListener('click', async function () {
     const fixtureId = "{{ fixture_id }}";  // Flask will inject the actual fixture ID here
     console.log("Fixture ID:", fixtureId);
 
@@ -1337,7 +1338,7 @@
   });
 
   // Close Modal
-  document.getElementById('closeModal').addEventListener('click', function () {
+  document.getElementById('closeModal')?.addEventListener('click', function () {
     document.getElementById('simulationModal').style.display = 'none';
   });
 
@@ -1359,16 +1360,41 @@
     });
   }
 
-  // Run once on page load for default bookmaker
+  // Run once on page load for default bookmaker (guard if element missing)
   window.addEventListener('DOMContentLoaded', function () {
-    const defaultBookmaker = document.getElementById('bookmaker-select').value;
-    updateOddsDisplay(defaultBookmaker);
+    const bmSelect = document.getElementById('bookmaker-select');
+    if (bmSelect) {
+      updateOddsDisplay(bmSelect.value);
+      bmSelect.addEventListener('change', function () {
+        updateOddsDisplay(this.value);
+      });
+    }
   });
 
-  // Update odds on dropdown change
-  document.getElementById('bookmaker-select').addEventListener('change', function () {
-    const selected = this.value;
-    updateOddsDisplay(selected);
+  // =========================
+  // H2H: fetch & show raw JSON
+  // =========================
+  document.addEventListener('DOMContentLoaded', function () {
+    const h2hBtn = document.getElementById('h2h-btn');
+    const h2hOut = document.getElementById('h2h-output');
+    if (!h2hBtn || !h2hOut) return;
+
+    h2hBtn.addEventListener('click', async function () {
+      h2hOut.textContent = 'Loading H2H...';
+      const fixtureId = "{{ fixture_id }}";
+      const url = `/api/h2h/${fixtureId}`;
+      console.log('[H2H] Fetch:', url);
+
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        console.log('[H2H] Status:', res.status);
+        const txt = await res.text();  // raw body (JSON or error)
+        h2hOut.textContent = txt;
+      } catch (err) {
+        console.error('[H2H] Fetch error:', err);
+        h2hOut.textContent = 'Error loading H2H: ' + (err?.message || String(err));
+      }
+    });
   });
 </script>
 
