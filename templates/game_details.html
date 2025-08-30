@@ -1373,6 +1373,21 @@
     });
   }
 
+  // Parse "9th Mar, 2025" or "9 Mar, 2025" to a timestamp
+  function parseH2HDate(s) {
+    if (!s) return 0;
+    s = String(s).replace(/(\d+)(st|nd|rd|th)/, "$1");
+    const t = Date.parse(s);
+    return Number.isFinite(t) ? t : 0;
+  }
+
+  function escapeHtml(s) {
+    return String(s ?? "").replace(/[&<>"']/g, m =>
+      ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])
+    );
+  }
+  function num(v) { v = Number(v); return Number.isFinite(v) ? v : 0; }
+
   // --- On load: force-close Sim modal and hide any stray static blocks ---
   document.addEventListener('DOMContentLoaded', function () {
     // Ensure the Simulation modal is hidden on load
@@ -1447,38 +1462,29 @@
     if (modal && e.target === modal) modal.style.display = 'none';
   });
 
-  // ---------- H2H helpers ----------
-  function escapeHtml(s) {
-    return String(s ?? "").replace(/[&<>"']/g, m =>
-      ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])
-    );
-  }
-  function num(v) { v = Number(v); return Number.isFinite(v) ? v : 0; }
-
-  // Renders: Date (from date_with_year), FT score (home_goals-away_goals), HT under FT (from ht_score),
-  // plus team names left/right and their YC/RC/corners counts.
+  // ---------- H2H: render cards (newest → oldest) ----------
   function renderH2HCards(payload) {
     const game = payload?.data?.[0];
     let list = Array.isArray(game?.h2h) ? game.h2h : [];
     if (!list.length) return '<p>No H2H data found.</p>';
 
-    // Show newest first (comment out next line to keep original order)
-    list = list.slice().reverse();
+    // Sort newest first by date_with_year (fallback to date)
+    list = list.slice().sort((a, b) =>
+      parseH2HDate(b.date_with_year || b.date) - parseH2HDate(a.date_with_year || a.date)
+    );
 
     return list.map(m => {
       const date = escapeHtml(m.date_with_year || m.date || '');
       const home = escapeHtml(m.home_name);
       const away = escapeHtml(m.away_name);
 
-      const ftHome = (m.home_goals ?? 0);
-      const ftAway = (m.away_goals ?? 0);
-      const ft = `${ftHome}-${ftAway}`;                        // full-time score
-      const ht = m.ht_score ? `(${escapeHtml(m.ht_score)})` : ''; // half-time in brackets
+      const ft = `${m.home_goals ?? 0}-${m.away_goals ?? 0}`;      // full-time
+      const ht = m.ht_score ? `(${escapeHtml(m.ht_score)})` : '';  // half-time in brackets
 
       const hy = num(m.home_yellows), hr = num(m.home_reds), hc = num(m.home_corners);
       const ay = num(m.away_yellows), ar = num(m.away_reds), ac = num(m.away_corners);
 
-      // Optional class for future W/D/L colouring (home perspective)
+      // Optional class for W/D/L (home perspective) if you add colors later
       const outcomeClass = m.home_win ? 'win' : (m.away_win ? 'loss' : 'draw');
 
       return `
@@ -1551,6 +1557,7 @@
     if (modal && e.target === modal) modal.style.display = 'none';
   });
 </script>
+
 
     <br>
     <a href="{{ url_for('fixtures_page') }}">Back to Fixtures</a>
