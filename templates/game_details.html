@@ -1328,7 +1328,31 @@
 </div>
 
 <script>
-  // ---------- Simulations ----------
+  // --- On load: force-close Sim modal and hide any stray static blocks ---
+  document.addEventListener('DOMContentLoaded', function () {
+    // Keep the Simulation modal definitely hidden on load
+    const simModal = document.getElementById('simulationModal');
+    if (simModal) simModal.style.display = 'none';
+
+    // If there are any #simulationResults elements NOT inside the modal, hide/rename them
+    document.querySelectorAll('#simulationResults').forEach(el => {
+      if (!el.closest('#simulationModal')) {
+        el.id = 'simulationResults_legacy';
+        el.style.display = 'none';
+      }
+    });
+
+    // Initialize bookmaker highlighting if selector exists
+    const bmSelect = document.getElementById('bookmaker-select');
+    if (bmSelect) {
+      updateOddsDisplay(bmSelect.value);
+      bmSelect.addEventListener('change', function () {
+        updateOddsDisplay(this.value);
+      });
+    }
+  });
+
+  // ---------- Generate Simulations (modal) ----------
   document.getElementById('generateSimulationsBtn')?.addEventListener('click', async function () {
     const fixtureId = "{{ fixture_id }}";
     const url = `/simulate/${fixtureId}`;
@@ -1372,10 +1396,10 @@
     document.getElementById('simulationModal').style.display = 'none';
   });
 
-  // Click outside to close (Sim)
+  // Close Simulation modal by clicking outside the card
   window.addEventListener('click', function (e) {
     const modal = document.getElementById('simulationModal');
-    if (e.target === modal) modal.style.display = 'none';
+    if (modal && e.target === modal) modal.style.display = 'none';
   });
 
   // ---------- Bookmaker highlighting ----------
@@ -1395,17 +1419,7 @@
     });
   }
 
-  window.addEventListener('DOMContentLoaded', function () {
-    const bmSelect = document.getElementById('bookmaker-select');
-    if (bmSelect) {
-      updateOddsDisplay(bmSelect.value);
-      bmSelect.addEventListener('change', function () {
-        updateOddsDisplay(this.value);
-      });
-    }
-  });
-
-  // ---------- H2H Modal ----------
+  // ---------- H2H (modal) ----------
   document.getElementById('h2h-btn')?.addEventListener('click', async function () {
     const fixtureId = "{{ fixture_id }}";
     const url = `/api/h2h/${fixtureId}`;
@@ -1414,7 +1428,7 @@
 
     try {
       const res = await fetch(url, { cache: 'no-store' });
-      const txt = await res.text(); // raw JSON (or error)
+      const txt = await res.text(); // raw JSON (or error text)
       out.textContent = txt;
     } catch (err) {
       console.error('[H2H] Fetch error:', err);
@@ -1428,10 +1442,10 @@
     document.getElementById('h2hModal').style.display = 'none';
   });
 
-  // Click outside to close (H2H)
+  // Close H2H modal by clicking outside the card
   window.addEventListener('click', function (e) {
     const modal = document.getElementById('h2hModal');
-    if (e.target === modal) modal.style.display = 'none';
+    if (modal && e.target === modal) modal.style.display = 'none';
   });
 </script>
 
