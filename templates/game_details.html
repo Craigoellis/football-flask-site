@@ -1348,11 +1348,11 @@
 
   // --- On load: force-close Sim modal and hide any stray static blocks ---
   document.addEventListener('DOMContentLoaded', function () {
-    // Keep the Simulation modal definitely hidden on load
+    // Ensure the Simulation modal is hidden on load
     const simModal = document.getElementById('simulationModal');
     if (simModal) simModal.style.display = 'none';
 
-    // If there are any #simulationResults elements NOT inside the modal, hide/rename them
+    // Hide any #simulationResults not inside the modal
     document.querySelectorAll('#simulationResults').forEach(el => {
       if (!el.closest('#simulationModal')) {
         el.id = 'simulationResults_legacy';
@@ -1360,7 +1360,7 @@
       }
     });
 
-    // Initialize bookmaker highlighting if selector exists
+    // Bookmaker highlighting init
     const bmSelect = document.getElementById('bookmaker-select');
     if (bmSelect) {
       updateOddsDisplay(bmSelect.value);
@@ -1428,38 +1428,56 @@
   }
   function num(v) { v = Number(v); return Number.isFinite(v) ? v : 0; }
 
+  // Renders: Date (from date_with_year), FT score (home_goals-away_goals), HT under FT (from ht_score),
+  // plus team names left/right and their YC/RC/corners counts.
   function renderH2HCards(payload) {
-    const game = payload && payload.data && payload.data[0];
-    const list = (game && Array.isArray(game.h2h) && game.h2h) || [];
+    const game = payload?.data?.[0];
+    let list = Array.isArray(game?.h2h) ? game.h2h : [];
     if (!list.length) return '<p>No H2H data found.</p>';
 
+    // Show newest first (comment out next line to keep original order)
+    list = list.slice().reverse();
+
     return list.map(m => {
+      const date = escapeHtml(m.date_with_year || m.date || '');
+      const home = escapeHtml(m.home_name);
+      const away = escapeHtml(m.away_name);
+
+      const ftHome = (m.home_goals ?? 0);
+      const ftAway = (m.away_goals ?? 0);
+      const ft = `${ftHome}-${ftAway}`;                        // full-time score
+      const ht = m.ht_score ? `(${escapeHtml(m.ht_score)})` : ''; // half-time in brackets
+
       const hy = num(m.home_yellows), hr = num(m.home_reds), hc = num(m.home_corners);
       const ay = num(m.away_yellows), ar = num(m.away_reds), ac = num(m.away_corners);
-      const score = `${num(m.home_goals)}-${num(m.away_goals)}`;
-      const ht = m.ht_score ? `(${escapeHtml(m.ht_score)})` : '';
-      const date = escapeHtml(m.date_with_year || m.date || '');
+
+      // Optional class for future W/D/L colouring (home perspective)
+      const outcomeClass = m.home_win ? 'win' : (m.away_win ? 'loss' : 'draw');
 
       return `
-        <div class="h2h-card">
+        <div class="h2h-card ${outcomeClass}">
           <div class="h2h-date">${date}</div>
+
           <div class="h2h-row">
+            <!-- Left (home) -->
             <div class="h2h-team">
               <span class="h2h-stats">
                 <span class="h2h-chip"><span class="chip-square chip-yellow"></span>${hy}</span>
                 <span class="h2h-chip"><span class="chip-square chip-red"></span>${hr}</span>
                 <span class="h2h-chip chip-flag">${hc}</span>
               </span>
-              <span>${escapeHtml(m.home_name)}</span>
+              <span>${home}</span>
             </div>
 
+            <!-- Center score -->
             <div class="h2h-score">
-              <div class="score">${score}</div>
+              <div class="score">${ft}</div>
               <div class="ht">${ht}</div>
             </div>
 
+            <!-- Right (away) -->
             <div class="h2h-team right">
-              <span>${escapeHtml(m.away_name)}</span>
+              <span>${away}</span>
               <span class="h2h-stats">
                 <span class="h2h-chip"><span class="chip-square chip-yellow"></span>${ay}</span>
                 <span class="h2h-chip"><span class="chip-square chip-red"></span>${ar}</span>
@@ -1506,7 +1524,6 @@
     if (modal && e.target === modal) modal.style.display = 'none';
   });
 </script>
-
 
     <br>
     <a href="{{ url_for('fixtures_page') }}">Back to Fixtures</a>
