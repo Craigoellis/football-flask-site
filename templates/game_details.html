@@ -30,7 +30,6 @@
   </select>
 </div>
 
-
 <!-- Simulation Modal (Hidden by default) -->
 <div
   id="simulationModal"
@@ -93,7 +92,7 @@
       style="position:absolute; top:10px; right:20px; font-size:24px; cursor:pointer;"
       >&times;</span
     >
-    <h3>Head-to-Head (Raw)</h3>
+    <h3>Head-to-Head</h3>
     <pre
       id="h2hResults"
       style="white-space: pre-wrap; max-height: 60vh; overflow: auto; background:#f7f7f7; padding:12px; border-radius:6px;"
@@ -1379,7 +1378,6 @@
     if (e.target === modal) modal.style.display = 'none';
   });
 
-
   // ---------- Bookmaker highlighting ----------
   function updateOddsDisplay(bookmaker) {
     document.querySelectorAll('.odds-value').forEach(td => {
@@ -1406,7 +1404,6 @@
       });
     }
   });
-
 
   // ---------- H2H Modal ----------
   document.getElementById('h2h-btn')?.addEventListener('click', async function () {
