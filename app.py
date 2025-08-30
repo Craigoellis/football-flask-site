@@ -284,6 +284,117 @@ def refresh_value_bets_cache():
     fetch_value_bets(force_refresh=True)
     print("[CACHE] Value Bets Cache Updated.")
 
+# H2H cache config
+H2H_CACHE_DIR = "/data/h2h"
+H2H_EXPIRY_DAYS = 3  # days to keep cache
+
+
+os.makedirs(H2H_CACHE_DIR, exist_ok=True)
+
+def _h2h_cache_path(fixture_id: int) -> str:
+    """Return the full cache file path for a given fixture id."""
+    return os.path.join(H2H_CACHE_DIR, f"{fixture_id}.json")
+
+def _is_file_expired(filepath: str, days: int) -> bool:
+    """Return True if file doesn't exist or is older than N days."""
+    try:
+        age_seconds = time.time() - os.path.getmtime(filepath)
+        return age_seconds > (days * 86400)
+    except FileNotFoundError:
+        return True
+
+def _load_h2h_from_cache(fixture_id: int):
+    """Load cached JSON if present and not expired; otherwise None."""
+    fp = _h2h_cache_path(fixture_id)
+    if not os.path.exists(fp):
+        return None
+    if _is_file_expired(fp, H2H_EXPIRY_DAYS):
+        # remove expired cache file so others don’t read it
+        try:
+            os.remove(fp)
+        except OSError:
+            pass
+        return None
+    try:
+        with open(fp, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        # if corrupt, delete it and treat as cache miss
+        try:
+            os.remove(fp)
+        except OSError:
+            pass
+        return None
+
+def _save_h2h_to_cache(fixture_id: int, data) -> None:
+    """Write raw JSON to the cache."""
+    os.makedirs(H2H_CACHE_DIR, exist_ok=True)
+    fp = _h2h_cache_path(fixture_id)
+    with open(fp, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False)
+
+def _cleanup_h2h_cache() -> None:
+    """Best-effort cleanup: delete any expired cache files."""
+    if not os.path.isdir(H2H_CACHE_DIR):
+        return
+    for name in os.listdir(H2H_CACHE_DIR):
+        if not name.endswith(".json"):
+            continue
+        fp = os.path.join(H2H_CACHE_DIR, name)
+        if _is_file_expired(fp, H2H_EXPIRY_DAYS):
+            try:
+                os.remove(fp)
+            except OSError:
+                pass
+
+@app.route("/api/h2h/<int:fixture_id>")
+def api_h2h(fixture_id: int):
+    """
+    Returns raw H2H JSON for a fixture.
+    - Serves from cache if available and not expired.
+    - Otherwise fetches from OddAlerts, caches for 3 days, and returns.
+    """
+    # 1) Try cache first
+    cached = _load_h2h_from_cache(fixture_id)
+    if cached is not None:
+        _cleanup_h2h_cache()  # opportunistic cleanup
+        return jsonify(cached)
+
+    # 2) Fetch fresh from OddAlerts
+    # Uses your existing API_TOKEN constant/variable in app.py.
+    # If you don't have API_TOKEN defined, define it like your other endpoints.
+    base_url = f"https://data.oddalerts.com/api/fixtures/{fixture_id}"
+    url = f"{base_url}?api_token={API_TOKEN}&include=h2h"
+
+    attempts = 0
+    last_exc = None
+    while attempts < 5:
+        try:
+            resp = requests.get(url, timeout=20)
+            if resp.status_code == 429:
+                # basic exponential backoff: 1,2,4,8,16s
+                time.sleep(2 ** attempts or 1)
+                attempts += 1
+                continue
+            resp.raise_for_status()
+            data = resp.json()
+
+            # save + return
+            _save_h2h_to_cache(fixture_id, data)
+            _cleanup_h2h_cache()
+            return jsonify(data)
+        except Exception as e:
+            last_exc = e
+            time.sleep(1.0)
+            attempts += 1
+
+    # 3) If fetch fails and no cache to fall back on
+    return jsonify({
+        "error": "Failed to fetch H2H data",
+        "fixture_id": fixture_id,
+        "detail": str(last_exc) if last_exc else "unknown error"
+    }), 502
+
 # =========================
 # Game Details
 # =========================
