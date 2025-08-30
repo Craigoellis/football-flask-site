@@ -19,7 +19,6 @@
 </button>
 <pre id="h2h-output" style="white-space: pre-wrap; margin-top: 12px;"></pre>
 
-
 <!-- Bookmaker Selector Dropdown -->
 <div style="margin-bottom: 10px; text-align: left;">
   <label for="bookmaker-select"><strong>Select Bookmaker:</strong></label>
@@ -32,18 +31,23 @@
   </select>
 </div>
 
-
 <!-- Simulation Modal (Hidden by default) -->
-<div id="simulationModal" style="
+<div
+  id="simulationModal"
+  style="
     display: none;
     position: fixed;
     z-index: 9999;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
     overflow: auto;
     background-color: rgba(0,0,0,0.6);
-">
-  <div style="
+  "
+>
+  <div
+    style="
       background-color: #fff;
       margin: 10% auto;
       padding: 20px;
@@ -51,51 +55,75 @@
       width: 90%;
       max-width: 600px;
       position: relative;
-  ">
-    <span id="closeModal" style="
+    "
+  >
+    <span
+      id="closeModal"
+      style="
         position: absolute;
         top: 10px;
         right: 20px;
         font-size: 24px;
         cursor: pointer;
-    ">&times;</span>
+      "
+      >&times;</span
+    >
 
-    <!-- H2H Modal (Hidden by default) -->
-<div id="h2hModal" style="
-  display: none;
-  position: fixed;
-  z-index: 9999;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.6);
-">
-  <div style="
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 800px;
-    position: relative;
-  ">
-    <span id="closeH2HModal" style="
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      font-size: 24px;
-      cursor: pointer;
-    ">&times;</span>
+    <!-- Simulation results will be injected here -->
+    <div id="simulationResults"></div>
+  </div>
+</div>
+
+<!-- H2H Modal (Hidden by default) -->
+<div
+  id="h2hModal"
+  style="
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+  "
+>
+  <div
+    style="
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 800px;
+      position: relative;
+    "
+  >
+    <span
+      id="closeH2HModal"
+      style="
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 24px;
+        cursor: pointer;
+      "
+      >&times;</span
+    >
 
     <h3>Head-to-Head (Raw)</h3>
-    <pre id="h2hResults" style="
-      white-space: pre-wrap;
-      max-height: 60vh;
-      overflow: auto;
-      background: #f7f7f7;
-      padding: 12px;
-      border-radius: 6px;
-    "></pre>
+    <pre
+      id="h2hResults"
+      style="
+        white-space: pre-wrap;
+        max-height: 60vh;
+        overflow: auto;
+        background: #f7f7f7;
+        padding: 12px;
+        border-radius: 6px;
+      "
+    ></pre>
   </div>
 </div>
 
