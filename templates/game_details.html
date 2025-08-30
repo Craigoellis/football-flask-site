@@ -95,7 +95,8 @@
     <h3>Head-to-Head</h3>
     <pre
       id="h2hResults"
-      style="white-space: pre-wrap; max-height: 60vh; overflow: auto; background:#f7f7f7; padding:12px; border-radius:6px;"
+      class="h2h-list"
+      style="max-height: 60vh; overflow: auto;"
     ></pre>
   </div>
 </div>
@@ -1328,6 +1329,23 @@
 </div>
 
 <script>
+  // ---------- Utilities ----------
+  function updateOddsDisplay(bookmaker) {
+    document.querySelectorAll('.odds-value').forEach(td => {
+      const oddsStr = td.getAttribute(`data-${bookmaker}`);
+      const impliedStr = td.getAttribute("data-implied");
+
+      td.textContent = oddsStr || "N/A";
+      td.style.backgroundColor = "";
+
+      const odds = parseFloat(oddsStr);
+      const implied = parseFloat(impliedStr);
+      if (!isNaN(odds) && !isNaN(implied) && odds > implied) {
+        td.style.backgroundColor = "#c1f0c1"; // light green
+      }
+    });
+  }
+
   // --- On load: force-close Sim modal and hide any stray static blocks ---
   document.addEventListener('DOMContentLoaded', function () {
     // Keep the Simulation modal definitely hidden on load
@@ -1402,21 +1420,56 @@
     if (modal && e.target === modal) modal.style.display = 'none';
   });
 
-  // ---------- Bookmaker highlighting ----------
-  function updateOddsDisplay(bookmaker) {
-    document.querySelectorAll('.odds-value').forEach(td => {
-      const oddsStr = td.getAttribute(`data-${bookmaker}`);
-      const impliedStr = td.getAttribute("data-implied");
+  // ---------- H2H helpers ----------
+  function escapeHtml(s) {
+    return String(s ?? "").replace(/[&<>"']/g, m =>
+      ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])
+    );
+  }
+  function num(v) { v = Number(v); return Number.isFinite(v) ? v : 0; }
 
-      td.textContent = oddsStr || "N/A";
-      td.style.backgroundColor = "";
+  function renderH2HCards(payload) {
+    const game = payload && payload.data && payload.data[0];
+    const list = (game && Array.isArray(game.h2h) && game.h2h) || [];
+    if (!list.length) return '<p>No H2H data found.</p>';
 
-      const odds = parseFloat(oddsStr);
-      const implied = parseFloat(impliedStr);
-      if (!isNaN(odds) && !isNaN(implied) && odds > implied) {
-        td.style.backgroundColor = "#c1f0c1"; // light green
-      }
-    });
+    return list.map(m => {
+      const hy = num(m.home_yellows), hr = num(m.home_reds), hc = num(m.home_corners);
+      const ay = num(m.away_yellows), ar = num(m.away_reds), ac = num(m.away_corners);
+      const score = `${num(m.home_goals)}-${num(m.away_goals)}`;
+      const ht = m.ht_score ? `(${escapeHtml(m.ht_score)})` : '';
+      const date = escapeHtml(m.date_with_year || m.date || '');
+
+      return `
+        <div class="h2h-card">
+          <div class="h2h-date">${date}</div>
+          <div class="h2h-row">
+            <div class="h2h-team">
+              <span class="h2h-stats">
+                <span class="h2h-chip"><span class="chip-square chip-yellow"></span>${hy}</span>
+                <span class="h2h-chip"><span class="chip-square chip-red"></span>${hr}</span>
+                <span class="h2h-chip chip-flag">${hc}</span>
+              </span>
+              <span>${escapeHtml(m.home_name)}</span>
+            </div>
+
+            <div class="h2h-score">
+              <div class="score">${score}</div>
+              <div class="ht">${ht}</div>
+            </div>
+
+            <div class="h2h-team right">
+              <span>${escapeHtml(m.away_name)}</span>
+              <span class="h2h-stats">
+                <span class="h2h-chip"><span class="chip-square chip-yellow"></span>${ay}</span>
+                <span class="h2h-chip"><span class="chip-square chip-red"></span>${ar}</span>
+                <span class="h2h-chip chip-flag">${ac}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
   }
 
   // ---------- H2H (modal) ----------
@@ -1424,12 +1477,17 @@
     const fixtureId = "{{ fixture_id }}";
     const url = `/api/h2h/${fixtureId}`;
     const out = document.getElementById('h2hResults');
-    out.textContent = 'Loading H2H...';
+    out.innerHTML = 'Loading H2H...';
 
     try {
       const res = await fetch(url, { cache: 'no-store' });
-      const txt = await res.text(); // raw JSON (or error text)
-      out.textContent = txt;
+      if (!res.ok) {
+        const txt = await res.text();
+        out.textContent = `Error ${res.status}: ${txt}`;
+      } else {
+        const json = await res.json();
+        out.innerHTML = renderH2HCards(json);
+      }
     } catch (err) {
       console.error('[H2H] Fetch error:', err);
       out.textContent = 'Error loading H2H: ' + (err?.message || String(err));
@@ -1448,6 +1506,7 @@
     if (modal && e.target === modal) modal.style.display = 'none';
   });
 </script>
+
 
     <br>
     <a href="{{ url_for('fixtures_page') }}">Back to Fixtures</a>
