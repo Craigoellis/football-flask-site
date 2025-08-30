@@ -1328,6 +1328,33 @@
     </div> <!-- ✅ Closing Flex Container -->
 </div>
 
+<style>
+  /* --- H2H layout hard overrides (wins vs any conflicting CSS) --- */
+  #h2hModal .h2h-list { display: grid !important; gap: 12px !important; padding: 6px 0 !important; }
+  #h2hModal .h2h-card { background:#0f172a !important; color:#e5e7eb !important; border-radius:10px !important; padding:12px 14px !important; box-shadow:0 6px 18px rgba(0,0,0,.18) !important; font-size:14px !important; }
+  #h2hModal .h2h-date { text-align:center !important; font-weight:700 !important; color:#cbd5e1 !important; margin-bottom:8px !important; }
+
+  #h2hModal .h2h-row { display:flex !important; align-items:center !important; justify-content:space-between !important; gap:10px !important; }
+
+  #h2hModal .h2h-team { flex:1 1 0 !important; display:flex !important; align-items:center !important; gap:10px !important; font-weight:600 !important; }
+  #h2hModal .h2h-team.right { justify-content:flex-end !important; text-align:right !important; }
+
+  #h2hModal .h2h-stats { display:flex !important; flex-direction:row !important; align-items:center !important; gap:10px !important; }
+  #h2hModal .h2h-chip { display:inline-flex !important; align-items:center !important; gap:6px !important; }
+  #h2hModal .chip-square { width:10px !important; height:10px !important; border-radius:2px !important; display:inline-block !important; }
+  #h2hModal .chip-yellow { background:#facc15 !important; }
+  #h2hModal .chip-red    { background:#ef4444 !important; }
+  #h2hModal .chip-flag::before { content:"⚑" !important; display:inline-block !important; transform: translateY(-1px) !important; margin-right:4px !important; }
+
+  #h2hModal .h2h-score { flex:0 0 auto !important; background:#111827 !important; border-radius:8px !important; padding:6px 12px !important; text-align:center !important; min-width:70px !important; position:relative !important; }
+  #h2hModal .h2h-score .score { font-weight:800 !important; font-size:16px !important; line-height:1.1 !important; }
+  #h2hModal .h2h-score .ht { font-size:11px !important; opacity:.8 !important; }
+  #h2hModal .h2h-score::after { content:"" !important; position:absolute !important; right:-8px !important; top:12% !important; bottom:12% !important; width:3px !important; background:#06b6d4 !important; border-radius:2px !important; }
+
+  /* prevent any leftover pre-style whitespace from affecting the layout */
+  #h2hModal .h2h-list, #h2hModal .h2h-list * { white-space: normal !important; }
+</style>
+
 <script>
   // ---------- Utilities ----------
   function updateOddsDisplay(bookmaker) {
