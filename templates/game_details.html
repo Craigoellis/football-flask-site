@@ -1427,6 +1427,15 @@
     white-space: normal !important;
   }
 
+  /* H2H summary bar: auto-fit tiles so 5 items wrap nicely */
+  #h2hModal .h2h-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+
   /* Small screens */
   @media (max-width: 540px) {
     #h2hModal .h2h-row { gap: 6px !important; }
@@ -1454,7 +1463,7 @@
     });
   }
 
-  // Parse "9th Mar, 2025" or "9 Mar, 2025" to a timestamp
+  // Parse dates like "9th Mar, 2025" safely
   function parseH2HDate(s) {
     if (!s) return 0;
     s = String(s).replace(/(\d+)(st|nd|rd|th)/, "$1");
@@ -1468,14 +1477,14 @@
     );
   }
   function num(v) { v = Number(v); return Number.isFinite(v) ? v : 0; }
+  function fmt2(n) { return Number.isFinite(n) ? n.toFixed(2) : "0.00"; }
+  function pct(count, total) { return total ? (100 * count / total).toFixed(2) : "0.00"; }
 
   // --- On load: force-close Sim modal and hide any stray static blocks ---
   document.addEventListener('DOMContentLoaded', function () {
-    // Ensure the Simulation modal is hidden on load
     const simModal = document.getElementById('simulationModal');
     if (simModal) simModal.style.display = 'none';
 
-    // Hide any #simulationResults not inside the modal
     document.querySelectorAll('#simulationResults').forEach(el => {
       if (!el.closest('#simulationModal')) {
         el.id = 'simulationResults_legacy';
@@ -1483,7 +1492,6 @@
       }
     });
 
-    // Bookmaker highlighting init
     const bmSelect = document.getElementById('bookmaker-select');
     if (bmSelect) {
       updateOddsDisplay(bmSelect.value);
@@ -1537,13 +1545,12 @@
     document.getElementById('simulationModal').style.display = 'none';
   });
 
-  // Close Simulation modal by clicking outside the card
   window.addEventListener('click', function (e) {
     const modal = document.getElementById('simulationModal');
     if (modal && e.target === modal) modal.style.display = 'none';
   });
 
-  // ---------- H2H: render cards (newest → oldest) ----------
+  // ---------- H2H: render cards + summary (newest → oldest) ----------
   function renderH2HCards(payload) {
     const game = payload?.data?.[0];
     let list = Array.isArray(game?.h2h) ? game.h2h : [];
@@ -1554,26 +1561,62 @@
       parseH2HDate(b.date_with_year || b.date) - parseH2HDate(a.date_with_year || a.date)
     );
 
-    return list.map(m => {
+    // Summary stats
+    const n = list.length;
+    let goalsSum = 0, cornersSum = 0, btts = 0, o15 = 0, o25 = 0;
+    for (const m of list) {
+      const hg = num(m.home_goals), ag = num(m.away_goals);
+      const hc = num(m.home_corners), ac = num(m.away_corners);
+      goalsSum += hg + ag;
+      cornersSum += hc + ac;
+      if (m.btts)    btts++;
+      if (m.over_15) o15++;
+      if (m.over_25) o25++;
+    }
+
+    const summaryHTML = `
+      <div class="h2h-summary">
+        <div class="tile">
+          <div class="label">AVG Goals</div>
+          <div class="value">${fmt2(goalsSum / n)}</div>
+        </div>
+        <div class="tile">
+          <div class="label">AVG Corners</div>
+          <div class="value">${fmt2(cornersSum / n)}</div>
+        </div>
+        <div class="tile">
+          <div class="label">BTTS %</div>
+          <div class="value">${pct(btts, n)}</div>
+        </div>
+        <div class="tile">
+          <div class="label">Over 1.5 %</div>
+          <div class="value">${pct(o15, n)}</div>
+        </div>
+        <div class="tile">
+          <div class="label">Over 2.5 %</div>
+          <div class="value">${pct(o25, n)}</div>
+        </div>
+      </div>
+    `;
+
+    // Cards
+    const cardsHTML = list.map(m => {
       const date = escapeHtml(m.date_with_year || m.date || '');
       const home = escapeHtml(m.home_name);
       const away = escapeHtml(m.away_name);
 
-      const ft = `${m.home_goals ?? 0}-${m.away_goals ?? 0}`;      // full-time
-      const ht = m.ht_score ? `(${escapeHtml(m.ht_score)})` : '';  // half-time in brackets
+      const ft = `${m.home_goals ?? 0}-${m.away_goals ?? 0}`;
+      const ht = m.ht_score ? `(${escapeHtml(m.ht_score)})` : '';
 
       const hy = num(m.home_yellows), hr = num(m.home_reds), hc = num(m.home_corners);
       const ay = num(m.away_yellows), ar = num(m.away_reds), ac = num(m.away_corners);
 
-      // Optional class for W/D/L (home perspective) if you add colors later
       const outcomeClass = m.home_win ? 'win' : (m.away_win ? 'loss' : 'draw');
 
       return `
         <div class="h2h-card ${outcomeClass}">
           <div class="h2h-date">${date}</div>
-
           <div class="h2h-row">
-            <!-- Left (home) -->
             <div class="h2h-team">
               <span class="h2h-stats">
                 <span class="h2h-chip"><span class="chip-square chip-yellow"></span>${hy}</span>
@@ -1582,14 +1625,10 @@
               </span>
               <span>${home}</span>
             </div>
-
-            <!-- Center score -->
             <div class="h2h-score">
               <div class="score">${ft}</div>
               <div class="ht">${ht}</div>
             </div>
-
-            <!-- Right (away) -->
             <div class="h2h-team right">
               <span>${away}</span>
               <span class="h2h-stats">
@@ -1602,6 +1641,8 @@
         </div>
       `;
     }).join('');
+
+    return summaryHTML + `<div class="h2h-list">${cardsHTML}</div>`;
   }
 
   // ---------- H2H (modal) ----------
@@ -1632,13 +1673,11 @@
     document.getElementById('h2hModal').style.display = 'none';
   });
 
-  // Close H2H modal by clicking outside the card
   window.addEventListener('click', function (e) {
     const modal = document.getElementById('h2hModal');
     if (modal && e.target === modal) modal.style.display = 'none';
   });
 </script>
-
 
     <br>
     <a href="{{ url_for('fixtures_page') }}">Back to Fixtures</a>
