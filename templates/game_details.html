@@ -434,20 +434,32 @@
     </tbody>
 </table>
 
-<section class="season-block">
-  <h3>Goal Timings</h3>
-  <table class="season-stats">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Home</th>
-        <th>Away</th>
-        <th>Total</th>
-        <th>Home</th>
-        <th>Away</th>
-        <th>Total</th>
-      </tr>
-    </thead>
+<table border="1" cellpadding="8" cellspacing="0"
+       style="width: 100%; border-collapse: collapse; text-align: center;">
+  <thead>
+    <!-- Main Title Row -->
+    <tr style="background-color: #007bff; color: white;">
+      <th colspan="7" style="font-size: 18px;">Goal Timings</th>
+    </tr>
+
+    <!-- Team Names Row -->
+    <tr style="background-color: #007bff; color: white;">
+      <th rowspan="2">Statistic</th>
+      <th colspan="3">{{ home_team }}</th>
+      <th colspan="3">{{ away_team }}</th>
+    </tr>
+
+    <!-- Home | Away | Overall Labels Row -->
+    <tr style="background-color: #007bff; color: white;">
+      <th>Home</th>
+      <th>Away</th>
+      <th>Overall</th>
+      <th>Home</th>
+      <th>Away</th>
+      <th>Overall</th>
+    </tr>
+  </thead>
+  
     <tbody>
       <!-- Scored / Conceded First (percentages only) -->
       <tr>
