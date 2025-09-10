@@ -1989,7 +1989,7 @@ def custom_date(value):
 # Scheduler Setup
 # =========================
 scheduler = BackgroundScheduler()
-scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=15)
+scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=30)
 scheduler.add_job(refresh_value_bets_cache, 'interval', minutes=10)
 scheduler.start()
 
