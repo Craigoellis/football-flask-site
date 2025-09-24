@@ -1302,7 +1302,10 @@ def value_bets():
             "bookmaker": bookmaker_name,
             "latest_odds": latest_odds,
             "value_percentage": value_percentage,
-            "fixture_id": bet["id"]
+            "fixture_id": bet["id"],
+            "home_played": bet.get("home_played"),
+            "away_played": bet.get("away_played"),
+            "competition_progress": bet.get("competition", {}).get("progress"),
         })
 
     return render_template('value_bets.html', value_bets=table_data, market_name_mapping=MARKET_NAME_MAPPING)
@@ -1879,7 +1882,10 @@ def filter_value_bets():
                 "bookmaker": bookmaker_name,
                 "latest_odds": latest_odds,
                 "value_percentage": value_percentage,
-                "fixture_id": bet["id"]
+                "fixture_id": bet["id"],
+                "home_played": bet.get("home_played"),
+                "away_played": bet.get("away_played"),
+                "competition_progress": bet.get("competition", {}).get("progress"),
             })
 
         # 🟢 Debug print statements at the end, just before returning:
