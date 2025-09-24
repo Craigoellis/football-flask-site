@@ -515,6 +515,30 @@ def load_game_details_cache_from_disk():
     else:
         game_details_cache = {}
 
+# --- Save Season Stats Cache ---
+def save_season_stats_cache_to_disk():
+    try:
+        with open(SEASON_STATS_CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump(season_stats_cache, f, indent=2)
+        with open("/data/season_stats_cache_time.txt", "w", encoding="utf-8") as t:
+            t.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    except Exception as e:
+        print(f"[ERROR] Failed to save season stats cache: {e}")
+
+
+# --- Load Season Stats Cache ---
+def load_season_stats_cache_from_disk():
+    global season_stats_cache
+    if os.path.exists(SEASON_STATS_CACHE_FILE):
+        with open(SEASON_STATS_CACHE_FILE, "r", encoding="utf-8") as f:
+            try:
+                season_stats_cache = json.load(f)
+            except json.JSONDecodeError:
+                season_stats_cache = {}
+    else:
+        season_stats_cache = {}
+
+
 # --- Main Function ---
 def fetch_and_cache_all_game_details():
     print(f"[CACHE] Refreshing Game Details Cache at {datetime.now().strftime('%H:%M:%S')}...")
