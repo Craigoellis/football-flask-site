@@ -284,6 +284,17 @@ def refresh_value_bets_cache():
     fetch_value_bets(force_refresh=True)
     print("[CACHE] Value Bets Cache Updated.")
 
+@app.route('/debug/value-bets-cache')
+def debug_value_bets_cache():
+    if os.path.exists(VALUE_BETS_CACHE_FILE):
+        with open(VALUE_BETS_CACHE_FILE, "r", encoding="utf-8") as f:
+            try:
+                data = json.load(f)
+                return jsonify(data)
+            except json.JSONDecodeError:
+                return jsonify({})
+    return jsonify({})
+
 # H2H cache config
 H2H_CACHE_DIR = "/data/h2h"
 H2H_EXPIRY_DAYS = 3  # days to keep cache
