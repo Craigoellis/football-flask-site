@@ -1433,7 +1433,26 @@ def filter_value_bets():
         selected_predictability = request_data.get("predictability", [])
         exclude_cups = request_data.get("exclude_cups", False)
         exclude_friendlies = request_data.get("exclude_friendlies", False)
-        selected_markets = request_data.get("markets", [])
+                # Season Progress (global range)
+        sp_cfg = (request_data.get("season_progress") or {})
+        sp_min = sp_cfg.get("min", 0)
+        sp_max = sp_cfg.get("max", 100)
+
+        # clamp & sanitize
+        try:
+            sp_min = max(0.0, min(100.0, float(sp_min)))
+        except Exception:
+            sp_min = 0.0
+        try:
+            sp_max = max(0.0, min(100.0, float(sp_max)))
+        except Exception:
+            sp_max = 100.0
+
+        # ensure min <= max
+        if sp_min > sp_max:
+            sp_min, sp_max = sp_max, sp_min
+
+        selected_markets = request_data.get("markets", [])   
 
         # Load home win FT filter settings
         home_win_filters = request_data.get("home_win_filters", {})
@@ -1633,6 +1652,16 @@ def filter_value_bets():
                 continue  # Skip cup games
             if exclude_friendlies and bet["competition"].get("is_friendly", False):
                 continue  # Skip friendly games
+
+            # 🟢 Apply Season Progress filter
+            comp_progress = bet.get("competition", {}).get("progress")
+            if comp_progress is not None:
+                try:
+                    comp_progress = float(comp_progress)
+                except Exception:
+                    continue  # skip if not numeric
+                if not (sp_min <= comp_progress <= sp_max):
+                    continue  # outside range → skip this bet
 
             # Filter odds based on selected bookmakers and remove negative values
             filtered_odds = [

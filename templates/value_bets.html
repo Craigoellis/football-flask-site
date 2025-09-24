@@ -35,6 +35,15 @@
     <label><input type="checkbox" id="exclude_cups" name="exclude_cups"> Exclude Cup Games</label><br>
     <label><input type="checkbox" id="exclude_friendlies" name="exclude_friendlies"> Exclude Friendlies</label><br>
 
+    <!-- Season Progress (Global range filter) -->
+    <div class="filter-settings">
+      <label>Season Progress (%): 
+        <input type="number" id="season-progress-min" value="0" min="0" max="100" step="1">
+        to
+        <input type="number" id="season-progress-max" value="100" min="0" max="100" step="1">
+      </label>
+    </div>
+
     <button type="button" class="collapsible">Home Win (FT Result)</button>
     <div class="content">
       <label><input type="checkbox" id="filter-home-win" checked> Include Home Win FT Result</label>
@@ -361,20 +370,33 @@
     }
 
     function applyFilter() {
-        let selectedBookmakers = [];
-        document.querySelectorAll("input[name='bookmaker']:checked").forEach(checkbox => {
-            selectedBookmakers.push(checkbox.value);
-        });
+    let selectedBookmakers = [];
+    document.querySelectorAll("input[name='bookmaker']:checked").forEach(checkbox => {
+        selectedBookmakers.push(checkbox.value);
+    });
 
-        let selectedPredictability = [];
-        document.querySelectorAll("input[name='predictability']:checked").forEach(checkbox => {
-            selectedPredictability.push(checkbox.value);
-        });
+    let selectedPredictability = [];
+    document.querySelectorAll("input[name='predictability']:checked").forEach(checkbox => {
+        selectedPredictability.push(checkbox.value);
+    });
 
+    let excludeCups = document.getElementById("exclude_cups").checked;
+    let excludeFriendlies = document.getElementById("exclude_friendlies").checked;
 
-        let excludeCups = document.getElementById("exclude_cups").checked;
-        let excludeFriendlies = document.getElementById("exclude_friendlies").checked;
+    const spMin = parseFloat(document.getElementById("season-progress-min").value);
+    const spMax = parseFloat(document.getElementById("season-progress-max").value);
 
+    // Build payload with everything
+    const payload = {
+        bookmakers: selectedBookmakers,
+        predictability: selectedPredictability,
+        exclude_cups: excludeCups,
+        exclude_friendlies: excludeFriendlies,
+        season_progress: {
+            min: Number.isFinite(spMin) ? spMin : 0,
+            max: Number.isFinite(spMax) ? spMax : 100
+        }
+    };
 
         // Home Win FT Result filter values
         const includeHomeWin = document.getElementById("filter-home-win").checked;
@@ -538,9 +560,6 @@
         const o85ValueMin = parseFloat(document.getElementById("o85-value-min").value);
         const o85ValueMax = parseFloat(document.getElementById("o85-value-max").value);
 
-
-
-
         fetch("/filter_value_bets?" + new Date().getTime(), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -549,6 +568,11 @@
                 predictability: selectedPredictability, 
                 exclude_cups: excludeCups,
                 exclude_friendlies: excludeFriendlies,
+
+                season_progress: {
+                    min: Number.isFinite(spMin) ? spMin : 0,
+                    max: Number.isFinite(spMax) ? spMax : 100
+                },
 
                 home_win_filters: {
                     include: includeHomeWin,
