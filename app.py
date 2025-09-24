@@ -501,6 +501,18 @@ def fetch_season_stats(season_ids, api_token):
     print(f"[CACHE] Fetched and cached season stats for {len(season_stats)} Season IDs.")
     return season_stats
 
+@app.route('/debug/season-stats-cache')
+def debug_season_stats_cache():
+    if os.path.exists(SEASON_STATS_CACHE_FILE):
+        with open(SEASON_STATS_CACHE_FILE, "r", encoding="utf-8") as f:
+            try:
+                data = json.load(f)
+                return jsonify(data)
+            except json.JSONDecodeError:
+                return jsonify({})
+    return jsonify({})
+
+
 API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"
 GAME_DETAILS_CACHE_FILE = '/data/game_details_cache.json'
 
