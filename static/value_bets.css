@@ -235,3 +235,16 @@ h1, p {
 .range-sep {
     opacity: 0.7;
 }
+
+.season-progress-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* space between elements */
+    margin-top: 5px;
+}
+
+.season-progress-container label {
+    font-weight: normal;
+}
+
