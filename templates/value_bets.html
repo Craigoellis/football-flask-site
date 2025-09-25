@@ -36,14 +36,16 @@
     <label><input type="checkbox" id="exclude_friendlies" name="exclude_friendlies"> Exclude Friendlies</label><br>
 
     <!-- Season Progress (Global range filter) -->
+    <h3>Season Progress</h3>
     <div class="filter-settings">
-      <label>Season Progress (%): 
+      <div class="inline-range">
+        <label class="range-label">Season Progress (%):</label>
         <input type="number" id="season-progress-min" value="0" min="0" max="100" step="1">
-        to
+        <span class="range-sep">to</span>
         <input type="number" id="season-progress-max" value="100" min="0" max="100" step="1">
-      </label>
+      </div>
     </div>
-
+    
     <button type="button" class="collapsible">Home Win (FT Result)</button>
     <div class="content">
       <label><input type="checkbox" id="filter-home-win" checked> Include Home Win FT Result</label>

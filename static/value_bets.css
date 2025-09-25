@@ -209,3 +209,29 @@ h1, p {
     width: 100px;
     text-align: center;
 }
+
+/* Center section titles inside the filter popup */
+.filter-popup h3 {
+    text-align: center;
+    /* color is already #007BFF from your file */
+}
+
+/* Inline min/max row for Season Progress (same feel as other range rows) */
+.inline-range {
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* centers the whole row like picture 2 */
+    gap: 8px;
+}
+
+.inline-range input {
+    width: 110px;             /* similar width to your other number inputs */
+}
+
+.range-label {
+    font-weight: 600;
+}
+
+.range-sep {
+    opacity: 0.7;
+}
