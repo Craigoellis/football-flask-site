@@ -413,13 +413,14 @@ def api_h2h(fixture_id: int):
 game_details_cache = {}
 
 def fetch_season_stats(season_ids, api_token):
+    global season_stats_cache
     cache_file = SEASON_STATS_CACHE_FILE
     cache_expiry_days = 3
     season_stats = {}
 
     # Load existing cache if it exists
     if os.path.exists(cache_file):
-        with open(cache_file, 'r') as f:
+        with open(cache_file, 'r', encoding='utf-8') as f:
             try:
                 season_stats = json.load(f)
                 print(f"[CACHE] {len(season_stats)} Season Stats already cached.")
@@ -475,8 +476,8 @@ def fetch_season_stats(season_ids, api_token):
                     season_stats[season_id_str]["data"].extend(paginated_data.get('data', []))
 
                 # ✅ Immediately save updated cache after each season_id fetch
-                with open(cache_file, 'w') as f:
-                    json.dump(season_stats, f)
+                with open(cache_file, 'w', encoding='utf-8') as f:
+                    json.dump(season_stats, f, indent=2)
 
                 print(f"[CACHE] Cached Season ID {season_id}")
                 break  # Successful fetch, exit retry loop
@@ -495,11 +496,15 @@ def fetch_season_stats(season_ids, api_token):
         for unused_id in unused_ids:
             del season_stats[unused_id]
             print(f"[CACHE] Removed stale Season ID {unused_id}")
-        with open(cache_file, 'w') as f:
-            json.dump(season_stats, f)
+        with open(cache_file, 'w', encoding='utf-8') as f:
+            json.dump(season_stats, f, indent=2)
 
     print(f"[CACHE] Fetched and cached season stats for {len(season_stats)} Season IDs.")
+
+    # 🔑 keep in-memory cache in sync with the file
+    season_stats_cache = season_stats
     return season_stats
+
 
 @app.route('/debug/season-stats-cache')
 def debug_season_stats_cache():
@@ -538,17 +543,6 @@ def load_game_details_cache_from_disk():
     else:
         game_details_cache = {}
 
-# --- Save Season Stats Cache ---
-def save_season_stats_cache_to_disk():
-    try:
-        with open(SEASON_STATS_CACHE_FILE, "w", encoding="utf-8") as f:
-            json.dump(season_stats_cache, f, indent=2)
-        with open("/data/season_stats_cache_time.txt", "w", encoding="utf-8") as t:
-            t.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    except Exception as e:
-        print(f"[ERROR] Failed to save season stats cache: {e}")
-
-
 # --- Load Season Stats Cache ---
 def load_season_stats_cache_from_disk():
     global season_stats_cache
@@ -560,7 +554,6 @@ def load_season_stats_cache_from_disk():
                 season_stats_cache = {}
     else:
         season_stats_cache = {}
-
 
 # --- Main Function ---
 def fetch_and_cache_all_game_details():
@@ -996,17 +989,16 @@ def datetimeformat(value):
 def game_details(fixture_id):
     fixture_id_str = str(fixture_id)
 
-    # 🔁 Always load latest fixtures data from disk (optional but harmless)
-    load_fixtures_cache_from_disk()
+    # 🔁 Always load latest caches from disk
+    load_fixtures_cache_from_disk()            # you already had this
+    load_season_stats_cache_from_disk()        # ✅ NEW: ensure season stats are fresh from JSON
 
-    # 🔍 Check if game data for this fixture is in memory
+    # 🔍 Ensure game details for this fixture are in memory (fallback to disk if needed)
     if fixture_id_str not in game_details_cache:
-        # 🧠 Try loading the latest game details cache from disk
         if os.path.exists(GAME_DETAILS_CACHE_FILE):
             try:
                 with open(GAME_DETAILS_CACHE_FILE, "r", encoding="utf-8") as f:
                     disk_data = json.load(f)
-                    # If this fixture exists on disk, update memory
                     if fixture_id_str in disk_data:
                         game_details_cache[fixture_id_str] = disk_data[fixture_id_str]
                     else:
@@ -1016,6 +1008,7 @@ def game_details(fixture_id):
         else:
             return f"No data found for Fixture ID: {fixture_id}", 404
 
+    # Defaults
     fixture_name = None
     kick_off_time = None
     home_team = None
@@ -1026,7 +1019,7 @@ def game_details(fixture_id):
     home_position = None
     away_position = None
 
-    # 🔍 Find the fixture info from the fixture cache
+    # 🔎 Find the fixture info from the fixtures cache
     for date_fixtures in cached_fixtures.values():
         for country_fixtures in date_fixtures.values():
             for league_fixtures in country_fixtures.values():
@@ -1049,11 +1042,12 @@ def game_details(fixture_id):
     # ✅ Get the game data from memory (now guaranteed to exist)
     game_data = game_details_cache.get(fixture_id_str, {})
 
-    # 📊 Load season stats for each team (if available)
+    # 📊 Select season stats for each team from the freshly-loaded cache
     home_stats = {}
     away_stats = {}
     if season_id:
-        season_stats_data = season_stats_cache.get(str(season_id), {}).get("data", [])
+        season_bucket = season_stats_cache.get(str(season_id), {})
+        season_stats_data = season_bucket.get("data", [])
         for team_data in season_stats_data:
             team_id = team_data.get("team_id")
             if team_id == home_id:
@@ -1061,9 +1055,9 @@ def game_details(fixture_id):
             elif team_id == away_id:
                 away_stats = team_data
 
-    # 🧾 Render the page with all available data
+    # 🧾 Render the page
     return render_template(
-        'game_details.html',
+        "game_details.html",
         fixture_name=fixture_name,
         kick_off_time=kick_off_time,
         home_team=home_team,
@@ -1074,7 +1068,7 @@ def game_details(fixture_id):
         home_stats=home_stats,
         away_stats=away_stats,
         fixture_id=fixture_id,
-        api_token=API_TOKEN
+        api_token=API_TOKEN,
     )
 
 @app.template_filter('ordinal')
