@@ -414,11 +414,13 @@ game_details_cache = {}
 
 def fetch_season_stats(season_ids, api_token):
     global season_stats_cache
+
     cache_file = SEASON_STATS_CACHE_FILE
     cache_expiry_days = 3
-    season_stats = {}
+    modified = False  # track if we actually changed anything
 
-    # Load existing cache if it exists
+    # Start from what's already on disk
+    season_stats = {}
     if os.path.exists(cache_file):
         with open(cache_file, 'r', encoding='utf-8') as f:
             try:
@@ -433,22 +435,31 @@ def fetch_season_stats(season_ids, api_token):
         season_id_str = str(season_id)
         season_entry = season_stats.get(season_id_str)
 
-        # Check if cache exists and is still valid
+        # cache still valid?
         if season_entry:
             last_updated_str = season_entry.get("last_updated")
             if last_updated_str:
-                last_updated = datetime.fromisoformat(last_updated_str)
+                try:
+                    last_updated = datetime.fromisoformat(last_updated_str)
+                except ValueError:
+                    last_updated = datetime.min.replace(tzinfo=timezone.utc)
                 if (current_time - last_updated).days < cache_expiry_days:
-                    continue  # Cache still valid, skip fetch
+                    continue  # still fresh
 
-        # Fetch fresh data if no cache or expired
+        # Fetch fresh
         retries = 0
-        url = f"https://data.oddalerts.com/api/stats/season/{season_id}?api_token={api_token}&include_frozen=false"
+        url = (
+            f"https://data.oddalerts.com/api/stats/season/{season_id}"
+            f"?api_token={api_token}&include_frozen=false"
+        )
 
-        while retries < 5:
+        success = False
+        while retries < 5 and not success:
             try:
+                # NOTE: HEADERS must be defined elsewhere; if not, remove headers=HEADERS
                 response = requests.get(url, headers=HEADERS)
                 if response.status_code == 429:
+                    print("[WARN] Rate limited (429). Sleeping 15s...")
                     time.sleep(15)
                     retries += 1
                     continue
@@ -456,13 +467,13 @@ def fetch_season_stats(season_ids, api_token):
                 response.raise_for_status()
                 data = response.json()
 
-                # Store with timestamp
+                # Base page data
                 season_stats[season_id_str] = {
                     "last_updated": current_time.isoformat(),
-                    "data": data.get('data', [])
+                    "data": data.get('data', []),
                 }
 
-                # Handle pagination if needed
+                # Pagination
                 info = data.get('info', {})
                 current_page = info.get('page', 1)
                 total_pages = info.get('pages', 1)
@@ -473,22 +484,29 @@ def fetch_season_stats(season_ids, api_token):
                     paginated_response = requests.get(paginated_url, headers=HEADERS)
                     paginated_response.raise_for_status()
                     paginated_data = paginated_response.json()
-                    season_stats[season_id_str]["data"].extend(paginated_data.get('data', []))
+                    season_stats[season_id_str]["data"].extend(
+                        paginated_data.get('data', [])
+                    )
 
-                # ✅ Immediately save updated cache after each season_id fetch
+                # Save immediately after this season succeeds
                 with open(cache_file, 'w', encoding='utf-8') as f:
                     json.dump(season_stats, f, indent=2)
 
                 print(f"[CACHE] Cached Season ID {season_id}")
-                break  # Successful fetch, exit retry loop
+                modified = True
+                success = True
 
-            except requests.RequestException:
-                print(f"[ERROR] Failed to fetch season stats for Season ID {season_id}. Retry {retries + 1}/5.")
+            except requests.RequestException as e:
+                print(f"[ERROR] Season ID {season_id} fetch failed: {e}. "
+                      f"Retry {retries + 1}/5.")
                 retries += 1
                 time.sleep(5)
 
-    # ✅ Clean up any season IDs no longer needed
-    existing_ids = set(str(sid) for sid in season_ids)
+        if not success:
+            print(f"[WARN] No data saved for Season ID {season_id} after retries.")
+
+    # Cleanup: remove any cached seasons no longer in season_ids
+    existing_ids = {str(sid) for sid in season_ids}
     cached_ids = set(season_stats.keys())
     unused_ids = cached_ids - existing_ids
 
@@ -496,15 +514,23 @@ def fetch_season_stats(season_ids, api_token):
         for unused_id in unused_ids:
             del season_stats[unused_id]
             print(f"[CACHE] Removed stale Season ID {unused_id}")
+        modified = True
+
+    # Final write only if changed (avoid clobbering with {})
+    if modified and season_stats:
         with open(cache_file, 'w', encoding='utf-8') as f:
             json.dump(season_stats, f, indent=2)
 
+    # Log where we wrote and size
+    if os.path.exists(cache_file):
+        print(f"[CACHE] Season stats file: {os.path.abspath(cache_file)} "
+              f"(size: {os.path.getsize(cache_file)} bytes)")
+
     print(f"[CACHE] Fetched and cached season stats for {len(season_stats)} Season IDs.")
 
-    # 🔑 keep in-memory cache in sync with the file
+    # Keep memory in sync
     season_stats_cache = season_stats
     return season_stats
-
 
 @app.route('/debug/season-stats-cache')
 def debug_season_stats_cache():
