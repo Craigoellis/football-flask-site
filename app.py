@@ -192,7 +192,9 @@ def refresh_fixtures_cache():
     # Step 2: Fetch Season Stats
     print("[CACHE] Fetching Season Stats...")
     fetch_season_stats(unique_season_ids, API_TOKEN)
-    print("[CACHE] Season Stats Cache Updated.")
+    # 🔁 Ensure in-memory season stats are refreshed from disk immediately
+    load_season_stats_cache_from_disk()
+    print("[CACHE] Season Stats Cache Updated and Reloaded in Memory.")
 
     # Step 3: Fetch Game Details
     print("[CACHE] Fetching Game Details...")
