@@ -419,86 +419,85 @@ def fetch_season_stats(season_ids, api_token):
     cache_expiry_days = 3
     season_stats = {}
 
-    # Load existing cache if it exists
+    # Ensure directory exists for the cache
+    os.makedirs(os.path.dirname(cache_file), exist_ok=True)
+
+    # Load existing cache if present
     if os.path.exists(cache_file):
-        with open(cache_file, 'r') as f:
-            try:
+        try:
+            with open(cache_file, "r", encoding="utf-8") as f:
                 season_stats = json.load(f)
-                print(f"[CACHE] {len(season_stats)} Season Stats already cached.")
-            except json.JSONDecodeError:
-                season_stats = {}
+            print(f"[CACHE] {len(season_stats)} Season Stats already cached.")
+        except json.JSONDecodeError:
+            # Corrupt/partial file—start clean
+            season_stats = {}
 
     current_time = datetime.utcnow().replace(tzinfo=timezone.utc)
 
     for season_id in season_ids:
-        season_id_str = str(season_id)
-        season_entry = season_stats.get(season_id_str)
+        sid = str(season_id)
+        entry = season_stats.get(sid)
 
-        # Check if cache exists and is still valid
-        if season_entry:
-            last_updated_str = season_entry.get("last_updated")
-            if last_updated_str:
-                last_updated = datetime.fromisoformat(last_updated_str)
-                if (current_time - last_updated).days < cache_expiry_days:
-                    continue  # Cache still valid, skip fetch
+        # TTL check (3 days)
+        if entry and entry.get("last_updated"):
+            try:
+                last = datetime.fromisoformat(entry["last_updated"])
+                if (current_time - last).days < cache_expiry_days:
+                    continue
+            except Exception:
+                pass  # fall through and refetch
 
-        # Fetch fresh data if no cache or expired
+        # Fetch fresh
         retries = 0
         url = f"https://data.oddalerts.com/api/stats/season/{season_id}?api_token={api_token}&include_frozen=false"
-
         while retries < 5:
             try:
-                response = requests.get(url, headers=HEADERS)
-                if response.status_code == 429:
-                    time.sleep(15)
-                    retries += 1
-                    continue
+                resp = requests.get(url, headers=HEADERS, timeout=30)
+                if resp.status_code == 429:
+                    time.sleep(15); retries += 1; continue
+                resp.raise_for_status()
+                data = resp.json()
 
-                response.raise_for_status()
-                data = response.json()
-
-                # Store with timestamp
-                season_stats[season_id_str] = {
+                season_stats[sid] = {
                     "last_updated": current_time.isoformat(),
-                    "data": data.get('data', [])
+                    "data": data.get("data", [])
                 }
 
-                # Handle pagination if needed
-                info = data.get('info', {})
-                current_page = info.get('page', 1)
-                total_pages = info.get('pages', 1)
+                # Pagination
+                info = data.get("info", {})
+                page = info.get("page", 1)
+                pages = info.get("pages", 1)
+                while page < pages:
+                    page += 1
+                    purl = f"{url}&page={page}"
+                    pr = requests.get(purl, headers=HEADERS, timeout=30)
+                    pr.raise_for_status()
+                    season_stats[sid]["data"].extend(pr.json().get("data", []))
 
-                while current_page < total_pages:
-                    current_page += 1
-                    paginated_url = f"{url}&page={current_page}"
-                    paginated_response = requests.get(paginated_url, headers=HEADERS)
-                    paginated_response.raise_for_status()
-                    paginated_data = paginated_response.json()
-                    season_stats[season_id_str]["data"].extend(paginated_data.get('data', []))
-
-                # ✅ Immediately save updated cache after each season_id fetch
-                with open(cache_file, 'w') as f:
+                # ATOMIC SAVE after this season
+                tmp = cache_file + ".tmp"
+                with open(tmp, "w", encoding="utf-8") as f:
                     json.dump(season_stats, f)
+                os.replace(tmp, cache_file)
 
                 print(f"[CACHE] Cached Season ID {season_id}")
-                break  # Successful fetch, exit retry loop
-
+                break
             except requests.RequestException:
-                print(f"[ERROR] Failed to fetch season stats for Season ID {season_id}. Retry {retries + 1}/5.")
                 retries += 1
+                print(f"[ERROR] Season ID {season_id} failed (retry {retries}/5).")
                 time.sleep(5)
 
-    # ✅ Clean up any season IDs no longer needed
-    existing_ids = set(str(sid) for sid in season_ids)
-    cached_ids = set(season_stats.keys())
-    unused_ids = cached_ids - existing_ids
-
-    if unused_ids:
-        for unused_id in unused_ids:
-            del season_stats[unused_id]
-            print(f"[CACHE] Removed stale Season ID {unused_id}")
-        with open(cache_file, 'w') as f:
+    # Remove stale seasons no longer in use
+    wanted = set(map(str, season_ids))
+    stale = set(season_stats.keys()) - wanted
+    if stale:
+        for sid in stale:
+            del season_stats[sid]
+            print(f"[CACHE] Removed stale Season ID {sid}")
+        tmp = cache_file + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
             json.dump(season_stats, f)
+        os.replace(tmp, cache_file)
 
     print(f"[CACHE] Fetched and cached season stats for {len(season_stats)} Season IDs.")
     return season_stats
@@ -506,13 +505,15 @@ def fetch_season_stats(season_ids, api_token):
 # --- Save Season Stats Cache ---
 def save_season_stats_cache_to_disk():
     try:
-        with open(SEASON_STATS_CACHE_FILE, "w", encoding="utf-8") as f:
+        os.makedirs(os.path.dirname(SEASON_STATS_CACHE_FILE), exist_ok=True)
+        tmp = SEASON_STATS_CACHE_FILE + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
             json.dump(season_stats_cache, f, indent=2)
+        os.replace(tmp, SEASON_STATS_CACHE_FILE)
         with open("/data/season_stats_cache_time.txt", "w", encoding="utf-8") as t:
             t.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     except Exception as e:
         print(f"[ERROR] Failed to save season stats cache: {e}")
-
 
 # --- Load Season Stats Cache ---
 def load_season_stats_cache_from_disk():
@@ -998,8 +999,11 @@ def datetimeformat(value):
 def game_details(fixture_id):
     fixture_id_str = str(fixture_id)
 
-    # 🔁 Always load latest fixtures data from disk (optional but harmless)
+    # Always load latest fixtures
     load_fixtures_cache_from_disk()
+
+    # NEW: always reload season stats from disk so we show freshest data
+    load_season_stats_cache_from_disk()
 
     # 🔍 Check if game data for this fixture is in memory
     if fixture_id_str not in game_details_cache:
