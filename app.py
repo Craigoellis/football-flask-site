@@ -28,23 +28,6 @@ VALUE_BETS_CACHE_FILE = '/data/value_bets_cache.json'
 # Season Stats API Cache
 SEASON_STATS_CACHE_FILE = '/data/season_stats_cache.json'
 
-# NEW: separate cache file + in-memory cache for "Last 25 Games"
-SEASON_STATS_CACHE_FILE_LAST25 = "/data/season_stats_last25.json"
-season_stats_cache_last25 = {}
-
-# NEW: season stats sources (labels + URL templates)
-SEASON_STATS_SOURCES = {
-    "season": {
-        "label": "Season Stats",
-        "url": "https://data.oddalerts.com/api/stats/season/{season_id}?api_token={api_token}&include_frozen=false",
-    },
-    "last25": {
-        "label": "Last 25 Games",
-        "url": "https://data.oddalerts.com/api/stats/season/{season_id}?api_token={api_token}&last_x=25_overall",
-    },
-}
-
-
 # Betslip Generator API and Cache
 BETSLIP_GENERATOR_URL = f"https://data.oddalerts.com/api/betslips?api_token={API_TOKEN}"
 PREDICTABILITY_CACHE_FILE = '/data/predictability_cache.json'
@@ -212,12 +195,6 @@ def refresh_fixtures_cache():
     # 🔁 Ensure in-memory season stats are refreshed from disk immediately
     load_season_stats_cache_from_disk()
     print("[CACHE] Season Stats Cache Updated and Reloaded in Memory.")
-
-    # Step 2.5: Fetch "Last 25 Games" Season Stats
-    print("[CACHE] Fetching Last 25 Games Season Stats...")
-    fetch_season_stats_last25(unique_season_ids, API_TOKEN)
-    load_season_stats_cache_last25_from_disk()
-    print("[CACHE] Last 25 Games Season Stats Cache Updated and Reloaded in Memory.")
 
     # Step 3: Fetch Game Details
     print("[CACHE] Fetching Game Details...")
@@ -525,88 +502,6 @@ def fetch_season_stats(season_ids, api_token):
     print(f"[CACHE] Fetched and cached season stats for {len(season_stats)} Season IDs.")
     return season_stats
 
-def fetch_season_stats_last25(season_ids, api_token):
-    """Fetch and cache 'Last 25 Games' season stats for each season."""
-    cache_file = SEASON_STATS_CACHE_FILE_LAST25
-    cache_expiry_days = 3
-    season_stats = {}
-
-    # Ensure directory exists
-    os.makedirs(os.path.dirname(cache_file), exist_ok=True)
-
-    # Load existing cache if present
-    if os.path.exists(cache_file):
-        try:
-            with open(cache_file, "r", encoding="utf-8") as f:
-                season_stats = json.load(f)
-            print(f"[CACHE] {len(season_stats)} 'Last 25 Games' seasons already cached.")
-        except json.JSONDecodeError:
-            season_stats = {}
-
-    current_time = datetime.utcnow().replace(tzinfo=timezone.utc)
-
-    for season_id in season_ids:
-        sid = str(season_id)
-        entry = season_stats.get(sid)
-
-        # TTL check (3 days)
-        if entry and entry.get("last_updated"):
-            try:
-                last = datetime.fromisoformat(entry["last_updated"])
-                if (current_time - last).days < cache_expiry_days:
-                    continue
-            except Exception:
-                pass
-
-        # Fetch fresh
-        retries = 0
-        url = f"https://data.oddalerts.com/api/stats/season/{season_id}?api_token={api_token}&last_x=25_overall"
-        while retries < 5:
-            try:
-                resp = requests.get(url, headers=HEADERS, timeout=30)
-                if resp.status_code == 429:
-                    time.sleep(15)
-                    retries += 1
-                    continue
-                resp.raise_for_status()
-                data = resp.json()
-
-                season_stats[sid] = {
-                    "last_updated": current_time.isoformat(),
-                    "data": data.get("data", [])
-                }
-
-                # Handle pagination
-                info = data.get("info", {})
-                page = info.get("page", 1)
-                pages = info.get("pages", 1)
-                while page < pages:
-                    page += 1
-                    purl = f"{url}&page={page}"
-                    pr = requests.get(purl, headers=HEADERS, timeout=30)
-                    pr.raise_for_status()
-                    season_stats[sid]["data"].extend(pr.json().get("data", []))
-
-                # Atomic save
-                tmp = cache_file + ".tmp"
-                with open(tmp, "w", encoding="utf-8") as f:
-                    json.dump(season_stats, f)
-                os.replace(tmp, cache_file)
-
-                print(f"[CACHE] Cached 'Last 25 Games' Season ID {season_id}")
-                break
-            except requests.RequestException:
-                retries += 1
-                print(f"[ERROR] 'Last 25 Games' Season ID {season_id} failed (retry {retries}/5).")
-                time.sleep(5)
-
-    print(f"[CACHE] Fetched and cached 'Last 25 Games' stats for {len(season_stats)} seasons.")
-
-    # Save to memory
-    global season_stats_cache_last25
-    season_stats_cache_last25 = season_stats
-
-
 # --- Save Season Stats Cache ---
 def save_season_stats_cache_to_disk():
     try:
@@ -631,36 +526,6 @@ def load_season_stats_cache_from_disk():
                 season_stats_cache = {}
     else:
         season_stats_cache = {}
-
-def load_season_stats_cache_last25_from_disk():
-    """Load the 'Last 25 Games' season stats cache from disk into memory."""
-    global season_stats_cache_last25
-    try:
-        if os.path.exists(SEASON_STATS_CACHE_FILE_LAST25):
-            with open(SEASON_STATS_CACHE_FILE_LAST25, "r", encoding="utf-8") as f:
-                season_stats_cache_last25 = json.load(f)
-            print(f"[CACHE] Loaded Last 25 Games cache with {len(season_stats_cache_last25)} seasons.")
-        else:
-            season_stats_cache_last25 = {}
-            print("[CACHE] No Last 25 Games cache file found; starting empty.")
-    except Exception as e:
-        print(f"[ERROR] Failed to load Last 25 Games cache: {e}")
-        season_stats_cache_last25 = {}
-
-def save_season_stats_cache_last25_to_disk():
-    """Save the in-memory 'Last 25 Games' season stats cache to disk (atomic)."""
-    try:
-        os.makedirs(os.path.dirname(SEASON_STATS_CACHE_FILE_LAST25), exist_ok=True)
-        tmp = SEASON_STATS_CACHE_FILE_LAST25 + ".tmp"
-        with open(tmp, "w", encoding="utf-8") as f:
-            json.dump(season_stats_cache_last25, f, indent=2)
-        os.replace(tmp, SEASON_STATS_CACHE_FILE_LAST25)
-        # optional timestamp file (mirrors your existing saver style)
-        with open("/data/season_stats_last25_time.txt", "w", encoding="utf-8") as t:
-            t.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    except Exception as e:
-        print(f"[ERROR] Failed to save Last 25 Games cache: {e}")
-
 
 
 @app.route('/debug/season-stats-cache')
@@ -1134,10 +999,11 @@ def datetimeformat(value):
 def game_details(fixture_id):
     fixture_id_str = str(fixture_id)
 
-    # Always load latest fixtures and both season stats caches
+    # Always load latest fixtures
     load_fixtures_cache_from_disk()
+
+    # NEW: always reload season stats from disk so we show freshest data
     load_season_stats_cache_from_disk()
-    load_season_stats_cache_last25_from_disk()
 
     # 🔍 Check if game data for this fixture is in memory
     if fixture_id_str not in game_details_cache:
@@ -1189,19 +1055,11 @@ def game_details(fixture_id):
     # ✅ Get the game data from memory (now guaranteed to exist)
     game_data = game_details_cache.get(fixture_id_str, {})
 
-    # 📊 Load season stats for each team (supports toggle between Season & Last 25)
+    # 📊 Load season stats for each team (if available)
     home_stats = {}
     away_stats = {}
-
-    # Determine which stats type to show: "season" or "last25"
-    stats_type = request.args.get("stats", "season")
-
     if season_id:
-        if stats_type == "last25":
-            season_stats_data = season_stats_cache_last25.get(str(season_id), {}).get("data", [])
-        else:
-            season_stats_data = season_stats_cache.get(str(season_id), {}).get("data", [])
-
+        season_stats_data = season_stats_cache.get(str(season_id), {}).get("data", [])
         for team_data in season_stats_data:
             team_id = team_data.get("team_id")
             if team_id == home_id:
@@ -1222,11 +1080,8 @@ def game_details(fixture_id):
         home_stats=home_stats,
         away_stats=away_stats,
         fixture_id=fixture_id,
-        api_token=API_TOKEN,
-        stats_type=stats_type  # 👈 Pass current stats mode to template
+        api_token=API_TOKEN
     )
-
-
 
 @app.template_filter('ordinal')
 def ordinal(value):

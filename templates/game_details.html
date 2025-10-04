@@ -149,32 +149,18 @@
 
         <!-- LEFT SIDE: Season Stats -->
         <div style="flex: 1;">
-              <!-- Toggle buttons -->
+
+              <!-- NEW: toggle buttons for stats type -->
               <div class="stats-toggle-buttons" style="margin-bottom: 15px; text-align: center;">
-                <button id="btnSeason" class="toggle-button active">Season Stats</button>
-                <button id="btnLast25" class="toggle-button">Last 25 Games</button>
+                  <a href="{{ url_for('game_details', fixture_id=fixture_id, stats='season') }}"
+                    class="toggle-button {% if stats_type == 'season' %}active{% endif %}">
+                    Season Stats
+                  </a>
+                  <a href="{{ url_for('game_details', fixture_id=fixture_id, stats='last25') }}"
+                    class="toggle-button {% if stats_type == 'last25' %}active{% endif %}">
+                    Last 25 Games
+                  </a>
               </div>
-
-              <!-- Wrapper holding both versions -->
-              <div id="statsWrapper">
-                <!-- Season Stats (default visible) -->
-                <div id="seasonStats" class="stats-table" style="display:block;">
-                  {% set home_stats = home_stats_season %}
-                  {% set away_stats = away_stats_season %}
-                  {% include 'partials/_season_stats_table.html' %}
-                </div>
-
-                <!-- Last 25 Games (hidden initially) -->
-                <div id="last25Stats" class="stats-table" style="display:none;">
-                  {% set home_stats = home_stats_last25 %}
-                  {% set away_stats = away_stats_last25 %}
-                  {% include 'partials/_season_stats_table.html' %}
-                </div>
-              </div>
-
-
-
-
 
 <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
 <thead>
@@ -2046,31 +2032,6 @@
     const modal = document.getElementById('h2hModal');
     if (modal && e.target === modal) modal.style.display = 'none';
   });
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const btnSeason = document.getElementById("btnSeason");
-  const btnLast25 = document.getElementById("btnLast25");
-  const seasonStats = document.getElementById("seasonStats");
-  const last25Stats = document.getElementById("last25Stats");
-
-  if (!btnSeason || !btnLast25 || !seasonStats || !last25Stats) return;
-
-  btnSeason.addEventListener("click", function() {
-    btnSeason.classList.add("active");
-    btnLast25.classList.remove("active");
-    seasonStats.style.display = "block";
-    last25Stats.style.display = "none";
-  });
-
-  btnLast25.addEventListener("click", function() {
-    btnLast25.classList.add("active");
-    btnSeason.classList.remove("active");
-    seasonStats.style.display = "none";
-    last25Stats.style.display = "block";
-  });
-});
 </script>
 
     <br>
