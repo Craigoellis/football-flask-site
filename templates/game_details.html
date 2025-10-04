@@ -149,17 +149,32 @@
 
         <!-- LEFT SIDE: Season Stats -->
         <div style="flex: 1;">
-            <!-- NEW: Toggle buttons for Season Stats / Last 25 Games -->
+            <!-- NEW: Toggle buttons for Season Stats / Last 25 Games (Instant Swap) -->
             <div class="stats-toggle-buttons" style="margin-bottom: 15px; text-align: center;">
-                <a href="{{ url_for('game_details', fixture_id=fixture_id, stats='season') }}"
-                  class="toggle-button {% if stats_type == 'season' %}active{% endif %}">
-                  Season Stats
-                </a>
-                <a href="{{ url_for('game_details', fixture_id=fixture_id, stats='last25') }}"
-                  class="toggle-button {% if stats_type == 'last25' %}active{% endif %}">
-                  Last 25 Games
-                </a>
+              <button id="btnSeason" class="toggle-button active">Season Stats</button>
+              <button id="btnLast25" class="toggle-button">Last 25 Games</button>
             </div>
+
+            <!-- Wrapper that holds both versions of the table -->
+            <div id="statsWrapper">
+
+              <!-- Season Stats Table -->
+              <div id="seasonStats" class="stats-table">
+                  {% set home_stats = home_stats_season %}
+                  {% set away_stats = away_stats_season %}
+                  {% include 'partials/_season_stats_table.html' %}
+              </div>
+
+              <!-- Last 25 Games Table (hidden initially) -->
+              <div id="last25Stats" class="stats-table" style="display:none;">
+                  {% set home_stats = home_stats_last25 %}
+                  {% set away_stats = away_stats_last25 %}
+                  {% include 'partials/_season_stats_table.html' %}
+              </div>
+
+            </div>
+
+
 
 <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
 <thead>
