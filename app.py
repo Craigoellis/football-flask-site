@@ -734,36 +734,70 @@ def fetch_and_cache_all_game_details():
     combined_data = {}
 
     def fetch_bookmaker_odds(bookmaker_id):
+        """
+        Fetch ALL pages of odds for a given bookmaker and return:
+            { "<fixture_id>": { "<market_name>": { ...market options... }, ... } }
+        Normalizes list/dict payloads so downstream lookups always work.
+        """
         url = (
-            f"https://data.oddalerts.com/api/fixtures/upcoming?api_token={API_TOKEN}&include=odds&bookmaker={bookmaker_id}"
+            f"https://data.oddalerts.com/api/fixtures/upcoming"
+            f"?api_token={API_TOKEN}&include=odds&bookmaker={bookmaker_id}"
         )
+
         odds_map = {}
         retries = 5
-        wait = 5
 
-        for attempt in range(retries):
-            try:
-                res = requests.get(url)
-                if res.status_code == 429:
-                    print(f"[RETRY] Bookmaker {bookmaker_id} rate-limited. Waiting {wait} seconds...")
+        while url:
+            wait = 5
+            for attempt in range(retries):
+                try:
+                    res = requests.get(url)
+                    if res.status_code == 429:
+                        # simple backoff, then retry same page
+                        time.sleep(wait)
+                        wait = min(wait * 2, 60)
+                        continue
+
+                    res.raise_for_status()
+                    payload = res.json()
+                    data = payload.get("data", [])
+
+                    for fixture in data:
+                        fid = str(fixture.get("id"))
+                        # keep only fixtures we actually show on site
+                        if fid not in all_fixtures:
+                            continue
+
+                        raw_odds = fixture.get("odds", {})
+
+                        # Normalize: if it's a list, convert to {market_name: market_dict}
+                        if isinstance(raw_odds, list):
+                            normalized = {}
+                            for od in raw_odds:
+                                mname = od.get("market_name")
+                                if mname:
+                                    normalized[mname] = od
+                            odds_map[fid] = normalized
+                        elif isinstance(raw_odds, dict):
+                            odds_map[fid] = raw_odds
+                        else:
+                            odds_map[fid] = {}
+
+                    # move to next page if present
+                    url = payload.get("info", {}).get("next_page_url")
+                    break
+
+                except Exception as e:
+                    # backoff & retry the same page
                     time.sleep(wait)
-                    wait *= 2
-                    continue
-
-                res.raise_for_status()
-                data = res.json().get("data", [])
-                odds_map = {
-                    str(f.get("id")): f.get("odds", {})
-                    for f in data
-                }
+                    wait = min(wait * 2, 60)
+            else:
+                # failed this page after retries → stop paginating
+                print(f"[ERROR] Failed to fetch Bookmaker {bookmaker_id} odds after multiple retries.")
                 break
-            except Exception as e:
-                print(f"[RETRY ERROR] Bookmaker {bookmaker_id} attempt {attempt + 1} failed: {e}")
-                time.sleep(wait)
-                wait *= 2
-        else:
-            print(f"[ERROR] Failed to fetch Bookmaker {bookmaker_id} odds after multiple retries.")
+
         return odds_map
+
 
     pinnacle_odds_map = fetch_bookmaker_odds(1)
     onexbet_odds_map = fetch_bookmaker_odds(3)
