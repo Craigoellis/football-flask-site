@@ -149,21 +149,29 @@
 
         <!-- LEFT SIDE: Season Stats -->
         <div style="flex: 1;">
-          <!-- ✅ Toggle Buttons -->
-          <div class="stats-toggle-buttons" style="margin-bottom: 15px; text-align: center;">
-            <button id="btnSeason" class="toggle-button active">Season Stats</button>
-            <button id="btnLast25" class="toggle-button">Last 25 Games</button>
-          </div>
+              <!-- Toggle buttons -->
+              <div class="stats-toggle-buttons" style="margin-bottom: 15px; text-align: center;">
+                <button id="btnSeason" class="toggle-button active">Season Stats</button>
+                <button id="btnLast25" class="toggle-button">Last 25 Games</button>
+              </div>
 
-          <!-- ✅ Season Stats Container -->
-          <div id="seasonStats" style="display: block;">
-            {% include 'partials/_season_stats_table.html' %}
-          </div>
+              <!-- Wrapper holding both versions -->
+              <div id="statsWrapper">
+                <!-- Season Stats (default visible) -->
+                <div id="seasonStats" class="stats-table" style="display:block;">
+                  {% set home_stats = home_stats_season %}
+                  {% set away_stats = away_stats_season %}
+                  {% include 'partials/_season_stats_table.html' %}
+                </div>
 
-          <!-- ✅ Last 25 Games Container -->
-          <div id="last25Stats" style="display: none;">
-            {% include 'partials/_season_stats_table.html' %}
-          </div>
+                <!-- Last 25 Games (hidden initially) -->
+                <div id="last25Stats" class="stats-table" style="display:none;">
+                  {% set home_stats = home_stats_last25 %}
+                  {% set away_stats = away_stats_last25 %}
+                  {% include 'partials/_season_stats_table.html' %}
+                </div>
+              </div>
+
 
 
 
