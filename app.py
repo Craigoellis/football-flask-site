@@ -1189,27 +1189,35 @@ def game_details(fixture_id):
     # ✅ Get the game data from memory (now guaranteed to exist)
     game_data = game_details_cache.get(fixture_id_str, {})
 
-    # 📊 Load season stats for each team (supports toggle between Season & Last 25)
-    home_stats = {}
-    away_stats = {}
+    # 📊 Load season stats for each team (preload both Season & Last 25)
+    home_stats_season = {}
+    away_stats_season = {}
+    home_stats_last25 = {}
+    away_stats_last25 = {}
 
-    # Determine which stats type to show: "season" or "last25"
+    # Determine which view is currently selected
     stats_type = request.args.get("stats", "season")
 
     if season_id:
-        if stats_type == "last25":
-            season_stats_data = season_stats_cache_last25.get(str(season_id), {}).get("data", [])
-        else:
-            season_stats_data = season_stats_cache.get(str(season_id), {}).get("data", [])
-
+        # --- Full Season Stats ---
+        season_stats_data = season_stats_cache.get(str(season_id), {}).get("data", [])
         for team_data in season_stats_data:
-            team_id = team_data.get("team_id")
-            if team_id == home_id:
-                home_stats = team_data
-            elif team_id == away_id:
-                away_stats = team_data
+            tid = team_data.get("team_id")
+            if tid == home_id:
+                home_stats_season = team_data
+            elif tid == away_id:
+                away_stats_season = team_data
 
-    # 🧾 Render the page with all available data
+        # --- Last 25 Games Stats ---
+        last25_stats_data = season_stats_cache_last25.get(str(season_id), {}).get("data", [])
+        for team_data in last25_stats_data:
+            tid = team_data.get("team_id")
+            if tid == home_id:
+                home_stats_last25 = team_data
+            elif tid == away_id:
+                away_stats_last25 = team_data
+
+    # 🧾 Render page with both datasets for instant toggle
     return render_template(
         'game_details.html',
         fixture_name=fixture_name,
@@ -1219,11 +1227,13 @@ def game_details(fixture_id):
         home_position=home_position,
         away_position=away_position,
         game_data=game_data,
-        home_stats=home_stats,
-        away_stats=away_stats,
         fixture_id=fixture_id,
         api_token=API_TOKEN,
-        stats_type=stats_type  # 👈 Pass current stats mode to template
+        stats_type=stats_type,
+        home_stats_season=home_stats_season,
+        away_stats_season=away_stats_season,
+        home_stats_last25=home_stats_last25,
+        away_stats_last25=away_stats_last25
     )
 
 
