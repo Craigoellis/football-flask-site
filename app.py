@@ -632,7 +632,7 @@ def load_season_stats_cache_from_disk():
                 season_stats_cache = {}
     else:
         season_stats_cache = {}
-
+    
 def load_season_stats_cache_last25_from_disk():
     """Load the 'Last 25 Games' season stats cache from disk into memory."""
     global season_stats_cache_last25
@@ -661,6 +661,7 @@ def save_season_stats_cache_last25_to_disk():
             t.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     except Exception as e:
         print(f"[ERROR] Failed to save Last 25 Games cache: {e}")
+
 
 
 @app.route('/debug/season-stats-cache')
@@ -2221,7 +2222,7 @@ def custom_date(value):
 # Scheduler Setup
 # =========================
 scheduler = BackgroundScheduler()
-scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=30)
+scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=10)
 scheduler.add_job(refresh_value_bets_cache, 'interval', minutes=10)
 scheduler.start()
 
