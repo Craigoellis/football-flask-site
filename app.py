@@ -734,70 +734,53 @@ def fetch_and_cache_all_game_details():
     combined_data = {}
 
     def fetch_bookmaker_odds(bookmaker_id):
-        """
-        Fetch ALL pages of odds for a given bookmaker and return:
-            { "<fixture_id>": { "<market_name>": { ...market options... }, ... } }
-        Normalizes list/dict payloads so downstream lookups always work.
-        """
         url = (
             f"https://data.oddalerts.com/api/fixtures/upcoming"
             f"?api_token={API_TOKEN}&include=odds&bookmaker={bookmaker_id}"
         )
-
         odds_map = {}
-        retries = 5
+        wait = 5
 
         while url:
-            wait = 5
-            for attempt in range(retries):
-                try:
-                    res = requests.get(url)
-                    if res.status_code == 429:
-                        # simple backoff, then retry same page
-                        time.sleep(wait)
-                        wait = min(wait * 2, 60)
-                        continue
-
-                    res.raise_for_status()
-                    payload = res.json()
-                    data = payload.get("data", [])
-
-                    for fixture in data:
-                        fid = str(fixture.get("id"))
-                        # keep only fixtures we actually show on site
-                        if fid not in all_fixtures:
-                            continue
-
-                        raw_odds = fixture.get("odds", {})
-
-                        # Normalize: if it's a list, convert to {market_name: market_dict}
-                        if isinstance(raw_odds, list):
-                            normalized = {}
-                            for od in raw_odds:
-                                mname = od.get("market_name")
-                                if mname:
-                                    normalized[mname] = od
-                            odds_map[fid] = normalized
-                        elif isinstance(raw_odds, dict):
-                            odds_map[fid] = raw_odds
-                        else:
-                            odds_map[fid] = {}
-
-                    # move to next page if present
-                    url = payload.get("info", {}).get("next_page_url")
-                    break
-
-                except Exception as e:
-                    # backoff & retry the same page
+            try:
+                res = requests.get(url)
+                if res.status_code == 429:
                     time.sleep(wait)
                     wait = min(wait * 2, 60)
-            else:
-                # failed this page after retries → stop paginating
-                print(f"[ERROR] Failed to fetch Bookmaker {bookmaker_id} odds after multiple retries.")
+                    continue
+
+                res.raise_for_status()
+                payload = res.json()
+                data = payload.get("data", [])
+
+                for fx in data:
+                    fid = str(fx.get("id"))
+                    if fid not in all_fixtures:
+                        continue
+
+                    raw = fx.get("odds", {})
+                    # Normalize list → dict keyed by market_name
+                    if isinstance(raw, list):
+                        norm = {}
+                        for m in raw:
+                            mname = m.get("market_name")
+                            if mname:
+                                # drop the market_name key; keep the selections (home/draw/away, over_25, etc.)
+                                norm[mname] = {k: v for k, v in m.items() if k != "market_name"}
+                        odds_map[fid] = norm
+                    elif isinstance(raw, dict):
+                        odds_map[fid] = raw
+                    else:
+                        odds_map[fid] = {}
+
+                url = payload.get("info", {}).get("next_page_url")
+                time.sleep(0.5)
+
+            except Exception as e:
+                print(f"[ERROR] Bookmaker {bookmaker_id} page fetch failed: {e}")
                 break
 
         return odds_map
-
 
     pinnacle_odds_map = fetch_bookmaker_odds(1)
     onexbet_odds_map = fetch_bookmaker_odds(3)
