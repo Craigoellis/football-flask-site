@@ -135,3 +135,211 @@
     border-radius: 6px;
     width: fit-content;
 }
+
+/* H2H pretty cards */
+.h2h-list {
+  display: grid;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.h2h-card {
+  background: #0f172a;            /* dark slate */
+  color: #e5e7eb;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.18);
+  font-size: 14px;
+}
+
+.h2h-date {
+  text-align: center;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+}
+
+.h2h-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* left/right team blocks */
+.h2h-team {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+.h2h-team.right {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+/* little stat chips (cards, corners) */
+.h2h-stats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #f8fafc;
+}
+.h2h-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  opacity: .95;
+}
+.chip-square {
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.chip-yellow { background: #facc15; }  /* yellow card */
+.chip-red    { background: #ef4444; }  /* red card  */
+.chip-flag::before {                    /* corners flag */
+  content: "⚑";
+  display: inline-block;
+  transform: translateY(-1px);
+  margin-right: 4px;
+}
+
+/* center score box */
+.h2h-score {
+  flex: 0 0 auto;
+  background: #111827;
+  border-radius: 8px;
+  padding: 6px 12px;
+  text-align: center;
+  min-width: 70px;
+  position: relative;
+}
+.h2h-score .score {
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1.1;
+}
+.h2h-score .ht {
+  font-size: 11px;
+  opacity: .8;
+}
+.h2h-score::after {                    /* cyan vertical bar (accent) */
+  content: "";
+  position: absolute;
+  right: -8px;
+  top: 12%;
+  bottom: 12%;
+  width: 3px;
+  background: #06b6d4; /* cyan */
+  border-radius: 2px;
+}
+
+/* small screens */
+@media (max-width: 540px) {
+  .h2h-row { gap: 6px; }
+  .h2h-score { min-width: 62px; padding: 6px 10px; }
+  .h2h-score .score { font-size: 15px; }
+}
+
+/* --------------------------------------------------
+   Stats Toggle Buttons (Season Stats / Last 25 Games)
+---------------------------------------------------*/
+.stats-toggle-buttons {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.toggle-button {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 0 5px;
+    border-radius: 6px;
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    border: 1px solid #ddd;
+}
+
+.toggle-button:hover {
+    background-color: #dddddd;
+}
+
+.toggle-button.active {
+    background-color: #007BFF;
+    color: #ffffff;
+    border-color: #007BFF;
+}
+
+/* Responsive: stack buttons on small screens */
+@media (max-width: 540px) {
+    .stats-toggle-buttons .toggle-button {
+        display: block;
+        margin: 6px auto;
+        width: 220px; /* keeps them tidy on mobile */
+        max-width: 90%;
+    }
+}
+
+/* --------------------------------------------------
+   Stats Toggle Buttons (Instant View Switch)
+---------------------------------------------------*/
+.stats-toggle-buttons {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.toggle-button {
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 0 6px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.toggle-button:hover {
+    background-color: #e9ecef;
+}
+
+.toggle-button.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+/* Smooth fade between stat tables */
+.stats-table {
+    transition: opacity 0.25s ease-in-out;
+}
+.stats-table[style*="display:none"] {
+    opacity: 0;
+}
+
+/* ================================
+   🎨 TOGGLE BUTTON STYLES
+   Used for Season Stats / Last 25 Games switch
+================================== */
+
+.toggle-button {
+  background-color: #f1f1f1;       /* light grey background */
+  border: 1px solid #007bff;       /* blue border */
+  color: #007bff;                  /* blue text */
+  padding: 6px 14px;               /* spacing inside button */
+  cursor: pointer;                 /* pointer cursor on hover */
+  border-radius: 5px;              /* rounded corners */
+  margin: 0 5px;                   /* small space between buttons */
+  font-weight: bold;               /* bold text */
+}
+
+.toggle-button.active {
+  background-color: #007bff;       /* blue background when active */
+  color: white;                    /* white text when active */
+}
