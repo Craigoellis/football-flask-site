@@ -150,18 +150,6 @@
         <!-- LEFT SIDE: Season Stats -->
         <div style="flex: 1;">
 
-              <!-- NEW: toggle buttons for stats type -->
-              <div class="stats-toggle-buttons" style="margin-bottom: 15px; text-align: center;">
-                  <a href="{{ url_for('game_details', fixture_id=fixture_id, stats='season') }}"
-                    class="toggle-button {% if stats_type == 'season' %}active{% endif %}">
-                    Season Stats
-                  </a>
-                  <a href="{{ url_for('game_details', fixture_id=fixture_id, stats='last25') }}"
-                    class="toggle-button {% if stats_type == 'last25' %}active{% endif %}">
-                    Last 25 Games
-                  </a>
-              </div>
-
 <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
 <thead>
     <!-- Main Title Row -->
