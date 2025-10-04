@@ -149,30 +149,22 @@
 
         <!-- LEFT SIDE: Season Stats -->
         <div style="flex: 1;">
-            <!-- NEW: Toggle buttons for Season Stats / Last 25 Games (Instant Swap) -->
-            <div class="stats-toggle-buttons" style="margin-bottom: 15px; text-align: center;">
-              <button id="btnSeason" class="toggle-button active">Season Stats</button>
-              <button id="btnLast25" class="toggle-button">Last 25 Games</button>
-            </div>
+          <!-- ✅ Toggle Buttons -->
+          <div class="stats-toggle-buttons" style="margin-bottom: 15px; text-align: center;">
+            <button id="btnSeason" class="toggle-button active">Season Stats</button>
+            <button id="btnLast25" class="toggle-button">Last 25 Games</button>
+          </div>
 
-            <!-- Wrapper that holds both versions of the table -->
-            <div id="statsWrapper">
+          <!-- ✅ Season Stats Container -->
+          <div id="seasonStats" style="display: block;">
+            {% include 'partials/_season_stats_table.html' %}
+          </div>
 
-              <!-- Season Stats Table -->
-              <div id="seasonStats" class="stats-table">
-                  {% set home_stats = home_stats_season %}
-                  {% set away_stats = away_stats_season %}
-                  {% include 'partials/_season_stats_table.html' %}
-              </div>
+          <!-- ✅ Last 25 Games Container -->
+          <div id="last25Stats" style="display: none;">
+            {% include 'partials/_season_stats_table.html' %}
+          </div>
 
-              <!-- Last 25 Games Table (hidden initially) -->
-              <div id="last25Stats" class="stats-table" style="display:none;">
-                  {% set home_stats = home_stats_last25 %}
-                  {% set away_stats = away_stats_last25 %}
-                  {% include 'partials/_season_stats_table.html' %}
-              </div>
-
-            </div>
 
 
 
@@ -2046,6 +2038,31 @@
     const modal = document.getElementById('h2hModal');
     if (modal && e.target === modal) modal.style.display = 'none';
   });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const btnSeason = document.getElementById("btnSeason");
+  const btnLast25 = document.getElementById("btnLast25");
+  const seasonStats = document.getElementById("seasonStats");
+  const last25Stats = document.getElementById("last25Stats");
+
+  if (!btnSeason || !btnLast25 || !seasonStats || !last25Stats) return;
+
+  btnSeason.addEventListener("click", function() {
+    btnSeason.classList.add("active");
+    btnLast25.classList.remove("active");
+    seasonStats.style.display = "block";
+    last25Stats.style.display = "none";
+  });
+
+  btnLast25.addEventListener("click", function() {
+    btnLast25.classList.add("active");
+    btnSeason.classList.remove("active");
+    seasonStats.style.display = "none";
+    last25Stats.style.display = "block";
+  });
+});
 </script>
 
     <br>
