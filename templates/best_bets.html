@@ -1,56 +1,82 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Best Bets — Step 1 (Probabilities Only)</h2>
+<h2>Best Bets — with season stats</h2>
 
-<p>
-  Date: <strong>{{ selected_date }}</strong> ·
-  Markets: <strong>
-    {% for m in markets %}{{ market_labels.get(m, m) }}{% if not loop.last %}, {% endif %}{% endfor %}
-  </strong> ·
-  Min Prob: <strong>{{ min_prob }}%</strong>
-</p>
+{% set titles = {
+  "over_2_goals": "Over 2.5 Goals",
+  "over_3_goals": "Over 3.5 Goals",
+  "home_win": "Home Win"
+} %}
 
-<table border="1" cellpadding="6" cellspacing="0">
-  <thead>
-    <tr>
-      <th>Kickoff</th>
-      <th>Fixture</th>
-      <th>Market</th>
-      <th>Probability %</th>
-      <th>Implied Odds</th>
-      <th>Latest Odds</th>
-      <th>League</th>
-      <th>Country</th>
-      <th>Predictability</th>
-      <th>Game</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% if rows and rows|length > 0 %}
-      {% for r in rows %}
+{% for key in ["over_2_goals", "over_3_goals", "home_win"] %}
+  <h3 style="margin-top:18px;">{{ titles[key] }}</h3>
+  {% set rows = rows_by_market.get(key, []) %}
+
+  <table border="1" cellpadding="6" cellspacing="0" style="width:100%; max-width:1400px;">
+    <thead>
       <tr>
-        <td>{{ r.kickoff_unix | format_kickoff }}</td>
-        <td>{{ r.fixture_name }}</td>
-        <td>{{ market_labels.get(r.market, r.market) }}</td>
-        <td>{{ r.probability }}</td>
-        <td>{{ r.implied_odds }}</td>
-        <td>{{ r.actual_odds }}</td>
-        <td>{{ r.competition_name }}</td>
-        <td>{{ r.competition_country }}</td>
-        <td>{{ r.predictability }}</td>
-        <td><a href="/game/{{ r.fixture_id }}">Open</a></td>
-      </tr>
-      {% endfor %}
-    {% else %}
-      <tr>
-        <td colspan="10">No matches at this threshold for the selected date.</td>
-      </tr>
-    {% endif %}
-  </tbody>
-</table>
+        <th>Kickoff</th>
+        <th>Fixture</th>
+        <th>Prob %</th>
 
-<p style="margin-top:1rem; font-size:.9rem;">
-  Tip: try query params, e.g.
-  <code>/best-bets?market=home_win&amp;market=over_2_goals&amp;min_prob=55&amp;date={{ selected_date }}</code>
-</p>
+        {# Season stats columns (vary by market) #}
+        {% if key in ["over_2_goals", "over_3_goals"] %}
+          <th>Home/Home %</th>
+          <th>Away/Away %</th>
+          <th>Home Overall %</th>
+          <th>Away Overall %</th>
+          <th>H home gp</th>
+          <th>A away gp</th>
+        {% elif key == "home_win" %}
+          <th>Home Win% (H)</th>
+          <th>Away Lost% (A)</th>
+          <th>H home gp</th>
+          <th>A away gp</th>
+        {% endif %}
+
+        <th>Implied</th>
+        <th>Latest Odds</th>
+        <th>League</th>
+        <th>Country</th>
+        <th>Predictability</th>
+        <th>Game</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if rows %}
+        {% for r in rows %}
+          {% set s = r.season_stats or {} %}
+          <tr>
+            <td>{{ r.kickoff_unix | format_kickoff }}</td>
+            <td>{{ r.fixture_name }}</td>
+            <td>{{ r.probability }}</td>
+
+            {% if key in ["over_2_goals", "over_3_goals"] %}
+              <td>{{ s.home_home_pct }}</td>
+              <td>{{ s.away_away_pct }}</td>
+              <td>{{ s.home_total_pct }}</td>
+              <td>{{ s.away_total_pct }}</td>
+              <td>{{ s.home_played_home }}</td>
+              <td>{{ s.away_played_away }}</td>
+            {% elif key == "home_win" %}
+              <td>{{ s.home_win_home_pct }}</td>
+              <td>{{ s.away_loss_away_pct }}</td>
+              <td>{{ s.home_played_home }}</td>
+              <td>{{ s.away_played_away }}</td>
+            {% endif %}
+
+            <td>{{ r.implied_odds }}</td>
+            <td>{{ r.actual_odds }}</td>
+            <td>{{ r.competition_name }}</td>
+            <td>{{ r.competition_country }}</td>
+            <td>{{ r.predictability }}</td>
+            <td><a href="/game/{{ r.fixture_id }}">Open</a></td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="16">No matches for this market in the current window.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+{% endfor %}
 {% endblock %}
