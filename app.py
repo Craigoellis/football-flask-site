@@ -2314,7 +2314,7 @@ def _passes_over35_gate(home_row, away_row, prob):
 def _passes_homewin_gate(home_row, away_row, prob):
     """Home Win gate: internal thresholds."""
     prob_threshold = 50.0
-    home_win_home_threshold = 65.0
+    home_win_home_threshold = 50
     away_loss_away_threshold = 40.0
     min_home_away_games = 5
 
