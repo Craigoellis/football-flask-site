@@ -2101,28 +2101,14 @@ def filter_value_bets():
 def best_bets():
     # markets to check (you can pass multiple ?market=home_win&market=over_2_goals&market=over_3_goals)
     markets = request.args.getlist('market') or ['home_win', 'over_2_goals', 'over_3_goals']
-    try:
-        min_prob = float(request.args.get('min_prob', 50))
-    except Exception:
-        min_prob = 50.0
 
     # choose which season cache to use (default: season)
     stats_mode = request.args.get('stats', 'season')  # 'season' or 'last25'
     season_cache = _load_season_cache(stats_mode)
 
-    # thresholds (defaults per your spec)
-    o25_pct_threshold = 60.0
-    o35_home_away_threshold = 45.0
-    o35_overall_threshold = 50.0
-    min_home_away_games = 5
-    min_overall_games = 10
-    home_win_pct_threshold = 60.0
-    away_loss_pct_threshold = 60.0
-
-    # time window (defaults to next 48 hours), supports ?hours=72 or ?days=3
+    # time window (default next 48 hours), supports ?hours=72 or ?days=3
     london_tz = pytz.timezone('Europe/London')
     now_london = datetime.now(london_tz)
-    # compute window length
     hours = request.args.get('hours')
     days = request.args.get('days')
     window_delta = timedelta(hours=48)
@@ -2157,59 +2143,35 @@ def best_bets():
         if not (now_london <= ko_time <= end_london):
             continue
 
-        # pull IDs needed for season stats
         season_id = fd.get('season_id')
         home_id = fd.get('home_id')
         away_id = fd.get('away_id')
 
-        # check each requested market against min_prob, THEN season-stats gate
         for m in markets:
             mdata = fd.get(m)
             if not isinstance(mdata, dict):
                 continue
             prob = mdata.get('probability')
-            if not isinstance(prob, (int, float)) or prob < min_prob:
-                continue  # fails probability gate
+            if not isinstance(prob, (int, float)):
+                continue
 
-            # Apply season-stats gate for relevant markets
-            passes_stats = True
+            # load season stats rows
+            hrow = _find_team_row(season_cache, season_id, home_id)
+            arow = _find_team_row(season_cache, season_id, away_id)
+
+            # run the appropriate gate
+            passes_stats = False
             if m == 'over_2_goals':
-                hrow = _find_team_row(season_cache, season_id, home_id)
-                arow = _find_team_row(season_cache, season_id, away_id)
-                passes_stats = _passes_over25_gate(
-                    hrow, arow,
-                    min_home_away_games=min_home_away_games,
-                    min_overall_games=min_overall_games,
-                    pct_threshold=o25_pct_threshold
-                )
-
+                passes_stats = _passes_over25_gate(hrow, arow, prob)
             elif m == 'over_3_goals':
-                hrow = _find_team_row(season_cache, season_id, home_id)
-                arow = _find_team_row(season_cache, season_id, away_id)
-                passes_stats = _passes_over35_gate(
-                    hrow, arow,
-                    min_home_away_games=min_home_away_games,
-                    min_overall_games=min_overall_games,
-                    home_away_pct_threshold=o35_home_away_threshold,
-                    overall_pct_threshold=o35_overall_threshold
-                )
-
+                passes_stats = _passes_over35_gate(hrow, arow, prob)
             elif m == 'home_win':
-                hrow = _find_team_row(season_cache, season_id, home_id)
-                arow = _find_team_row(season_cache, season_id, away_id)
-                passes_stats = _passes_homewin_gate(
-                    hrow, arow,
-                    min_home_away_games=min_home_away_games,
-                    min_overall_games=min_overall_games,
-                    home_win_pct=home_win_pct_threshold,
-                    away_loss_pct=away_loss_pct_threshold,
-                    require_overall=True
-                )
+                passes_stats = _passes_homewin_gate(hrow, arow, prob)
 
             if not passes_stats:
-                continue  # fails season-stats gate
+                continue
 
-            # If it passed both gates, include it
+            # passed gate → include
             results.append({
                 "fixture_id": int(fid),
                 "fixture_name": fd.get("fixture_name", fid),
@@ -2223,7 +2185,7 @@ def best_bets():
                 "kickoff_unix": ko_unix,
             })
 
-    # sort best → worst by probability
+    # sort by probability
     results.sort(key=lambda x: x["probability"], reverse=True)
 
     market_labels = {
@@ -2235,18 +2197,14 @@ def best_bets():
     return render_template(
         'best_bets.html',
         rows=results,
-        min_prob=min_prob,
         markets=markets,
         market_labels=market_labels
     )
 
+
 # --- Season stats helpers for Best Bets ---
 
 def _load_season_cache(stats_mode="season"):
-    """
-    Load the on-disk season stats cache as a dict.
-    stats_mode: "season" or "last25"
-    """
     cache_file = SEASON_STATS_CACHE_FILE if stats_mode == "season" else SEASON_STATS_CACHE_FILE_LAST25
     try:
         with open(cache_file, "r", encoding="utf-8") as f:
@@ -2255,11 +2213,6 @@ def _load_season_cache(stats_mode="season"):
         return {}
 
 def _find_team_row(season_cache: dict, season_id: int, team_id: int):
-    """
-    Find a single team row by season_id and team_id in your cached season stats structure:
-    season_cache[season_id]["data"] -> array of team rows.
-    Returns the team row dict or None.
-    """
     if not isinstance(season_cache, dict):
         return None
     bucket = season_cache.get(str(season_id)) or season_cache.get(season_id)
@@ -2274,7 +2227,6 @@ def _find_team_row(season_cache: dict, season_id: int, team_id: int):
     return None
 
 def _get_nested(d, path, default=None):
-    """Safely get nested dict values with a dotted path like 'goals_over.o2.home_percentage'."""
     cur = d
     for key in path.split("."):
         if not isinstance(cur, dict) or key not in cur:
@@ -2282,14 +2234,23 @@ def _get_nested(d, path, default=None):
         cur = cur[key]
     return cur
 
-def _passes_over25_gate(home_row: dict, away_row: dict,
-                        min_home_away_games=5, min_overall_games=10,
-                        pct_threshold=60.0):
-    """Apply your Over 2.5 gate exactly as specified."""
+
+# ---------------- Gates ---------------- #
+
+def _passes_over25_gate(home_row, away_row, prob):
+    """Over 2.5 Goals gate: internal thresholds."""
+    prob_threshold = 50.0
+    home_home_threshold = 60.0
+    away_away_threshold = 60.0
+    overall_threshold = 60.0
+    min_home_away_games = 5
+    min_overall_games = 10
+
+    if prob < prob_threshold:
+        return False
     if not home_row or not away_row:
         return False
 
-    # Samples
     h_played_home = _get_nested(home_row, "played.home", 0)
     a_played_away = _get_nested(away_row, "played.away", 0)
     h_played_total = _get_nested(home_row, "played.total", 0)
@@ -2300,39 +2261,33 @@ def _passes_over25_gate(home_row: dict, away_row: dict,
     if h_played_total < min_overall_games or a_played_total < min_overall_games:
         return False
 
-    # Percentages
-    h_home_o25 = _get_nested(home_row, "goals_over.o2.home_percentage")
-    a_away_o25 = _get_nested(away_row, "goals_over.o2.away_percentage")
-    h_total_o25 = _get_nested(home_row, "goals_over.o2.total_percentage")
-    a_total_o25 = _get_nested(away_row, "goals_over.o2.total_percentage")
+    h_home_o25 = float(_get_nested(home_row, "goals_over.o2.home_percentage", 0))
+    a_away_o25 = float(_get_nested(away_row, "goals_over.o2.away_percentage", 0))
+    h_total_o25 = float(_get_nested(home_row, "goals_over.o2.total_percentage", 0))
+    a_total_o25 = float(_get_nested(away_row, "goals_over.o2.total_percentage", 0))
 
-    try:
-        h_home_o25 = float(h_home_o25)
-        a_away_o25 = float(a_away_o25)
-        h_total_o25 = float(h_total_o25)
-        a_total_o25 = float(a_total_o25)
-    except (TypeError, ValueError):
-        return False
+    return (
+        h_home_o25 >= home_home_threshold and
+        a_away_o25 >= away_away_threshold and
+        h_total_o25 >= overall_threshold and
+        a_total_o25 >= overall_threshold
+    )
 
-    if h_home_o25 < pct_threshold:
-        return False
-    if a_away_o25 < pct_threshold:
-        return False
-    if h_total_o25 < pct_threshold:
-        return False
-    if a_total_o25 < pct_threshold:
-        return False
 
-    return True
+def _passes_over35_gate(home_row, away_row, prob):
+    """Over 3.5 Goals gate: internal thresholds."""
+    prob_threshold = 30.0
+    home_home_threshold = 50.0
+    away_away_threshold = 50.0
+    overall_threshold = 50.0
+    min_home_away_games = 5
+    min_overall_games = 10
 
-def _passes_over35_gate(home_row: dict, away_row: dict,
-                        min_home_away_games=5, min_overall_games=10,
-                        home_away_pct_threshold=45.0, overall_pct_threshold=50.0):
-    """Season-stats gate for Over 3.5: home/away splits ≥45%, both overall ≥50%."""
+    if prob < prob_threshold:
+        return False
     if not home_row or not away_row:
         return False
 
-    # Samples
     h_played_home = _get_nested(home_row, "played.home", 0)
     a_played_away = _get_nested(away_row, "played.away", 0)
     h_played_total = _get_nested(home_row, "played.total", 0)
@@ -2343,81 +2298,44 @@ def _passes_over35_gate(home_row: dict, away_row: dict,
     if h_played_total < min_overall_games or a_played_total < min_overall_games:
         return False
 
-    # Percentages
-    h_home_o35 = _get_nested(home_row, "goals_over.o3.home_percentage")
-    a_away_o35 = _get_nested(away_row, "goals_over.o3.away_percentage")
-    h_total_o35 = _get_nested(home_row, "goals_over.o3.total_percentage")
-    a_total_o35 = _get_nested(away_row, "goals_over.o3.total_percentage")
+    h_home_o35 = float(_get_nested(home_row, "goals_over.o3.home_percentage", 0))
+    a_away_o35 = float(_get_nested(away_row, "goals_over.o3.away_percentage", 0))
+    h_total_o35 = float(_get_nested(home_row, "goals_over.o3.total_percentage", 0))
+    a_total_o35 = float(_get_nested(away_row, "goals_over.o3.total_percentage", 0))
 
-    try:
-        h_home_o35 = float(h_home_o35)
-        a_away_o35 = float(a_away_o35)
-        h_total_o35 = float(h_total_o35)
-        a_total_o35 = float(a_total_o35)
-    except (TypeError, ValueError):
-        return False
+    return (
+        h_home_o35 >= home_home_threshold and
+        a_away_o35 >= away_away_threshold and
+        h_total_o35 >= overall_threshold and
+        a_total_o35 >= overall_threshold
+    )
 
-    if h_home_o35 < home_away_pct_threshold:
-        return False
-    if a_away_o35 < home_away_pct_threshold:
-        return False
-    if h_total_o35 < overall_pct_threshold:
-        return False
-    if a_total_o35 < overall_pct_threshold:
-        return False
 
-    return True
+def _passes_homewin_gate(home_row, away_row, prob):
+    """Home Win gate: internal thresholds."""
+    prob_threshold = 50.0
+    home_win_home_threshold = 65.0
+    away_loss_away_threshold = 40.0
+    min_home_away_games = 5
 
-def _passes_homewin_gate(home_row: dict, away_row: dict,
-                         min_home_away_games=5, min_overall_games=10,
-                         home_win_pct=60.0, away_loss_pct=60.0,
-                         require_overall=True):
-    """Apply your Home Win gate exactly as specified."""
+
+    if prob < prob_threshold:
+        return False
     if not home_row or not away_row:
         return False
 
-    # Samples
     h_played_home = _get_nested(home_row, "played.home", 0)
     a_played_away = _get_nested(away_row, "played.away", 0)
-    h_played_total = _get_nested(home_row, "played.total", 0)
-    a_played_total = _get_nested(away_row, "played.total", 0)
-
     if h_played_home < min_home_away_games or a_played_away < min_home_away_games:
         return False
-    if require_overall and (h_played_total < min_overall_games or a_played_total < min_overall_games):
-        return False
 
-    # Percentages
-    h_home_win = _get_nested(home_row, "won.home_percentage")
-    a_away_loss = _get_nested(away_row, "lost.away_percentage")
+    h_home_win = float(_get_nested(home_row, "won.home_percentage", 0))
+    a_away_loss = float(_get_nested(away_row, "lost.away_percentage", 0))
 
-    try:
-        h_home_win = float(h_home_win)
-        a_away_loss = float(a_away_loss)
-    except (TypeError, ValueError):
-        return False
-
-    if h_home_win < home_win_pct:
-        return False
-    if a_away_loss < away_loss_pct:
-        return False
-
-    if require_overall:
-        h_total_win = _get_nested(home_row, "won.total_percentage")
-        a_total_loss = _get_nested(away_row, "lost.total_percentage")
-        try:
-            h_total_win = float(h_total_win)
-            a_total_loss = float(a_total_loss)
-        except (TypeError, ValueError):
-            return False
-        if h_total_win < home_win_pct:
-            return False
-        if a_total_loss < away_loss_pct:
-            return False
-
-    return True
-
-
+    return (
+        h_home_win >= home_win_home_threshold and
+        a_away_loss >= away_loss_away_threshold
+    )
 
 @app.route('/betslip_generator')
 def betslip_generator():
