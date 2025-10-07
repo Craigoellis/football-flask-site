@@ -12,33 +12,35 @@
   <h3 style="margin-top:18px;">{{ titles[key] }}</h3>
   {% set rows = rows_by_market.get(key, []) %}
 
-  <table border="1" cellpadding="6" cellspacing="0" style="width:100%; max-width:1400px;">
+  <table border="1" cellpadding="6" cellspacing="0" style="width:100%; max-width:1600px;">
     <thead>
       <tr>
-        <th>Kickoff</th>
+        <!-- shared first block -->
+        <th>Kick Off</th>
+        <th>Country</th>
+        <th>League</th>
         <th>Fixture</th>
-        <th>Prob %</th>
+        <th>Probability</th>
+        <th>Implied Odds</th>
+        <th>Latest Odds</th>
+        <th>Predictability</th>
 
-        {# Season stats columns (vary by market) #}
         {% if key in ["over_2_goals", "over_3_goals"] %}
-          <th>Home/Home %</th>
-          <th>Away/Away %</th>
+          <!-- order for O2.5 / O3.5 -->
+          <th>Home Games Played</th>
+          <th>Away Games Played</th>
+          <th>Home %</th>
+          <th>Away %</th>
           <th>Home Overall %</th>
           <th>Away Overall %</th>
-          <th>H home gp</th>
-          <th>A away gp</th>
         {% elif key == "home_win" %}
-          <th>Home Win% (H)</th>
-          <th>Away Lost% (A)</th>
-          <th>H home gp</th>
-          <th>A away gp</th>
+          <!-- order for Home Win -->
+          <th>Home Games Played</th>
+          <th>Away Games Played</th>
+          <th>Home Win %</th>
+          <th>Away Lost %</th>
         {% endif %}
 
-        <th>Implied</th>
-        <th>Latest Odds</th>
-        <th>League</th>
-        <th>Country</th>
-        <th>Predictability</th>
         <th>Game</th>
       </tr>
     </thead>
@@ -47,29 +49,32 @@
         {% for r in rows %}
           {% set s = r.season_stats or {} %}
           <tr>
+            <!-- shared first block -->
             <td>{{ r.kickoff_unix | format_kickoff }}</td>
+            <td>{{ r.competition_country }}</td>
+            <td>{{ r.competition_name }}</td>
             <td>{{ r.fixture_name }}</td>
             <td>{{ r.probability }}</td>
+            <td>{{ r.implied_odds }}</td>
+            <td>{{ r.actual_odds }}</td>
+            <td>{{ r.predictability }}</td>
 
             {% if key in ["over_2_goals", "over_3_goals"] %}
+              <!-- O2.5 / O3.5 cells in the requested order -->
+              <td>{{ s.home_played_home }}</td>
+              <td>{{ s.away_played_away }}</td>
               <td>{{ s.home_home_pct }}</td>
               <td>{{ s.away_away_pct }}</td>
               <td>{{ s.home_total_pct }}</td>
               <td>{{ s.away_total_pct }}</td>
+            {% elif key == "home_win" %}
+              <!-- Home Win cells in the requested order -->
               <td>{{ s.home_played_home }}</td>
               <td>{{ s.away_played_away }}</td>
-            {% elif key == "home_win" %}
               <td>{{ s.home_win_home_pct }}</td>
               <td>{{ s.away_loss_away_pct }}</td>
-              <td>{{ s.home_played_home }}</td>
-              <td>{{ s.away_played_away }}</td>
             {% endif %}
 
-            <td>{{ r.implied_odds }}</td>
-            <td>{{ r.actual_odds }}</td>
-            <td>{{ r.competition_name }}</td>
-            <td>{{ r.competition_country }}</td>
-            <td>{{ r.predictability }}</td>
             <td><a href="/game/{{ r.fixture_id }}">Open</a></td>
           </tr>
         {% endfor %}
