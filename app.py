@@ -2097,6 +2097,79 @@ def filter_value_bets():
         print(f"🚨 Error in /filter_value_bets: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/best-bets')
+def best_bets():
+    # markets to check (you can pass multiple ?market=home_win&market=over_2_goals)
+    markets = request.args.getlist('market') or ['home_win', 'over_2_goals', 'over_3_goals']
+    try:
+        min_prob = float(request.args.get('min_prob', 50))
+    except Exception:
+        min_prob = 50.0
+
+    # default to today's London date; override with ?date=YYYY-MM-DD
+    london_tz = pytz.timezone('Europe/London')
+    default_date = datetime.now(london_tz).strftime('%Y-%m-%d')
+    selected_date = request.args.get('date', default_date)
+
+    # always read the latest cache from disk
+    try:
+        with open(GAME_DETAILS_CACHE_FILE, 'r', encoding='utf-8') as f:
+            game_data = json.load(f)
+    except Exception as e:
+        return f"Failed to load game details cache: {e}", 500
+
+    results = []
+    for fid, fd in game_data.items():
+        if not isinstance(fd, dict):
+            continue
+
+        ko_unix = fd.get('unix')
+        # filter to selected date (London)
+        try:
+            ko_date = datetime.fromtimestamp(ko_unix, pytz.utc).astimezone(london_tz).strftime('%Y-%m-%d')
+        except Exception:
+            continue
+        if selected_date and ko_date != selected_date:
+            continue
+
+        # check each requested market against min_prob
+        for m in markets:
+            mdata = fd.get(m)
+            if not isinstance(mdata, dict):
+                continue
+            prob = mdata.get('probability')
+            if isinstance(prob, (int, float)) and prob >= min_prob:
+                results.append({
+                    "fixture_id": int(fid),
+                    "fixture_name": fd.get("fixture_name", fid),
+                    "competition_name": fd.get("competition_name", "N/A"),
+                    "competition_country": fd.get("competition_country", "N/A"),
+                    "predictability": fd.get("competition_predictability", "N/A"),
+                    "market": m,
+                    "probability": round(prob, 2),
+                    "implied_odds": mdata.get("implied_odds"),
+                    "actual_odds": mdata.get("actual_odds"),
+                    "kickoff_unix": ko_unix,
+                })
+
+    # sort best → worst by probability
+    results.sort(key=lambda x: x["probability"], reverse=True)
+
+    # simple labels for the starter markets
+    market_labels = {
+        "home_win": "Home Win",
+        "over_2_goals": "Over 2.5 Goals",
+        "over_3_goals": "Over 3.5 Goals",
+    }
+
+    return render_template(
+        'best_bets.html',
+        rows=results,
+        selected_date=selected_date,
+        markets=markets,
+        min_prob=min_prob,
+        market_labels=market_labels
+    )
 
 
 @app.route('/betslip_generator')

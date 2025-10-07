@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Best Bets — Step 1 (Probabilities Only)</h2>
+
+<p>
+  Date: <strong>{{ selected_date }}</strong> ·
+  Markets: <strong>
+    {% for m in markets %}{{ market_labels.get(m, m) }}{% if not loop.last %}, {% endif %}{% endfor %}
+  </strong> ·
+  Min Prob: <strong>{{ min_prob }}%</strong>
+</p>
+
+<table border="1" cellpadding="6" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Kickoff</th>
+      <th>Fixture</th>
+      <th>Market</th>
+      <th>Probability %</th>
+      <th>Implied Odds</th>
+      <th>Latest Odds</th>
+      <th>League</th>
+      <th>Country</th>
+      <th>Predictability</th>
+      <th>Game</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% if rows and rows|length > 0 %}
+      {% for r in rows %}
+      <tr>
+        <td>{{ r.kickoff_unix | format_kickoff }}</td>
+        <td>{{ r.fixture_name }}</td>
+        <td>{{ market_labels.get(r.market, r.market) }}</td>
+        <td>{{ r.probability }}</td>
+        <td>{{ r.implied_odds }}</td>
+        <td>{{ r.actual_odds }}</td>
+        <td>{{ r.competition_name }}</td>
+        <td>{{ r.competition_country }}</td>
+        <td>{{ r.predictability }}</td>
+        <td><a href="/game/{{ r.fixture_id }}">Open</a></td>
+      </tr>
+      {% endfor %}
+    {% else %}
+      <tr>
+        <td colspan="10">No matches at this threshold for the selected date.</td>
+      </tr>
+    {% endif %}
+  </tbody>
+</table>
+
+<p style="margin-top:1rem; font-size:.9rem;">
+  Tip: try query params, e.g.
+  <code>/best-bets?market=home_win&amp;market=over_2_goals&amp;min_prob=55&amp;date={{ selected_date }}</code>
+</p>
+{% endblock %}
