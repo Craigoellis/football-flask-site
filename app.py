@@ -2110,17 +2110,12 @@ def best_bets():
     stats_mode = request.args.get('stats', 'season')  # 'season' or 'last25'
     season_cache = _load_season_cache(stats_mode)
 
-    # thresholds (defaults per your spec; can be made query-configurable later)
+    # thresholds (defaults per your spec)
     o25_pct_threshold = 60.0
     min_home_away_games = 5
     min_overall_games = 10
     home_win_pct_threshold = 60.0
     away_loss_pct_threshold = 60.0
-
-    # default to today's London date; override with ?date=YYYY-MM-DD
-    london_tz = pytz.timezone('Europe/London')
-    default_date = datetime.now(london_tz).strftime('%Y-%m-%d')
-    selected_date = request.args.get('date', default_date)
 
     # always read the latest cache from disk
     try:
@@ -2129,18 +2124,23 @@ def best_bets():
     except Exception as e:
         return f"Failed to load game details cache: {e}", 500
 
+    london_tz = pytz.timezone('Europe/London')
+    now_london = datetime.now(london_tz)
+    end_london = now_london + timedelta(hours=48)
+
     results = []
     for fid, fd in game_data.items():
         if not isinstance(fd, dict):
             continue
 
         ko_unix = fd.get('unix')
-        # filter to selected date (London)
         try:
-            ko_date = datetime.fromtimestamp(ko_unix, pytz.utc).astimezone(london_tz).strftime('%Y-%m-%d')
+            ko_time = datetime.fromtimestamp(ko_unix, pytz.utc).astimezone(london_tz)
         except Exception:
             continue
-        if selected_date and ko_date != selected_date:
+
+        # only include fixtures within the next 48 hours
+        if not (now_london <= ko_time <= end_london):
             continue
 
         # pull IDs needed for season stats
@@ -2160,7 +2160,6 @@ def best_bets():
             # Apply season-stats gate only for the markets we’ve specified
             passes_stats = True
             if m == 'over_2_goals':
-                # Need both team rows
                 hrow = _find_team_row(season_cache, season_id, home_id)
                 arow = _find_team_row(season_cache, season_id, away_id)
                 passes_stats = _passes_over25_gate(
@@ -2182,7 +2181,7 @@ def best_bets():
                     require_overall=True
                 )
 
-            # NOTE: We’re not gating 'over_3_goals' yet; we’ll add O3.5 once you’re happy.
+            # NOTE: We’re not gating 'over_3_goals' yet
 
             if not passes_stats:
                 continue  # fails season-stats gate
@@ -2214,12 +2213,10 @@ def best_bets():
     return render_template(
         'best_bets.html',
         rows=results,
-        selected_date=selected_date,
-        markets=markets,
         min_prob=min_prob,
+        markets=markets,
         market_labels=market_labels
     )
-
 
 # --- Season stats helpers for Best Bets ---
 
