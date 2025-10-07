@@ -2239,7 +2239,7 @@ def _get_nested(d, path, default=None):
 
 def _passes_over25_gate(home_row, away_row, prob):
     """Over 2.5 Goals gate: internal thresholds."""
-    prob_threshold = 50.0
+    prob_threshold = 45.0
     home_home_threshold = 60.0
     away_away_threshold = 60.0
     overall_threshold = 60.0
