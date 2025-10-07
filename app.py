@@ -2099,7 +2099,7 @@ def filter_value_bets():
 
 @app.route('/best-bets')
 def best_bets():
-    # markets to check (you can pass multiple ?market=home_win&market=over_2_goals)
+    # markets to check (you can pass multiple ?market=home_win&market=over_2_goals&market=over_3_goals)
     markets = request.args.getlist('market') or ['home_win', 'over_2_goals', 'over_3_goals']
     try:
         min_prob = float(request.args.get('min_prob', 50))
@@ -2112,10 +2112,28 @@ def best_bets():
 
     # thresholds (defaults per your spec)
     o25_pct_threshold = 60.0
+    o35_home_away_threshold = 45.0
+    o35_overall_threshold = 50.0
     min_home_away_games = 5
     min_overall_games = 10
     home_win_pct_threshold = 60.0
     away_loss_pct_threshold = 60.0
+
+    # time window (defaults to next 48 hours), supports ?hours=72 or ?days=3
+    london_tz = pytz.timezone('Europe/London')
+    now_london = datetime.now(london_tz)
+    # compute window length
+    hours = request.args.get('hours')
+    days = request.args.get('days')
+    window_delta = timedelta(hours=48)
+    try:
+        if days is not None:
+            window_delta = timedelta(days=int(days))
+        if hours is not None:  # hours takes priority if both provided
+            window_delta = timedelta(hours=int(hours))
+    except Exception:
+        pass
+    end_london = now_london + window_delta
 
     # always read the latest cache from disk
     try:
@@ -2123,10 +2141,6 @@ def best_bets():
             game_data = json.load(f)
     except Exception as e:
         return f"Failed to load game details cache: {e}", 500
-
-    london_tz = pytz.timezone('Europe/London')
-    now_london = datetime.now(london_tz)
-    end_london = now_london + timedelta(hours=48)
 
     results = []
     for fid, fd in game_data.items():
@@ -2139,7 +2153,7 @@ def best_bets():
         except Exception:
             continue
 
-        # only include fixtures within the next 48 hours
+        # only include fixtures within the rolling window
         if not (now_london <= ko_time <= end_london):
             continue
 
@@ -2157,7 +2171,7 @@ def best_bets():
             if not isinstance(prob, (int, float)) or prob < min_prob:
                 continue  # fails probability gate
 
-            # Apply season-stats gate only for the markets we’ve specified
+            # Apply season-stats gate for relevant markets
             passes_stats = True
             if m == 'over_2_goals':
                 hrow = _find_team_row(season_cache, season_id, home_id)
@@ -2167,6 +2181,17 @@ def best_bets():
                     min_home_away_games=min_home_away_games,
                     min_overall_games=min_overall_games,
                     pct_threshold=o25_pct_threshold
+                )
+
+            elif m == 'over_3_goals':
+                hrow = _find_team_row(season_cache, season_id, home_id)
+                arow = _find_team_row(season_cache, season_id, away_id)
+                passes_stats = _passes_over35_gate(
+                    hrow, arow,
+                    min_home_away_games=min_home_away_games,
+                    min_overall_games=min_overall_games,
+                    home_away_pct_threshold=o35_home_away_threshold,
+                    overall_pct_threshold=o35_overall_threshold
                 )
 
             elif m == 'home_win':
@@ -2180,8 +2205,6 @@ def best_bets():
                     away_loss_pct=away_loss_pct_threshold,
                     require_overall=True
                 )
-
-            # NOTE: We’re not gating 'over_3_goals' yet
 
             if not passes_stats:
                 continue  # fails season-stats gate
@@ -2203,7 +2226,6 @@ def best_bets():
     # sort best → worst by probability
     results.sort(key=lambda x: x["probability"], reverse=True)
 
-    # simple labels for the starter markets
     market_labels = {
         "home_win": "Home Win",
         "over_2_goals": "Over 2.5 Goals",
@@ -2299,6 +2321,49 @@ def _passes_over25_gate(home_row: dict, away_row: dict,
     if h_total_o25 < pct_threshold:
         return False
     if a_total_o25 < pct_threshold:
+        return False
+
+    return True
+
+def _passes_over35_gate(home_row: dict, away_row: dict,
+                        min_home_away_games=5, min_overall_games=10,
+                        home_away_pct_threshold=45.0, overall_pct_threshold=50.0):
+    """Season-stats gate for Over 3.5: home/away splits ≥45%, both overall ≥50%."""
+    if not home_row or not away_row:
+        return False
+
+    # Samples
+    h_played_home = _get_nested(home_row, "played.home", 0)
+    a_played_away = _get_nested(away_row, "played.away", 0)
+    h_played_total = _get_nested(home_row, "played.total", 0)
+    a_played_total = _get_nested(away_row, "played.total", 0)
+
+    if h_played_home < min_home_away_games or a_played_away < min_home_away_games:
+        return False
+    if h_played_total < min_overall_games or a_played_total < min_overall_games:
+        return False
+
+    # Percentages
+    h_home_o35 = _get_nested(home_row, "goals_over.o3.home_percentage")
+    a_away_o35 = _get_nested(away_row, "goals_over.o3.away_percentage")
+    h_total_o35 = _get_nested(home_row, "goals_over.o3.total_percentage")
+    a_total_o35 = _get_nested(away_row, "goals_over.o3.total_percentage")
+
+    try:
+        h_home_o35 = float(h_home_o35)
+        a_away_o35 = float(a_away_o35)
+        h_total_o35 = float(h_total_o35)
+        a_total_o35 = float(a_total_o35)
+    except (TypeError, ValueError):
+        return False
+
+    if h_home_o35 < home_away_pct_threshold:
+        return False
+    if a_away_o35 < home_away_pct_threshold:
+        return False
+    if h_total_o35 < overall_pct_threshold:
+        return False
+    if a_total_o35 < overall_pct_threshold:
         return False
 
     return True
