@@ -51,7 +51,7 @@
             <td class="col--prob" data-label="Probability"><span class="bb-badge">{{ r.probability }}%</span></td>
             <td class="col--implied" data-label="Implied Odds">{{ r.implied_odds }}</td>
             <td class="col--odds" data-label="Latest Odds">{{ r.actual_odds }}</td>
-            <td data-label="Predictability">{{ r.predictability }}</td>
+            <td data-label="Predictability">{{ r.predictability|capitalize }}</td>
             <td data-label="Home Games Played">{{ s.home_played_home }}</td>
             <td data-label="Away Games Played">{{ s.away_played_away }}</td>
             <td class="col--pct" data-label="Home %">{{ s.home_home_pct }}</td>
@@ -102,7 +102,7 @@
             <td class="col--prob" data-label="Probability"><span class="bb-badge">{{ r.probability }}%</span></td>
             <td class="col--implied" data-label="Implied Odds">{{ r.implied_odds }}</td>
             <td class="col--odds" data-label="Latest Odds">{{ r.actual_odds }}</td>
-            <td data-label="Predictability">{{ r.predictability }}</td>
+            <td data-label="Predictability">{{ r.predictability|capitalize }}</td>
             <td data-label="Home Games Played">{{ s.home_played_home }}</td>
             <td data-label="Away Games Played">{{ s.away_played_away }}</td>
             <td class="col--pct" data-label="Home %">{{ s.home_home_pct }}</td>
@@ -151,7 +151,7 @@
             <td class="col--prob" data-label="Probability"><span class="bb-badge">{{ r.probability }}%</span></td>
             <td class="col--implied" data-label="Implied Odds">{{ r.implied_odds }}</td>
             <td class="col--odds" data-label="Latest Odds">{{ r.actual_odds }}</td>
-            <td data-label="Predictability">{{ r.predictability }}</td>
+            <td data-label="Predictability">{{ r.predictability|capitalize }}</td>
             <td data-label="Home Games Played">{{ s.home_played_home }}</td>
             <td data-label="Away Games Played">{{ s.away_played_away }}</td>
             <td class="col--pct" data-label="Home Win %">{{ s.home_win_home_pct }}</td>

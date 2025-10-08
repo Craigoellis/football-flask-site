@@ -2187,7 +2187,6 @@ def best_bets():
                 "kickoff_unix": ko_unix,
             }
 
-            # (Optional) Attach the exact stats used by the gate for display
             if m == "over_2_goals":
                 row["season_stats"] = _extract_over_stats(hrow, arow, over_key="o2")
             elif m == "over_3_goals":
@@ -2197,16 +2196,18 @@ def best_bets():
 
             results.append(row)
 
-    # sort by probability
-    results.sort(key=lambda x: x["probability"], reverse=True)
+    # NEW: sort by earliest kickoff, then higher probability
+    results.sort(key=lambda x: (x.get("kickoff_unix", 0), -x.get("probability", 0)))
 
     # split into three tables by market
     results_by_market = {"over_2_goals": [], "over_3_goals": [], "home_win": []}
     for r in results:
         if r["market"] in results_by_market:
             results_by_market[r["market"]].append(r)
+
+    # NEW: per-table sort by kickoff, then probability
     for k in results_by_market:
-        results_by_market[k].sort(key=lambda x: x["probability"], reverse=True)
+        results_by_market[k].sort(key=lambda x: (x.get("kickoff_unix", 0), -x.get("probability", 0)))
 
     market_labels = {
         "home_win": "Home Win",
@@ -2219,7 +2220,6 @@ def best_bets():
         rows_by_market=results_by_market,
         market_labels=market_labels
     )
-
 
 # --- Season stats helpers for Best Bets ---
 
