@@ -1,21 +1,27 @@
 {% extends "base.html" %}
+
+{% block title %}Best Bets{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='best_bets.css') }}">
+{% endblock %}
+
 {% block content %}
-<h2>Best Bets — with season stats</h2>
+<div class="best-bets">
+  <h2>Best Bets — with season stats</h2>
 
-{% set titles = {
-  "over_2_goals": "Over 2.5 Goals",
-  "over_3_goals": "Over 3.5 Goals",
-  "home_win": "Home Win"
-} %}
+  {% set titles = {
+    "over_2_goals": "Over 2.5 Goals",
+    "over_3_goals": "Over 3.5 Goals",
+    "home_win": "Home Win"
+  } %}
 
-{% for key in ["over_2_goals", "over_3_goals", "home_win"] %}
-  <h3 style="margin-top:18px;">{{ titles[key] }}</h3>
-  {% set rows = rows_by_market.get(key, []) %}
-
-  <table border="1" cellpadding="6" cellspacing="0" style="width:100%; max-width:1600px;">
+  {# ---------- Over 2.5 Goals ---------- #}
+  <h3>{{ titles["over_2_goals"] }}</h3>
+  {% set rows = rows_by_market.get("over_2_goals", []) %}
+  <table class="bb-table">
     <thead>
       <tr>
-        <!-- shared first block -->
         <th>Kick Off</th>
         <th>Country</th>
         <th>League</th>
@@ -24,23 +30,12 @@
         <th>Implied Odds</th>
         <th>Latest Odds</th>
         <th>Predictability</th>
-
-        {% if key in ["over_2_goals", "over_3_goals"] %}
-          <!-- order for O2.5 / O3.5 -->
-          <th>Home Games Played</th>
-          <th>Away Games Played</th>
-          <th>Home %</th>
-          <th>Away %</th>
-          <th>Home Overall %</th>
-          <th>Away Overall %</th>
-        {% elif key == "home_win" %}
-          <!-- order for Home Win -->
-          <th>Home Games Played</th>
-          <th>Away Games Played</th>
-          <th>Home Win %</th>
-          <th>Away Lost %</th>
-        {% endif %}
-
+        <th>Home Games Played</th>
+        <th>Away Games Played</th>
+        <th>Home %</th>
+        <th>Away %</th>
+        <th>Home Overall %</th>
+        <th>Away Overall %</th>
         <th>Game</th>
       </tr>
     </thead>
@@ -49,39 +44,125 @@
         {% for r in rows %}
           {% set s = r.season_stats or {} %}
           <tr>
-            <!-- shared first block -->
-            <td>{{ r.kickoff_unix | format_kickoff }}</td>
-            <td>{{ r.competition_country }}</td>
-            <td>{{ r.competition_name }}</td>
-            <td>{{ r.fixture_name }}</td>
-            <td>{{ r.probability }}</td>
-            <td>{{ r.implied_odds }}</td>
-            <td>{{ r.actual_odds }}</td>
-            <td>{{ r.predictability }}</td>
-
-            {% if key in ["over_2_goals", "over_3_goals"] %}
-              <!-- O2.5 / O3.5 cells in the requested order -->
-              <td>{{ s.home_played_home }}</td>
-              <td>{{ s.away_played_away }}</td>
-              <td>{{ s.home_home_pct }}</td>
-              <td>{{ s.away_away_pct }}</td>
-              <td>{{ s.home_total_pct }}</td>
-              <td>{{ s.away_total_pct }}</td>
-            {% elif key == "home_win" %}
-              <!-- Home Win cells in the requested order -->
-              <td>{{ s.home_played_home }}</td>
-              <td>{{ s.away_played_away }}</td>
-              <td>{{ s.home_win_home_pct }}</td>
-              <td>{{ s.away_loss_away_pct }}</td>
-            {% endif %}
-
-            <td><a href="/game/{{ r.fixture_id }}">Open</a></td>
+            <td class="col--kick" data-label="Kick Off">{{ r.kickoff_unix | format_kickoff }}</td>
+            <td data-label="Country">{{ r.competition_country }}</td>
+            <td data-label="League">{{ r.competition_name }}</td>
+            <td data-label="Fixture">{{ r.fixture_name }}</td>
+            <td class="col--prob" data-label="Probability"><span class="bb-badge">{{ r.probability }}%</span></td>
+            <td class="col--implied" data-label="Implied Odds">{{ r.implied_odds }}</td>
+            <td class="col--odds" data-label="Latest Odds">{{ r.actual_odds }}</td>
+            <td data-label="Predictability">{{ r.predictability }}</td>
+            <td data-label="Home Games Played">{{ s.home_played_home }}</td>
+            <td data-label="Away Games Played">{{ s.away_played_away }}</td>
+            <td class="col--pct" data-label="Home %">{{ s.home_home_pct }}</td>
+            <td class="col--pct" data-label="Away %">{{ s.away_away_pct }}</td>
+            <td class="col--pct" data-label="Home Overall %">{{ s.home_total_pct }}</td>
+            <td class="col--pct" data-label="Away Overall %">{{ s.away_total_pct }}</td>
+            <td class="bb-link" data-label="Game"><a href="/game/{{ r.fixture_id }}">Open</a></td>
           </tr>
         {% endfor %}
       {% else %}
-        <tr><td colspan="16">No matches for this market in the current window.</td></tr>
+        <tr><td colspan="15">No matches for this market in the current window.</td></tr>
       {% endif %}
     </tbody>
   </table>
-{% endfor %}
+
+  {# ---------- Over 3.5 Goals ---------- #}
+  <h3>{{ titles["over_3_goals"] }}</h3>
+  {% set rows = rows_by_market.get("over_3_goals", []) %}
+  <table class="bb-table">
+    <thead>
+      <tr>
+        <th>Kick Off</th>
+        <th>Country</th>
+        <th>League</th>
+        <th>Fixture</th>
+        <th>Probability</th>
+        <th>Implied Odds</th>
+        <th>Latest Odds</th>
+        <th>Predictability</th>
+        <th>Home Games Played</th>
+        <th>Away Games Played</th>
+        <th>Home %</th>
+        <th>Away %</th>
+        <th>Home Overall %</th>
+        <th>Away Overall %</th>
+        <th>Game</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if rows %}
+        {% for r in rows %}
+          {% set s = r.season_stats or {} %}
+          <tr>
+            <td class="col--kick" data-label="Kick Off">{{ r.kickoff_unix | format_kickoff }}</td>
+            <td data-label="Country">{{ r.competition_country }}</td>
+            <td data-label="League">{{ r.competition_name }}</td>
+            <td data-label="Fixture">{{ r.fixture_name }}</td>
+            <td class="col--prob" data-label="Probability"><span class="bb-badge">{{ r.probability }}%</span></td>
+            <td class="col--implied" data-label="Implied Odds">{{ r.implied_odds }}</td>
+            <td class="col--odds" data-label="Latest Odds">{{ r.actual_odds }}</td>
+            <td data-label="Predictability">{{ r.predictability }}</td>
+            <td data-label="Home Games Played">{{ s.home_played_home }}</td>
+            <td data-label="Away Games Played">{{ s.away_played_away }}</td>
+            <td class="col--pct" data-label="Home %">{{ s.home_home_pct }}</td>
+            <td class="col--pct" data-label="Away %">{{ s.away_away_pct }}</td>
+            <td class="col--pct" data-label="Home Overall %">{{ s.home_total_pct }}</td>
+            <td class="col--pct" data-label="Away Overall %">{{ s.away_total_pct }}</td>
+            <td class="bb-link" data-label="Game"><a href="/game/{{ r.fixture_id }}">Open</a></td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="15">No matches for this market in the current window.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+
+  {# ---------- Home Win ---------- #}
+  <h3>{{ titles["home_win"] }}</h3>
+  {% set rows = rows_by_market.get("home_win", []) %}
+  <table class="bb-table">
+    <thead>
+      <tr>
+        <th>Kick Off</th>
+        <th>Country</th>
+        <th>League</th>
+        <th>Fixture</th>
+        <th>Probability</th>
+        <th>Implied Odds</th>
+        <th>Latest Odds</th>
+        <th>Predictability</th>
+        <th>Home Games Played</th>
+        <th>Away Games Played</th>
+        <th>Home Win %</th>
+        <th>Away Lost %</th>
+        <th>Game</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if rows %}
+        {% for r in rows %}
+          {% set s = r.season_stats or {} %}
+          <tr>
+            <td class="col--kick" data-label="Kick Off">{{ r.kickoff_unix | format_kickoff }}</td>
+            <td data-label="Country">{{ r.competition_country }}</td>
+            <td data-label="League">{{ r.competition_name }}</td>
+            <td data-label="Fixture">{{ r.fixture_name }}</td>
+            <td class="col--prob" data-label="Probability"><span class="bb-badge">{{ r.probability }}%</span></td>
+            <td class="col--implied" data-label="Implied Odds">{{ r.implied_odds }}</td>
+            <td class="col--odds" data-label="Latest Odds">{{ r.actual_odds }}</td>
+            <td data-label="Predictability">{{ r.predictability }}</td>
+            <td data-label="Home Games Played">{{ s.home_played_home }}</td>
+            <td data-label="Away Games Played">{{ s.away_played_away }}</td>
+            <td class="col--pct" data-label="Home Win %">{{ s.home_win_home_pct }}</td>
+            <td class="col--pct" data-label="Away Lost %">{{ s.away_loss_away_pct }}</td>
+            <td class="bb-link" data-label="Game"><a href="/game/{{ r.fixture_id }}">Open</a></td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="13">No matches for this market in the current window.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

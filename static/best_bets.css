@@ -1,0 +1,141 @@
+/* ------------------------------------------
+   Best Bets (matches game_details.css style)
+-------------------------------------------*/
+
+/* Page container */
+.best-bets {
+  margin-top: 10px;
+}
+
+/* Section titles (per table/market) */
+.best-bets h3 {
+  margin: 20px 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #007BFF; /* same blue */
+}
+
+/* Table shell */
+.best-bets .bb-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 28px;
+  background: #ffffff;
+  text-align: center;
+  font-size: 15px;
+  border-radius: 10px;
+  overflow: hidden;               /* keeps rounded corners on header */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* same card feel */
+}
+
+/* Header row */
+.best-bets .bb-table thead th {
+  background: #007BFF;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 12px 10px;
+  border: 1px solid #ddd;
+}
+
+/* Body cells */
+.best-bets .bb-table tbody td {
+  padding: 10px 8px;
+  color: #333;
+  border: 1px solid #eee;
+  vertical-align: middle;
+}
+
+/* Zebra striping for readability */
+.best-bets .bb-table tbody tr:nth-child(odd) {
+  background: #fafafa;
+}
+
+/* Hover highlight */
+.best-bets .bb-table tbody tr:hover {
+  background: #f3f8ff;
+}
+
+/* “Open” link button */
+.best-bets .bb-link a {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #007BFF;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid #007BFF;
+  transition: background-color .15s ease-in-out, color .15s ease-in-out, box-shadow .15s;
+}
+.best-bets .bb-link a:hover {
+  background: #0a67d1;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.35);
+}
+
+/* Small numeric badges (probability/odds if desired) */
+.best-bets .bb-badge {
+  display: inline-block;
+  min-width: 44px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #eef5ff;
+  color: #0a67d1;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tight columns on wide tables */
+.best-bets .col--kick { white-space: nowrap; }
+.best-bets .col--prob,
+.best-bets .col--implied,
+.best-bets .col--odds,
+.best-bets .col--pct {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Stack on small screens */
+@media (max-width: 900px) {
+  .best-bets .bb-table {
+    font-size: 14px;
+  }
+  .best-bets .bb-link a {
+    padding: 5px 9px;
+  }
+}
+
+@media (max-width: 640px) {
+  .best-bets .bb-table thead {
+    display: none; /* mobile: switch to cards */
+  }
+  .best-bets .bb-table,
+  .best-bets .bb-table tbody,
+  .best-bets .bb-table tr,
+  .best-bets .bb-table td {
+    display: block;
+    width: 100%;
+  }
+  .best-bets .bb-table tr {
+    background: #fff;
+    margin-bottom: 12px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .best-bets .bb-table td {
+    text-align: left;
+    padding: 10px 12px;
+    border: none;
+    border-top: 1px solid #f2f2f2;
+  }
+  .best-bets .bb-table td:first-child {
+    border-top: none;
+  }
+  /* show pseudo labels on mobile */
+  .best-bets .bb-table td[data-label]::before {
+    content: attr(data-label) ": ";
+    font-weight: 700;
+    color: #0f172a;
+  }
+}
