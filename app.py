@@ -2108,12 +2108,12 @@ def best_bets():
     stats_mode = request.args.get('stats', 'season')  # 'season' or 'last25'
     season_cache = _load_season_cache(stats_mode)
 
-    # time window (default next 48 hours), supports ?hours=72 or ?days=3
+    # time window (default next 72 hours / 3 days), supports ?hours=72 or ?days=3
     london_tz = pytz.timezone('Europe/London')
     now_london = datetime.now(london_tz)
     hours = request.args.get('hours')
     days = request.args.get('days')
-    window_delta = timedelta(hours=48)
+    window_delta = timedelta(hours=72)  # ✅ default changed from 48 to 72 hours
     try:
         if days is not None:
             window_delta = timedelta(days=int(days))
@@ -2173,7 +2173,7 @@ def best_bets():
             if not passes_stats:
                 continue
 
-            # ---- NEW: normalize odds and skip rows with missing market odds ----
+            # ---- normalize odds and skip rows with missing market odds ----
             def _to_float(v):
                 if v in (None, "", "N/A", "NA", "NaN", "-", "—"):
                     return None
@@ -2185,12 +2185,11 @@ def best_bets():
             implied_val = _to_float(mdata.get("implied_odds"))
             actual_val  = _to_float(mdata.get("actual_odds"))
 
-            # if no actual odds for this market, exclude this fixture for this market
             if actual_val is None:
                 continue
-            # -------------------------------------------------------------------
+            # ----------------------------------------------------------------
 
-            # passed gate → include (attach season stats if you want to render them)
+            # passed gate → include
             row = {
                 "fixture_id": int(fid),
                 "fixture_name": fd.get("fixture_name", fid),
