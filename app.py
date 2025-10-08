@@ -2173,6 +2173,23 @@ def best_bets():
             if not passes_stats:
                 continue
 
+            # ---- NEW: normalize odds and skip rows with missing market odds ----
+            def _to_float(v):
+                if v in (None, "", "N/A", "NA", "NaN", "-", "—"):
+                    return None
+                try:
+                    return float(v)
+                except Exception:
+                    return None
+
+            implied_val = _to_float(mdata.get("implied_odds"))
+            actual_val  = _to_float(mdata.get("actual_odds"))
+
+            # if no actual odds for this market, exclude this fixture for this market
+            if actual_val is None:
+                continue
+            # -------------------------------------------------------------------
+
             # passed gate → include (attach season stats if you want to render them)
             row = {
                 "fixture_id": int(fid),
@@ -2182,8 +2199,8 @@ def best_bets():
                 "predictability": fd.get("competition_predictability", "N/A"),
                 "market": m,
                 "probability": round(prob, 2),
-                "implied_odds": mdata.get("implied_odds"),
-                "actual_odds": mdata.get("actual_odds"),
+                "implied_odds": implied_val,
+                "actual_odds": actual_val,
                 "kickoff_unix": ko_unix,
             }
 
@@ -2196,7 +2213,7 @@ def best_bets():
 
             results.append(row)
 
-    # NEW: sort by earliest kickoff, then higher probability
+    # sort by earliest kickoff, then higher probability
     results.sort(key=lambda x: (x.get("kickoff_unix", 0), -x.get("probability", 0)))
 
     # split into three tables by market
@@ -2205,7 +2222,7 @@ def best_bets():
         if r["market"] in results_by_market:
             results_by_market[r["market"]].append(r)
 
-    # NEW: per-table sort by kickoff, then probability
+    # per-table sort by kickoff, then probability
     for k in results_by_market:
         results_by_market[k].sort(key=lambda x: (x.get("kickoff_unix", 0), -x.get("probability", 0)))
 
