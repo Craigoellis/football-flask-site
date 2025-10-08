@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <title>{% block title %}My Football Site{% endblock %}</title>
 
-    <!-- Shared CSS across all pages -->
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ url_for('static', filename='fixtures.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='pinnacle.css') }}">
-
-    <!-- Page-specific CSS (e.g., Best Bets) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='best_bets.css') }}">
     {% block extra_styles %}{% endblock %}
 
     <style>
-        /* ------------------------------
-           Navigation Bar Styling
-        ------------------------------ */
+        /* Navigation Bar Styling */
         .navbar {
             width: 100%;
             height: 50px;
@@ -26,6 +23,7 @@
             top: 0;
             left: 0;
             z-index: 999;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
         }
 
         .nav-links {
@@ -48,49 +46,43 @@
             color: #ddd;
         }
 
-        /* ------------------------------
-           Page Layout and Body
-        ------------------------------ */
+        /* Body + Page Content */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 60px 0 0 0; /* Push down content below navbar */
+            padding: 80px 0 0 0; /* increased top padding to avoid overlap */
             background-color: #f4f4f9;
             color: #333;
         }
 
         .main-content {
-            max-width: none;  /* Allow full-width layouts like Best Bets */
+            max-width: none;
             margin: auto;
             padding: 30px 15px;
         }
 
-        /* Optional: global link hover transition */
-        a {
-            transition: color 0.2s ease;
+        /* Page titles */
+        h2 {
+            margin-top: 0;
+            color: #007BFF;
+            font-weight: 700;
         }
     </style>
 </head>
 <body>
 
-<!-- ------------------------------
-     Navigation Bar
------------------------------- -->
-<div class="navbar">
-    <ul class="nav-links">
-        <li><a href="{{ url_for('home') }}">Home</a></li>
-        <li><a href="{{ url_for('fixtures_page') }}">Fixtures</a></li>
-        <li><a href="{{ url_for('value_bets') }}">Value Bets</a></li>
-        <li><a href="{{ url_for('best_bets') }}">Best Bets</a></li> <!-- ✅ New Page Link -->
-        <li><a href="{{ url_for('betslip_generator') }}">Betslip Generator</a></li>
-        <li><a href="{{ url_for('probability_rankings') }}?date={{ now.strftime('%Y-%m-%d') }}">Probability Rankings</a></li>
-        <li><a href="{{ url_for('pinnacle_comparisons') }}">Pinnacle Comparison</a></li>
-    </ul>
+<!-- Navigation Bar -->
+<div class="navbar nav-links">
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('fixtures_page') }}">Fixtures</a>
+    <a href="{{ url_for('value_bets') }}">Value Bets</a>
+    <a href="{{ url_for('betslip_generator') }}">Betslip Generator</a>
+    <a href="{{ url_for('probability_rankings') }}?date={{ now.strftime('%Y-%m-%d') }}">Probability Rankings</a>
+    <a href="{{ url_for('pinnacle_comparisons') }}">Pinnacle Comparison</a>
+    <a href="{{ url_for('best_bets') }}">Best Bets</a>
 </div>
 
-<!-- ------------------------------
-     Main Content
------------------------------- -->
+<!-- Main Content -->
 <div class="main-content">
     {% block content %}{% endblock %}
 </div>
