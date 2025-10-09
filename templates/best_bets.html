@@ -10,6 +10,14 @@
 <div class="best-bets">
   <h2>Best Bets — with season stats</h2>
 
+  <form method="get" action="{{ url_for('best_bets') }}" style="margin:10px 0 14px;">
+    <label style="font-weight:600;">
+      <input type="checkbox" name="value_only" value="1" {% if value_only %}checked{% endif %}>
+      Value Only
+    </label>
+    <button type="submit" class="bb-apply" style="margin-left:10px;">Apply</button>
+  </form>
+
   {% set titles = {
     "over_2_goals": "Over 2.5 Goals",
     "over_3_goals": "Over 3.5 Goals",
