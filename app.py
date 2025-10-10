@@ -2272,8 +2272,8 @@ def _get_nested(d, path, default=None):
 def _passes_over25_gate(home_row, away_row, prob):
     """Over 2.5 Goals gate: internal thresholds."""
     prob_threshold = 65.0
-    home_home_threshold = 60.0
-    away_away_threshold = 60.0
+    home_home_threshold = 70.0
+    away_away_threshold = 70.0
     overall_threshold = 60.0
     min_home_away_games = 5
     min_overall_games = 10
@@ -2346,8 +2346,8 @@ def _passes_over35_gate(home_row, away_row, prob):
 def _passes_homewin_gate(home_row, away_row, prob):
     """Home Win gate: internal thresholds."""
     prob_threshold = 60.0
-    home_win_home_threshold = 50.0
-    away_loss_away_threshold = 40.0
+    home_win_home_threshold = 60.0
+    away_loss_away_threshold = 45.0
     min_home_away_games = 5
 
     if prob < prob_threshold:
