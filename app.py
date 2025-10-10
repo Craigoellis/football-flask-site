@@ -2101,6 +2101,7 @@ def filter_value_bets():
 
 @app.route('/best-bets')
 def best_bets():
+    # markets to check (you can pass multiple ?market=home_win&market=over_2_goals&market=over_3_goals)
     markets = request.args.getlist('market') or ['home_win', 'over_2_goals', 'over_3_goals']
 
     # value-only toggle (?value_only=1)
@@ -2108,14 +2109,16 @@ def best_bets():
         return str(v).lower() in ("1", "true", "on", "yes")
     value_only = _as_bool(request.args.get('value_only', '0'))
 
-    stats_mode = request.args.get('stats', 'season')
+    # choose which season cache to use (default: season)
+    stats_mode = request.args.get('stats', 'season')  # 'season' or 'last25'
     season_cache = _load_season_cache(stats_mode)
 
+    # time window (default next 72 hours)
     london_tz = pytz.timezone('Europe/London')
     now_london = datetime.now(london_tz)
     hours = request.args.get('hours')
     days = request.args.get('days')
-    window_delta = timedelta(hours=72)  # default 72h
+    window_delta = timedelta(hours=72)
     try:
         if days is not None:
             window_delta = timedelta(days=int(days))
@@ -2125,6 +2128,7 @@ def best_bets():
         pass
     end_london = now_london + window_delta
 
+    # always read the latest cache from disk
     try:
         with open(GAME_DETAILS_CACHE_FILE, 'r', encoding='utf-8') as f:
             game_data = json.load(f)
@@ -2135,12 +2139,19 @@ def best_bets():
     for fid, fd in game_data.items():
         if not isinstance(fd, dict):
             continue
+
         ko_unix = fd.get('unix')
         try:
             ko_time = datetime.fromtimestamp(ko_unix, pytz.utc).astimezone(london_tz)
         except Exception:
             continue
+
         if not (now_london <= ko_time <= end_london):
+            continue
+
+        # ✅ NEW — skip anything not "High" or "Good" predictability
+        predict = (fd.get("competition_predictability") or "").strip().lower()
+        if predict not in ("high", "good"):
             continue
 
         season_id = fd.get('season_id')
@@ -2169,7 +2180,6 @@ def best_bets():
             if not passes_stats:
                 continue
 
-            # ---- normalize odds and skip missing ----
             def _to_float(v):
                 if v in (None, "", "N/A", "NA", "NaN", "-", "—"):
                     return None
@@ -2183,25 +2193,23 @@ def best_bets():
             if actual_val is None:
                 continue
 
-            # ---- VALUE ONLY filter: Latest Odds > Implied Odds ----
             if value_only:
-                # need implied to compare; if missing, drop
                 if implied_val is None or not (actual_val > implied_val):
                     continue
-            # -----------------------------------------
 
             row = {
                 "fixture_id": int(fid),
                 "fixture_name": fd.get("fixture_name", fid),
                 "competition_name": fd.get("competition_name", "N/A"),
                 "competition_country": fd.get("competition_country", "N/A"),
-                "predictability": fd.get("competition_predictability", "N/A"),
+                "predictability": fd.get("competition_predictability", "N/A").capitalize(),
                 "market": m,
                 "probability": round(prob, 2),
                 "implied_odds": implied_val,
                 "actual_odds": actual_val,
                 "kickoff_unix": ko_unix,
             }
+
             if m == "over_2_goals":
                 row["season_stats"] = _extract_over_stats(hrow, arow, over_key="o2")
             elif m == "over_3_goals":
@@ -2211,8 +2219,10 @@ def best_bets():
 
             results.append(row)
 
+    # sort by earliest kickoff, then probability
     results.sort(key=lambda x: (x.get("kickoff_unix", 0), -x.get("probability", 0)))
 
+    # split into three tables by market
     results_by_market = {"over_2_goals": [], "over_3_goals": [], "home_win": []}
     for r in results:
         if r["market"] in results_by_market:
@@ -2230,8 +2240,9 @@ def best_bets():
         'best_bets.html',
         rows_by_market=results_by_market,
         market_labels=market_labels,
-        value_only=value_only  # <<< pass to template
+        value_only=value_only
     )
+
 
 
 # --- Season stats helpers for Best Bets ---
