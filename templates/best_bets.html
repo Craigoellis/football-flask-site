@@ -236,16 +236,18 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".prob-cell").forEach(cell => {
     cell.addEventListener("click", () => {
       const row = cell.closest("tr");
-      const fixture = row.querySelector('[data-label="Fixture"]').textContent.trim();
-      const market = row.closest("table").previousElementSibling.textContent.trim();
-      const kickoff = row.querySelector(".col--kick").textContent.trim();
-      const country = row.querySelector('[data-label="Country"]').textContent.trim();
-      const league = row.querySelector('[data-label="League"]').textContent.trim();
-      const prob = parseFloat(cell.textContent) || 0;
-      const implied = (100 / prob).toFixed(2);
-      const odds = parseFloat(row.querySelector(".col--odds").textContent) || 0;
 
-      // Toggle add/remove
+      // --- Extract cell values safely ---
+      const fixture = row.cells[3]?.textContent.trim() || "Unknown Fixture";
+      const market = row.closest("table").previousElementSibling.textContent.trim();
+      const kickoff = row.cells[0]?.textContent.trim() || "-";
+      const country = row.cells[1]?.textContent.trim() || "-";
+      const league = row.cells[2]?.textContent.trim() || "-";
+      const prob = parseFloat(cell.textContent) || 0;
+      const implied = prob > 0 ? (100 / prob).toFixed(2) : "—";
+      const odds = parseFloat(row.cells[6]?.textContent) || 0;
+
+      // --- Toggle add/remove bet ---
       const idx = selectedBets.findIndex(b => b.fixture === fixture && b.market === market);
       if (idx >= 0) {
         selectedBets.splice(idx, 1);
@@ -258,9 +260,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Render bets in panel
+  // --- Render Betslip content ---
   function renderBets() {
     content.innerHTML = "";
+
     if (selectedBets.length === 0) {
       content.innerHTML = `<p class="betslip-empty">No bets selected yet.</p>`;
       combinedProbEl.textContent = "Combined Probability: —";
@@ -284,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
       content.appendChild(card);
     });
 
-    // Add event listeners to remove buttons
+    // --- Individual remove buttons ---
     document.querySelectorAll(".remove-bet").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const index = parseInt(e.target.dataset.index);
@@ -293,30 +296,42 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // Combined probability (multiply independent probabilities)
+    // --- Combined probability ---
     let combined = selectedBets.reduce((acc, b) => acc * (b.prob / 100), 1);
     let combinedPct = (combined * 100).toFixed(2);
     let impliedOdds = (1 / combined).toFixed(2);
 
-    // Actual combined odds (multiply odds)
+    // --- Combined odds ---
     let combinedActual = selectedBets.reduce((acc, b) => acc * (b.odds || 1), 1).toFixed(2);
 
     combinedProbEl.textContent = `Combined Probability: ${combinedPct}% (${impliedOdds})`;
     combinedOddsEl.textContent = `Actual Combined Odds: ${combinedActual}`;
   }
 
-  // Close button
+  // --- Close panel ---
   document.getElementById("close-betslip").addEventListener("click", () => {
     panel.classList.remove("open");
   });
 
-  // Clear all bets
-  document.getElementById("clear-bets").addEventListener("click", () => {
+  // --- Clear all bets ---
+  const clearBtn = document.createElement("button");
+  clearBtn.id = "clear-bets";
+  clearBtn.textContent = "Clear All";
+  clearBtn.classList.add("betslip-clear");
+  clearBtn.style.marginTop = "10px";
+  clearBtn.addEventListener("click", () => {
     selectedBets = [];
     renderBets();
   });
+
+  // Append Clear button to footer if not already there
+  const footer = document.querySelector(".betslip-footer");
+  if (footer && !document.getElementById("clear-bets")) {
+    footer.appendChild(clearBtn);
+  }
 });
 </script>
+
 
 
 {% endblock %}
