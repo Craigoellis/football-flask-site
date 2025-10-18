@@ -198,86 +198,92 @@
     <h3>Betslip</h3>
     <button id="close-betslip" class="betslip-close">&times;</button>
   </div>
-
   <div id="betslip-content" class="betslip-content">
-    <ul id="betslip-list">
-      <li class="betslip-empty">No bets selected yet.</li>
-    </ul>
+    <p class="betslip-empty">No bets selected yet.</p>
   </div>
-
   <div class="betslip-footer">
     <p id="combined-prob">Combined Probability: —</p>
-    <p id="combined-odds">Implied Odds: —</p>
-    <button id="betslip-clear" class="betslip-clear">Clear All</button>
+    <p id="combined-odds">Actual Combined Odds: —</p>
   </div>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const panel = document.getElementById("betslip-panel");
-  const list = document.getElementById("betslip-list");
+  const content = document.getElementById("betslip-content");
   const combinedProbEl = document.getElementById("combined-prob");
   const combinedOddsEl = document.getElementById("combined-odds");
-  const clearBtn = document.getElementById("betslip-clear");
-
-  if (!panel || !list || !clearBtn) {
-    console.warn("Betslip elements missing");
-    return;
-  }
 
   let selectedBets = [];
 
-  document.querySelectorAll(".prob-cell").forEach(cell => {
+  // Listen for clicks on probability cells
+  document.querySelectorAll(".col--prob").forEach(cell => {
     cell.addEventListener("click", () => {
-      const fixture = cell.dataset.fixture;
-      const market = cell.dataset.market;
-      const prob = parseFloat(cell.dataset.prob);
-      const odds = parseFloat(cell.dataset.odds || 0);
+      const row = cell.closest("tr");
+      const fixture = row.querySelector('[data-label="Fixture"]').textContent.trim();
+      const market = row.closest("table").previousElementSibling.textContent.trim();
+      const kickoff = row.querySelector(".col--kick").textContent.trim();
+      const country = row.querySelector('[data-label="Country"]').textContent.trim();
+      const league = row.querySelector('[data-label="League"]').textContent.trim();
+      const prob = parseFloat(cell.textContent) || 0;
+      const implied = (100 / prob).toFixed(2);
+      const odds = parseFloat(row.querySelector(".col--odds").textContent) || 0;
 
-      const existing = selectedBets.findIndex(
-        b => b.fixture === fixture && b.market === market
-      );
-      if (existing >= 0) selectedBets.splice(existing, 1);
-      else selectedBets.push({ fixture, market, probability: prob, odds });
+      // Toggle add/remove
+      const idx = selectedBets.findIndex(b => b.fixture === fixture && b.market === market);
+      if (idx >= 0) {
+        selectedBets.splice(idx, 1);
+      } else {
+        selectedBets.push({ fixture, market, kickoff, country, league, prob, implied, odds });
+      }
 
       renderBets();
       panel.classList.add("open");
     });
   });
 
-  clearBtn.addEventListener("click", () => {
-    selectedBets = [];
-    renderBets();
-  });
-
   function renderBets() {
-    list.innerHTML = "";
+    content.innerHTML = "";
     if (selectedBets.length === 0) {
-      list.innerHTML = "<li class='betslip-empty'>No selections yet</li>";
+      content.innerHTML = `<p class="betslip-empty">No bets selected yet.</p>`;
       combinedProbEl.textContent = "Combined Probability: —";
-      combinedOddsEl.textContent = "Implied Odds: —";
+      combinedOddsEl.textContent = "Actual Combined Odds: —";
       return;
     }
 
     selectedBets.forEach((b, i) => {
-      const li = document.createElement("li");
-      li.innerHTML = `<strong>${i + 1}. ${b.fixture}</strong><br>
-                      <span style="color:#007BFF;font-weight:600;">${b.market}</span>
-                      — ${b.probability}% · Odds: ${b.odds || "N/A"}`;
-      list.appendChild(li);
+      const card = document.createElement("div");
+      card.classList.add("betslip-card");
+      card.innerHTML = `
+        <div class="betslip-card-body">
+          <strong style="color:#007BFF;">${i + 1}. ${b.fixture}</strong><br>
+          <span>${b.market}</span><br>
+          <small>${b.kickoff} / ${b.country} - ${b.league}</small><br>
+          <span style="color:green;font-weight:600;">${b.prob.toFixed(2)}% (${b.implied})</span>
+          <span style="float:right;font-weight:600;">${b.odds}</span>
+        </div>
+      `;
+      content.appendChild(card);
     });
 
-    const combined = selectedBets.reduce((a, b) => a * (b.probability / 100), 1);
-    const combinedPct = (combined * 100).toFixed(2);
-    const impliedOdds = (1 / combined).toFixed(2);
-    const combinedActual = selectedBets.reduce(
-      (a, b) => a * (parseFloat(b.odds) || 1), 1
-    ).toFixed(2);
+    // Combined probability (multiply independent probabilities)
+    let combined = selectedBets.reduce((acc, b) => acc * (b.prob / 100), 1);
+    let combinedPct = (combined * 100).toFixed(2);
+    let impliedOdds = (1 / combined).toFixed(2);
 
-    combinedProbEl.textContent = `Combined Probability: ${combinedPct}%`;
-    combinedOddsEl.textContent = `Implied Odds: ${impliedOdds} · Actual Combined Odds: ${combinedActual}`;
+    // Actual combined odds (multiply odds)
+    let combinedActual = selectedBets.reduce((acc, b) => acc * (b.odds || 1), 1).toFixed(2);
+
+    combinedProbEl.textContent = `Combined Probability: ${combinedPct}% (${impliedOdds})`;
+    combinedOddsEl.textContent = `Actual Combined Odds: ${combinedActual}`;
   }
+
+  // Close button
+  document.getElementById("close-betslip").addEventListener("click", () => {
+    panel.classList.remove("open");
+  });
 });
 </script>
+
 
 {% endblock %}
