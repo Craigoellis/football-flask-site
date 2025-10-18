@@ -246,11 +246,17 @@ document.addEventListener("DOMContentLoaded", () => {
       const implied = prob > 0 ? (100 / prob).toFixed(2) : "—";
       const odds = parseFloat(row.cells[6]?.textContent) || 0;
 
+      // Calculate Value %
+      let valuePct = "—";
+      if (implied !== "—" && implied > 0 && odds > 0) {
+        valuePct = (((odds - implied) / implied) * 100).toFixed(2);
+      }
+
       const idx = selectedBets.findIndex(b => b.fixture === fixture && b.market === market);
       if (idx >= 0) {
         selectedBets.splice(idx, 1);
       } else {
-        selectedBets.push({ fixture, market, kickoff, country, league, prob, implied, odds });
+        selectedBets.push({ fixture, market, kickoff, country, league, prob, implied, odds, valuePct });
       }
 
       renderBets();
@@ -272,6 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedBets.forEach((b, i) => {
       const card = document.createElement("div");
       card.classList.add("betslip-card");
+      const valueColor = b.valuePct !== "—" && b.valuePct > 0 ? "green" : "red";
       card.innerHTML = `
         <div class="betslip-card-body">
           <button class="remove-bet" data-index="${i}">&times;</button>
@@ -279,7 +286,8 @@ document.addEventListener("DOMContentLoaded", () => {
           <span>${b.market}</span><br>
           <small>${b.kickoff} / ${b.country} - ${b.league}</small><br>
           <span style="color:green;font-weight:600;">${b.prob.toFixed(2)}% (${b.implied})</span>
-          <span style="float:right;font-weight:600;">${b.odds}</span>
+          <span style="float:right;font-weight:600;">${b.odds}</span><br>
+          <span style="color:${valueColor};font-weight:600;">Value: ${b.valuePct}%</span>
         </div>
       `;
       content.appendChild(card);
@@ -295,13 +303,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- Combined probability + odds ---
-    let combined = selectedBets.reduce((acc, b) => acc * (b.prob / 100), 1);
-    let combinedPct = (combined * 100).toFixed(2);
-    let impliedOdds = (1 / combined).toFixed(2);
-    let combinedActual = selectedBets.reduce((acc, b) => acc * (b.odds || 1), 1).toFixed(2);
+    let combinedProb = selectedBets.reduce((acc, b) => acc * (b.prob / 100), 1);
+    let combinedPct = (combinedProb * 100).toFixed(2);
+    let combinedImpliedOdds = (1 / combinedProb).toFixed(2);
+    let combinedActualOdds = selectedBets.reduce((acc, b) => acc * (b.odds || 1), 1).toFixed(2);
 
-    combinedProbEl.textContent = `Combined Probability: ${combinedPct}% (${impliedOdds})`;
-    combinedOddsEl.textContent = `Actual Combined Odds: ${combinedActual}`;
+    // --- Combined Value % ---
+    let combinedValue = (((combinedActualOdds - combinedImpliedOdds) / combinedImpliedOdds) * 100).toFixed(2);
+    let valueColor = combinedValue > 0 ? "green" : "red";
+
+    combinedProbEl.textContent = `Combined Probability: ${combinedPct}% (${combinedImpliedOdds})`;
+    combinedOddsEl.innerHTML = `Actual Combined Odds: <strong>${combinedActualOdds}</strong> &nbsp; | &nbsp; <span style="color:${valueColor};font-weight:600;">Value: ${combinedValue}%</span>`;
   }
 
   // --- Close panel ---
@@ -309,18 +321,20 @@ document.addEventListener("DOMContentLoaded", () => {
     panel.classList.remove("open");
   });
 
-  // --- Create a persistent Clear All button in the footer ---
+  // --- Clear All button (persistent) ---
   const clearBtn = document.createElement("button");
   clearBtn.textContent = "Clear All";
   clearBtn.classList.add("betslip-clear");
   clearBtn.style.marginTop = "10px";
   clearBtn.addEventListener("click", () => {
-    selectedBets.length = 0; // clear array in-place
+    selectedBets.length = 0;
     renderBets();
   });
 
   footer.appendChild(clearBtn);
 });
 </script>
+
+
 
 {% endblock %}
