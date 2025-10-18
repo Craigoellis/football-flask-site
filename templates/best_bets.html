@@ -238,7 +238,6 @@ document.addEventListener("DOMContentLoaded", () => {
     cell.addEventListener("click", () => {
       const row = cell.closest("tr");
 
-      // Extract values
       const fixture = row.cells[3]?.textContent.trim() || "Unknown Fixture";
       const market = row.closest("table").previousElementSibling.textContent.trim();
       const kickoff = row.cells[0]?.textContent.trim() || "-";
@@ -248,7 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const implied = prob > 0 ? (100 / prob).toFixed(2) : "—";
       const odds = parseFloat(row.cells[6]?.textContent) || 0;
 
-      // Toggle add/remove
       const idx = selectedBets.findIndex(b => b.fixture === fixture && b.market === market);
       if (idx >= 0) {
         selectedBets.splice(idx, 1);
@@ -289,8 +287,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- Remove single bet buttons ---
-    document.querySelectorAll(".remove-bet").forEach(btn => {
-      btn.addEventListener("click", (e) => {
+    content.querySelectorAll(".remove-bet").forEach(btn => {
+      btn.addEventListener("click", e => {
         const index = parseInt(e.target.dataset.index);
         selectedBets.splice(index, 1);
         renderBets();
@@ -312,24 +310,18 @@ document.addEventListener("DOMContentLoaded", () => {
     panel.classList.remove("open");
   });
 
-  // --- Clear All button ---
+  // --- Create a persistent Clear All button in the footer ---
   const clearBtn = document.createElement("button");
   clearBtn.textContent = "Clear All";
   clearBtn.classList.add("betslip-clear");
   clearBtn.style.marginTop = "10px";
   clearBtn.addEventListener("click", () => {
-    selectedBets = [];
+    selectedBets.length = 0; // clear array in-place
     renderBets();
   });
 
-  // Always append the button once
-  if (footer && !footer.querySelector(".betslip-clear")) {
-    footer.appendChild(clearBtn);
-  }
+  footer.appendChild(clearBtn);
 });
 </script>
-
-
-
 
 {% endblock %}
