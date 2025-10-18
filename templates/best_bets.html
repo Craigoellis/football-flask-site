@@ -56,12 +56,17 @@
             <td>{{ r.competition_country }}</td>
             <td>{{ r.competition_name }}</td>
             <td>{{ r.fixture_name }}</td>
-            <td class="prob-cell"
-                data-fixture="{{ r.fixture_name }}"
-                data-market="{{ titles['over_2_goals'] }}"
-                data-prob="{{ r.probability }}"
-                data-odds="{{ r.actual_odds }}">
-              <span class="bb-badge">{{ r.probability }}%</span>
+            <td>
+              <span class="bb-badge prob-cell"
+                    data-fixture="{{ r.fixture_name }}"
+                    data-market="{{ titles['over_2_goals'] }}"
+                    data-prob="{{ r.probability }}"
+                    data-odds="{{ r.actual_odds }}"
+                    data-country="{{ r.competition_country }}"
+                    data-league="{{ r.competition_name }}"
+                    data-ko="{{ r.kickoff_unix | format_kickoff }}">
+                {{ r.probability }}%
+              </span>
             </td>
             <td>{{ r.implied_odds }}</td>
             <td>{{ r.actual_odds }}</td>
@@ -113,12 +118,17 @@
             <td>{{ r.competition_country }}</td>
             <td>{{ r.competition_name }}</td>
             <td>{{ r.fixture_name }}</td>
-            <td class="prob-cell"
-                data-fixture="{{ r.fixture_name }}"
-                data-market="{{ titles['over_3_goals'] }}"
-                data-prob="{{ r.probability }}"
-                data-odds="{{ r.actual_odds }}">
-              <span class="bb-badge">{{ r.probability }}%</span>
+            <td>
+              <span class="bb-badge prob-cell"
+                    data-fixture="{{ r.fixture_name }}"
+                    data-market="{{ titles['over_3_goals'] }}"
+                    data-prob="{{ r.probability }}"
+                    data-odds="{{ r.actual_odds }}"
+                    data-country="{{ r.competition_country }}"
+                    data-league="{{ r.competition_name }}"
+                    data-ko="{{ r.kickoff_unix | format_kickoff }}">
+                {{ r.probability }}%
+              </span>
             </td>
             <td>{{ r.implied_odds }}</td>
             <td>{{ r.actual_odds }}</td>
@@ -168,12 +178,17 @@
             <td>{{ r.competition_country }}</td>
             <td>{{ r.competition_name }}</td>
             <td>{{ r.fixture_name }}</td>
-            <td class="prob-cell"
-                data-fixture="{{ r.fixture_name }}"
-                data-market="{{ titles['home_win'] }}"
-                data-prob="{{ r.probability }}"
-                data-odds="{{ r.actual_odds }}">
-              <span class="bb-badge">{{ r.probability }}%</span>
+            <td>
+              <span class="bb-badge prob-cell"
+                    data-fixture="{{ r.fixture_name }}"
+                    data-market="{{ titles['home_win'] }}"
+                    data-prob="{{ r.probability }}"
+                    data-odds="{{ r.actual_odds }}"
+                    data-country="{{ r.competition_country }}"
+                    data-league="{{ r.competition_name }}"
+                    data-ko="{{ r.kickoff_unix | format_kickoff }}">
+                {{ r.probability }}%
+              </span>
             </td>
             <td>{{ r.implied_odds }}</td>
             <td>{{ r.actual_odds }}</td>
@@ -213,23 +228,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const content = document.getElementById("betslip-content");
   const combinedProbEl = document.getElementById("combined-prob");
   const combinedOddsEl = document.getElementById("combined-odds");
+  const closeBtn = document.getElementById("close-betslip");
 
   let selectedBets = [];
 
   // Listen for clicks on probability cells
-  document.querySelectorAll(".col--prob").forEach(cell => {
+  document.querySelectorAll(".prob-cell").forEach(cell => {
     cell.addEventListener("click", () => {
-      const row = cell.closest("tr");
-      const fixture = row.querySelector('[data-label="Fixture"]').textContent.trim();
-      const market = row.closest("table").previousElementSibling.textContent.trim();
-      const kickoff = row.querySelector(".col--kick").textContent.trim();
-      const country = row.querySelector('[data-label="Country"]').textContent.trim();
-      const league = row.querySelector('[data-label="League"]').textContent.trim();
-      const prob = parseFloat(cell.textContent) || 0;
+      const fixture = cell.dataset.fixture;
+      const market = cell.dataset.market;
+      const kickoff = cell.dataset.ko;
+      const country = cell.dataset.country;
+      const league = cell.dataset.league;
+      const prob = parseFloat(cell.dataset.prob) || 0;
       const implied = (100 / prob).toFixed(2);
-      const odds = parseFloat(row.querySelector(".col--odds").textContent) || 0;
+      const odds = parseFloat(cell.dataset.odds) || 0;
 
-      // Toggle add/remove
       const idx = selectedBets.findIndex(b => b.fixture === fixture && b.market === market);
       if (idx >= 0) {
         selectedBets.splice(idx, 1);
@@ -278,12 +292,10 @@ document.addEventListener("DOMContentLoaded", () => {
     combinedOddsEl.textContent = `Actual Combined Odds: ${combinedActual}`;
   }
 
-  // Close button
-  document.getElementById("close-betslip").addEventListener("click", () => {
+  closeBtn.addEventListener("click", () => {
     panel.classList.remove("open");
   });
 });
 </script>
-
 
 {% endblock %}
