@@ -233,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedBets = [];
 
   // Listen for clicks on probability cells
-  document.querySelectorAll(".col--prob").forEach(cell => {
+  document.querySelectorAll(".prob-cell").forEach(cell => {
     cell.addEventListener("click", () => {
       const row = cell.closest("tr");
       const fixture = row.querySelector('[data-label="Fixture"]').textContent.trim();
