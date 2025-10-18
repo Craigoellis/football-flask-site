@@ -173,4 +173,121 @@
     </tbody>
   </table>
 </div>
+
+<!-- Betslip Side Panel -->
+<div id="betslip-panel" class="betslip-panel">
+  <div class="betslip-header">
+    <h3>Betslip</h3>
+    <button id="close-betslip" class="betslip-close">&times;</button>
+  </div>
+  <div id="betslip-content" class="betslip-content">
+    <p class="betslip-empty">No bets selected yet.</p>
+  </div>
+  <div class="betslip-footer">
+    <p id="combined-prob">Combined Probability: —</p>
+    <p id="combined-odds">Implied Odds: —</p>
+    <button id="clear-betslip" class="betslip-clear">Clear All</button>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const betslipPanel = document.getElementById("betslip-panel");
+  const betslipContent = document.getElementById("betslip-content");
+  const combinedProbEl = document.getElementById("combined-prob");
+  const combinedOddsEl = document.getElementById("combined-odds");
+  const clearButton = document.getElementById("clear-betslip");
+  const closeButton = document.getElementById("close-betslip");
+
+  let selectedBets = JSON.parse(localStorage.getItem("betslip") || "[]");
+
+  function saveBets() {
+    localStorage.setItem("betslip", JSON.stringify(selectedBets));
+  }
+
+  // Helper: recalculate combined probability and implied odds
+  function updateCombined() {
+    if (selectedBets.length === 0) {
+      combinedProbEl.textContent = "Combined Probability: —";
+      combinedOddsEl.textContent = "Implied Odds: —";
+      return;
+    }
+
+    let combined = selectedBets.reduce((acc, b) => acc * (b.probability / 100), 1);
+    let combinedPct = (combined * 100).toFixed(2);
+    let impliedOdds = (1 / combined).toFixed(2);
+
+    combinedProbEl.textContent = `Combined Probability: ${combinedPct}%`;
+    combinedOddsEl.textContent = `Implied Odds: ${impliedOdds}`;
+  }
+
+  // Helper: render betslip list
+  function renderBetslip() {
+    betslipContent.innerHTML = "";
+    if (selectedBets.length === 0) {
+      betslipContent.innerHTML = '<p class="betslip-empty">No bets selected yet.</p>';
+      betslipPanel.classList.remove("open");
+      updateCombined();
+      return;
+    }
+
+    selectedBets.forEach((bet, index) => {
+      const item = document.createElement("div");
+      item.classList.add("betslip-item");
+      item.innerHTML = `
+        <h4>${bet.fixture}</h4>
+        <p><strong>${bet.market}</strong> — ${bet.probability}% (${bet.odds})</p>
+        <button data-index="${index}" class="remove-bet">Remove</button>
+      `;
+      betslipContent.appendChild(item);
+    });
+
+    // Enable remove buttons
+    document.querySelectorAll(".remove-bet").forEach(btn => {
+      btn.addEventListener("click", e => {
+        const idx = parseInt(e.target.dataset.index);
+        selectedBets.splice(idx, 1);
+        saveBets();
+        renderBetslip();
+      });
+    });
+
+    betslipPanel.classList.add("open");
+    updateCombined();
+  }
+
+  // Handle clicking on probability cells
+  document.querySelectorAll("td:nth-child(5)").forEach(cell => {
+    cell.style.cursor = "pointer";
+    cell.addEventListener("click", () => {
+      const row = cell.parentElement;
+      const fixture = row.children[3].innerText;
+      const market = row.children[2].innerText;
+      const probability = parseFloat(cell.innerText);
+      const odds = row.children[6].innerText;
+
+      if (!isNaN(probability)) {
+        selectedBets.push({ fixture, market, probability, odds });
+        saveBets();
+        renderBetslip();
+      }
+    });
+  });
+
+  // Close and Clear
+  closeButton.addEventListener("click", () => betslipPanel.classList.remove("open"));
+  clearButton.addEventListener("click", () => {
+    selectedBets = [];
+    saveBets();
+    renderBetslip();
+  });
+
+  // Auto-load previous selections
+  if (selectedBets.length > 0) {
+    renderBetslip();
+  }
+});
+</script>
+
+
 {% endblock %}
