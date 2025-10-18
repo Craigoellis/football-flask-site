@@ -52,21 +52,27 @@
         {% for r in rows %}
           {% set s = r.season_stats or {} %}
           <tr>
-            <td class="col--kick" data-label="Kick Off">{{ r.kickoff_unix | format_kickoff }}</td>
-            <td data-label="Country">{{ r.competition_country }}</td>
-            <td data-label="League">{{ r.competition_name }}</td>
-            <td data-label="Fixture">{{ r.fixture_name }}</td>
-            <td class="col--prob" data-label="Probability"><span class="bb-badge">{{ r.probability }}%</span></td>
-            <td class="col--implied" data-label="Implied Odds">{{ r.implied_odds }}</td>
-            <td class="col--odds" data-label="Latest Odds">{{ r.actual_odds }}</td>
-            <td data-label="Predictability">{{ r.predictability|capitalize }}</td>
-            <td data-label="Home Games Played">{{ s.home_played_home }}</td>
-            <td data-label="Away Games Played">{{ s.away_played_away }}</td>
-            <td class="col--pct" data-label="Home %">{{ s.home_home_pct }}</td>
-            <td class="col--pct" data-label="Away %">{{ s.away_away_pct }}</td>
-            <td class="col--pct" data-label="Home Overall %">{{ s.home_total_pct }}</td>
-            <td class="col--pct" data-label="Away Overall %">{{ s.away_total_pct }}</td>
-            <td class="bb-link" data-label="Game"><a href="/game/{{ r.fixture_id }}">Open</a></td>
+            <td>{{ r.kickoff_unix | format_kickoff }}</td>
+            <td>{{ r.competition_country }}</td>
+            <td>{{ r.competition_name }}</td>
+            <td>{{ r.fixture_name }}</td>
+            <td class="prob-cell"
+                data-fixture="{{ r.fixture_name }}"
+                data-market="{{ titles['over_2_goals'] }}"
+                data-prob="{{ r.probability }}"
+                data-odds="{{ r.actual_odds }}">
+              <span class="bb-badge">{{ r.probability }}%</span>
+            </td>
+            <td>{{ r.implied_odds }}</td>
+            <td>{{ r.actual_odds }}</td>
+            <td>{{ r.predictability|capitalize }}</td>
+            <td>{{ s.home_played_home }}</td>
+            <td>{{ s.away_played_away }}</td>
+            <td>{{ s.home_home_pct }}</td>
+            <td>{{ s.away_away_pct }}</td>
+            <td>{{ s.home_total_pct }}</td>
+            <td>{{ s.away_total_pct }}</td>
+            <td><a href="/game/{{ r.fixture_id }}">Open</a></td>
           </tr>
         {% endfor %}
       {% else %}
@@ -103,21 +109,27 @@
         {% for r in rows %}
           {% set s = r.season_stats or {} %}
           <tr>
-            <td class="col--kick" data-label="Kick Off">{{ r.kickoff_unix | format_kickoff }}</td>
-            <td data-label="Country">{{ r.competition_country }}</td>
-            <td data-label="League">{{ r.competition_name }}</td>
-            <td data-label="Fixture">{{ r.fixture_name }}</td>
-            <td class="col--prob" data-label="Probability"><span class="bb-badge">{{ r.probability }}%</span></td>
-            <td class="col--implied" data-label="Implied Odds">{{ r.implied_odds }}</td>
-            <td class="col--odds" data-label="Latest Odds">{{ r.actual_odds }}</td>
-            <td data-label="Predictability">{{ r.predictability|capitalize }}</td>
-            <td data-label="Home Games Played">{{ s.home_played_home }}</td>
-            <td data-label="Away Games Played">{{ s.away_played_away }}</td>
-            <td class="col--pct" data-label="Home %">{{ s.home_home_pct }}</td>
-            <td class="col--pct" data-label="Away %">{{ s.away_away_pct }}</td>
-            <td class="col--pct" data-label="Home Overall %">{{ s.home_total_pct }}</td>
-            <td class="col--pct" data-label="Away Overall %">{{ s.away_total_pct }}</td>
-            <td class="bb-link" data-label="Game"><a href="/game/{{ r.fixture_id }}">Open</a></td>
+            <td>{{ r.kickoff_unix | format_kickoff }}</td>
+            <td>{{ r.competition_country }}</td>
+            <td>{{ r.competition_name }}</td>
+            <td>{{ r.fixture_name }}</td>
+            <td class="prob-cell"
+                data-fixture="{{ r.fixture_name }}"
+                data-market="{{ titles['over_3_goals'] }}"
+                data-prob="{{ r.probability }}"
+                data-odds="{{ r.actual_odds }}">
+              <span class="bb-badge">{{ r.probability }}%</span>
+            </td>
+            <td>{{ r.implied_odds }}</td>
+            <td>{{ r.actual_odds }}</td>
+            <td>{{ r.predictability|capitalize }}</td>
+            <td>{{ s.home_played_home }}</td>
+            <td>{{ s.away_played_away }}</td>
+            <td>{{ s.home_home_pct }}</td>
+            <td>{{ s.away_away_pct }}</td>
+            <td>{{ s.home_total_pct }}</td>
+            <td>{{ s.away_total_pct }}</td>
+            <td><a href="/game/{{ r.fixture_id }}">Open</a></td>
           </tr>
         {% endfor %}
       {% else %}
@@ -152,19 +164,25 @@
         {% for r in rows %}
           {% set s = r.season_stats or {} %}
           <tr>
-            <td class="col--kick" data-label="Kick Off">{{ r.kickoff_unix | format_kickoff }}</td>
-            <td data-label="Country">{{ r.competition_country }}</td>
-            <td data-label="League">{{ r.competition_name }}</td>
-            <td data-label="Fixture">{{ r.fixture_name }}</td>
-            <td class="col--prob" data-label="Probability"><span class="bb-badge">{{ r.probability }}%</span></td>
-            <td class="col--implied" data-label="Implied Odds">{{ r.implied_odds }}</td>
-            <td class="col--odds" data-label="Latest Odds">{{ r.actual_odds }}</td>
-            <td data-label="Predictability">{{ r.predictability|capitalize }}</td>
-            <td data-label="Home Games Played">{{ s.home_played_home }}</td>
-            <td data-label="Away Games Played">{{ s.away_played_away }}</td>
-            <td class="col--pct" data-label="Home Win %">{{ s.home_win_home_pct }}</td>
-            <td class="col--pct" data-label="Away Lost %">{{ s.away_loss_away_pct }}</td>
-            <td class="bb-link" data-label="Game"><a href="/game/{{ r.fixture_id }}">Open</a></td>
+            <td>{{ r.kickoff_unix | format_kickoff }}</td>
+            <td>{{ r.competition_country }}</td>
+            <td>{{ r.competition_name }}</td>
+            <td>{{ r.fixture_name }}</td>
+            <td class="prob-cell"
+                data-fixture="{{ r.fixture_name }}"
+                data-market="{{ titles['home_win'] }}"
+                data-prob="{{ r.probability }}"
+                data-odds="{{ r.actual_odds }}">
+              <span class="bb-badge">{{ r.probability }}%</span>
+            </td>
+            <td>{{ r.implied_odds }}</td>
+            <td>{{ r.actual_odds }}</td>
+            <td>{{ r.predictability|capitalize }}</td>
+            <td>{{ s.home_played_home }}</td>
+            <td>{{ s.away_played_away }}</td>
+            <td>{{ s.home_win_home_pct }}</td>
+            <td>{{ s.away_loss_away_pct }}</td>
+            <td><a href="/game/{{ r.fixture_id }}">Open</a></td>
           </tr>
         {% endfor %}
       {% else %}
@@ -180,13 +198,17 @@
     <h3>Betslip</h3>
     <button id="close-betslip" class="betslip-close">&times;</button>
   </div>
+
   <div id="betslip-content" class="betslip-content">
-    <p class="betslip-empty">No bets selected yet.</p>
+    <ul id="betslip-list">
+      <li class="betslip-empty">No bets selected yet.</li>
+    </ul>
   </div>
+
   <div class="betslip-footer">
     <p id="combined-prob">Combined Probability: —</p>
     <p id="combined-odds">Implied Odds: —</p>
-    <button id="clear-betslip" class="betslip-clear">Clear All</button>
+    <button id="betslip-clear" class="betslip-clear">Clear All</button>
   </div>
 </div>
 
@@ -198,9 +220,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const combinedOddsEl = document.getElementById("combined-odds");
   const clearBtn = document.getElementById("betslip-clear");
 
+  if (!panel || !list || !clearBtn) {
+    console.warn("Betslip elements missing");
+    return;
+  }
+
   let selectedBets = [];
 
-  // Listen for clicks on any probability cell
   document.querySelectorAll(".prob-cell").forEach(cell => {
     cell.addEventListener("click", () => {
       const fixture = cell.dataset.fixture;
@@ -208,22 +234,17 @@ document.addEventListener("DOMContentLoaded", () => {
       const prob = parseFloat(cell.dataset.prob);
       const odds = parseFloat(cell.dataset.odds || 0);
 
-      // Toggle add/remove
-      const existingIndex = selectedBets.findIndex(
+      const existing = selectedBets.findIndex(
         b => b.fixture === fixture && b.market === market
       );
-      if (existingIndex >= 0) {
-        selectedBets.splice(existingIndex, 1);
-      } else {
-        selectedBets.push({ fixture, market, probability: prob, odds });
-      }
+      if (existing >= 0) selectedBets.splice(existing, 1);
+      else selectedBets.push({ fixture, market, probability: prob, odds });
 
       renderBets();
       panel.classList.add("open");
     });
   });
 
-  // Clear button
   clearBtn.addEventListener("click", () => {
     selectedBets = [];
     renderBets();
@@ -232,7 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderBets() {
     list.innerHTML = "";
     if (selectedBets.length === 0) {
-      list.innerHTML = "<li>No selections yet</li>";
+      list.innerHTML = "<li class='betslip-empty'>No selections yet</li>";
       combinedProbEl.textContent = "Combined Probability: —";
       combinedOddsEl.textContent = "Implied Odds: —";
       return;
@@ -240,40 +261,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     selectedBets.forEach((b, i) => {
       const li = document.createElement("li");
-      li.innerHTML = `
-        <strong>${i + 1}. ${b.fixture}</strong><br>
-        <span style="color:#007BFF;font-weight:600;">${b.market}</span>
-        <span> — ${b.probability}% · Odds: ${b.odds || "N/A"}</span>
-      `;
+      li.innerHTML = `<strong>${i + 1}. ${b.fixture}</strong><br>
+                      <span style="color:#007BFF;font-weight:600;">${b.market}</span>
+                      — ${b.probability}% · Odds: ${b.odds || "N/A"}`;
       list.appendChild(li);
     });
 
-    // --- Combined probability (product of probabilities) ---
-    let combined = selectedBets.reduce((acc, b) => acc * (b.probability / 100), 1);
-    let combinedPct = (combined * 100).toFixed(2);
-
-    // --- Implied combined odds (from probabilities) ---
-    let impliedOdds = (1 / combined).toFixed(2);
-
-    // --- Actual combined odds (product of odds) ---
-    let combinedActual = selectedBets.reduce(
-      (acc, b) => acc * (parseFloat(b.odds) || 1),
-      1
-    );
-    let combinedActualRounded = combinedActual.toFixed(2);
+    const combined = selectedBets.reduce((a, b) => a * (b.probability / 100), 1);
+    const combinedPct = (combined * 100).toFixed(2);
+    const impliedOdds = (1 / combined).toFixed(2);
+    const combinedActual = selectedBets.reduce(
+      (a, b) => a * (parseFloat(b.odds) || 1), 1
+    ).toFixed(2);
 
     combinedProbEl.textContent = `Combined Probability: ${combinedPct}%`;
-    combinedOddsEl.textContent = `Implied Odds: ${impliedOdds} · Actual Combined Odds: ${combinedActualRounded}`;
-  }
-
-  // Keep panel open once script runs
-  if (panel) {
-    panel.classList.add("open");
+    combinedOddsEl.textContent = `Implied Odds: ${impliedOdds} · Actual Combined Odds: ${combinedActual}`;
   }
 });
 </script>
-
-
-
 
 {% endblock %}
