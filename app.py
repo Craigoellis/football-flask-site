@@ -932,23 +932,33 @@ def fetch_and_cache_all_game_details():
                         }
                         add_all_bookmaker_odds(mkt_under, "total_goals", odds_under)
 
-                # ✅ NEW: Over/Under Half Goals (First Half)
+                # Over/Under Half Goals (First Half)
                 over_half = probs.get("o0_1h_goals")
                 if over_half is not None:
+                    under_half = round(100 - over_half, 2)
+
+                    # Over 0.5 1H
                     market_data["over_0_5_half_goals"] = {
                         "probability": round(over_half, 2),
                         "implied_odds": round(100 / over_half, 2),
-                        "actual_odds": odds_dict.get("total_goals_1h", {}).get("over_05", "N/A")
+                        "actual_odds": odds_dict.get("total_goals_1h", {}).get("over_05", "N/A"),
+                        "pinnacle_odds": odds_dict.get("total_goals_1h", {}).get("over_05", "N/A"),
+                        "onexbet_odds": odds_dict.get("total_goals_1h", {}).get("over_05", "N/A"),
+                        "williamhill_odds": odds_dict.get("total_goals_1h", {}).get("over_05", "N/A"),
+                        "betfair_exchange_odds": odds_dict.get("total_goals_1h", {}).get("over_05", "N/A"),
                     }
-                    add_all_bookmaker_odds("over_0_5_half_goals", "total_goals_1h", "over_05")
 
-                    under_half = round(100 - over_half, 2)
+                    # Under 0.5 1H
                     market_data["under_0_5_half_goals"] = {
                         "probability": under_half,
                         "implied_odds": round(100 / under_half, 2),
-                        "actual_odds": odds_dict.get("total_goals_1h", {}).get("under_05", "N/A")
+                        "actual_odds": odds_dict.get("total_goals_1h", {}).get("under_05", "N/A"),
+                        "pinnacle_odds": odds_dict.get("total_goals_1h", {}).get("under_05", "N/A"),
+                        "onexbet_odds": odds_dict.get("total_goals_1h", {}).get("under_05", "N/A"),
+                        "williamhill_odds": odds_dict.get("total_goals_1h", {}).get("under_05", "N/A"),
+                        "betfair_exchange_odds": odds_dict.get("total_goals_1h", {}).get("under_05", "N/A"),
                     }
-                    add_all_bookmaker_odds("under_0_5_half_goals", "total_goals_1h", "under_05")
+
 
                 # Team Goals
                 for team_type in ["home", "away"]:
