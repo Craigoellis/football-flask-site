@@ -704,9 +704,9 @@ def load_game_details_cache_from_disk():
 # --- Main Function ---
 def fetch_and_cache_all_game_details():
     print(f"[CACHE] Refreshing Game Details Cache at {datetime.now().strftime('%H:%M:%S')}...")
-    global game_details_cache, fixtures_cache  # ✅ Add this line
+    global game_details_cache, fixtures_cache
 
-    # ✅ Properly load fixtures_cache from disk
+    # ✅ Load fixtures cache from disk
     fixtures_cache = load_fixtures_cache_from_disk()
 
     all_fixtures = {
@@ -759,13 +759,11 @@ def fetch_and_cache_all_game_details():
                         continue
 
                     raw = fx.get("odds", {})
-                    # Normalize list → dict keyed by market_name
                     if isinstance(raw, list):
                         norm = {}
                         for m in raw:
                             mname = m.get("market_name")
                             if mname:
-                                # drop the market_name key; keep the selections (home/draw/away, over_25, etc.)
                                 norm[mname] = {k: v for k, v in m.items() if k != "market_name"}
                         odds_map[fid] = norm
                     elif isinstance(raw, dict):
@@ -814,7 +812,7 @@ def fetch_and_cache_all_game_details():
                                 if str(game.get("fixture_id")) == fixture_id:
                                     for key in [
                                         "fixture_name", "unix", "season_id", "competition_predictability",
-                                        "competition_id", "home_id", "away_id", "home_position", "away_position", 
+                                        "competition_id", "home_id", "away_id", "home_position", "away_position",
                                         "competition_country", "competition_name"
                                     ]:
                                         market_data[key] = game.get(key)
@@ -934,6 +932,24 @@ def fetch_and_cache_all_game_details():
                         }
                         add_all_bookmaker_odds(mkt_under, "total_goals", odds_under)
 
+                # ✅ NEW: Over/Under Half Goals (First Half)
+                over_half = probs.get("o0_1h_goals")
+                if over_half is not None:
+                    market_data["over_0_5_half_goals"] = {
+                        "probability": round(over_half, 2),
+                        "implied_odds": round(100 / over_half, 2),
+                        "actual_odds": odds_dict.get("total_goals_1h", {}).get("over_05", "N/A")
+                    }
+                    add_all_bookmaker_odds("over_0_5_half_goals", "total_goals_1h", "over_05")
+
+                    under_half = round(100 - over_half, 2)
+                    market_data["under_0_5_half_goals"] = {
+                        "probability": under_half,
+                        "implied_odds": round(100 / under_half, 2),
+                        "actual_odds": odds_dict.get("total_goals_1h", {}).get("under_05", "N/A")
+                    }
+                    add_all_bookmaker_odds("under_0_5_half_goals", "total_goals_1h", "under_05")
+
                 # Team Goals
                 for team_type in ["home", "away"]:
                     for line in ["0.5", "1.5"]:
@@ -998,6 +1014,7 @@ def fetch_and_cache_all_game_details():
     duration = round((time.time() - start_time) / 60, 2)
     print(f"[CACHE COMPLETE] Game details updated in {duration} minutes ✅")
     return combined_data
+
 
 # --- At module level: LOAD at startup (do NOT SAVE here!) ---
 load_game_details_cache_from_disk()
