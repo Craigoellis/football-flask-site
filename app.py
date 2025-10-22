@@ -2131,8 +2131,8 @@ def filter_value_bets():
 
 @app.route('/best-bets')
 def best_bets():
-    # markets to check (you can pass multiple ?market=home_win&market=over_2_goals&market=over_3_goals)
-    markets = request.args.getlist('market') or ['home_win', 'over_2_goals', 'over_3_goals']
+    # markets to check (now includes Over 1.5 Goals)
+    markets = request.args.getlist('market') or ['over_1_goals', 'over_2_goals', 'over_3_goals', 'home_win']
 
     # value-only toggle (?value_only=1)
     def _as_bool(v):
@@ -2179,7 +2179,7 @@ def best_bets():
         if not (now_london <= ko_time <= end_london):
             continue
 
-        # ✅ NEW — skip anything not "High" or "Good" predictability
+        # ✅ Skip anything not "High" or "Good" predictability
         predict = (fd.get("competition_predictability") or "").strip().lower()
         if predict not in ("high", "good"):
             continue
@@ -2199,7 +2199,10 @@ def best_bets():
             hrow = _find_team_row(season_cache, season_id, home_id)
             arow = _find_team_row(season_cache, season_id, away_id)
 
-            if m == 'over_2_goals':
+            # ✅ Market-specific stat gates
+            if m == 'over_1_goals':
+                passes_stats = _passes_over15_gate(hrow, arow, prob)
+            elif m == 'over_2_goals':
                 passes_stats = _passes_over25_gate(hrow, arow, prob)
             elif m == 'over_3_goals':
                 passes_stats = _passes_over35_gate(hrow, arow, prob)
@@ -2210,6 +2213,7 @@ def best_bets():
             if not passes_stats:
                 continue
 
+            # convert odds safely
             def _to_float(v):
                 if v in (None, "", "N/A", "NA", "NaN", "-", "—"):
                     return None
@@ -2219,7 +2223,7 @@ def best_bets():
                     return None
 
             implied_val = _to_float(mdata.get("implied_odds"))
-            actual_val  = _to_float(mdata.get("actual_odds"))
+            actual_val = _to_float(mdata.get("actual_odds"))
             if actual_val is None:
                 continue
 
@@ -2240,7 +2244,10 @@ def best_bets():
                 "kickoff_unix": ko_unix,
             }
 
-            if m == "over_2_goals":
+            # ✅ Extract relevant season stats depending on market
+            if m == "over_1_goals":
+                row["season_stats"] = _extract_over_stats(hrow, arow, over_key="o1")
+            elif m == "over_2_goals":
                 row["season_stats"] = _extract_over_stats(hrow, arow, over_key="o2")
             elif m == "over_3_goals":
                 row["season_stats"] = _extract_over_stats(hrow, arow, over_key="o3")
@@ -2252,18 +2259,28 @@ def best_bets():
     # sort by earliest kickoff, then probability
     results.sort(key=lambda x: (x.get("kickoff_unix", 0), -x.get("probability", 0)))
 
-    # split into three tables by market
-    results_by_market = {"over_2_goals": [], "over_3_goals": [], "home_win": []}
+    # ✅ Split into four tables by market
+    results_by_market = {
+        "over_1_goals": [],
+        "over_2_goals": [],
+        "over_3_goals": [],
+        "home_win": [],
+    }
+
     for r in results:
         if r["market"] in results_by_market:
             results_by_market[r["market"]].append(r)
+
+    # Sort each market section again
     for k in results_by_market:
         results_by_market[k].sort(key=lambda x: (x.get("kickoff_unix", 0), -x.get("probability", 0)))
 
+    # ✅ Market display names
     market_labels = {
-        "home_win": "Home Win",
+        "over_1_goals": "Over 1.5 Goals",
         "over_2_goals": "Over 2.5 Goals",
         "over_3_goals": "Over 3.5 Goals",
+        "home_win": "Home Win",
     }
 
     return render_template(
@@ -2272,8 +2289,6 @@ def best_bets():
         market_labels=market_labels,
         value_only=value_only
     )
-
-
 
 # --- Season stats helpers for Best Bets ---
 
@@ -2309,6 +2324,43 @@ def _get_nested(d, path, default=None):
 
 
 # ---------------- Gates (probability + stats inside each) ---------------- #
+
+def _passes_over15_gate(home_row, away_row, prob):
+    """Over 1.5 Goals gate: internal thresholds."""
+    prob_threshold = 70.0
+    home_home_threshold = 80.0
+    away_away_threshold = 80.0
+    overall_threshold = 70.0
+    min_home_away_games = 5
+    min_overall_games = 10
+
+    if prob < prob_threshold:
+        return False
+    if not home_row or not away_row:
+        return False
+
+    h_played_home = _get_nested(home_row, "played.home", 0)
+    a_played_away = _get_nested(away_row, "played.away", 0)
+    h_played_total = _get_nested(home_row, "played.total", 0)
+    a_played_total = _get_nested(away_row, "played.total", 0)
+
+    if h_played_home < min_home_away_games or a_played_away < min_home_away_games:
+        return False
+    if h_played_total < min_overall_games or a_played_total < min_overall_games:
+        return False
+
+    h_home_o15 = float(_get_nested(home_row, "goals_over.o1.home_percentage", 0))
+    a_away_o15 = float(_get_nested(away_row, "goals_over.o1.away_percentage", 0))
+    h_total_o15 = float(_get_nested(home_row, "goals_over.o1.total_percentage", 0))
+    a_total_o15 = float(_get_nested(away_row, "goals_over.o1.total_percentage", 0))
+
+    return (
+        h_home_o15 >= home_home_threshold and
+        a_away_o15 >= away_away_threshold and
+        h_total_o15 >= overall_threshold and
+        a_total_o15 >= overall_threshold
+    )
+
 
 def _passes_over25_gate(home_row, away_row, prob):
     """Over 2.5 Goals gate: internal thresholds."""
