@@ -1430,6 +1430,7 @@ def probability_rankings():
         "over_7_corners", "over_8_corners", "over_9_corners", "over_10_corners", "over_11_corners",
         "under_7_corners", "under_8_corners", "under_9_corners", "under_10_corners", "under_11_corners",
         "home_score_first", "draw_score_first", "away_score_first",
+        "over_0_5_half_goals", "under_0_5_half_goals"
     ]
 
     market_labels = {
@@ -1450,6 +1451,8 @@ def probability_rankings():
         "under_7_corners": "Under 7.5 Corners", "under_8_corners": "Under 8.5 Corners", "under_9_corners": "Under 9.5 Corners",
         "under_10_corners": "Under 10.5 Corners", "under_11_corners": "Under 11.5 Corners",
         "home_score_first": "Home Scores First", "draw_score_first": "No Goals First", "away_score_first": "Away Scores First",
+        "over_0_5_half_goals": "Over 0.5 First Half Goals",
+        "under_0_5_half_goals": "Under 0.5 First Half Goals"
     }
 
     return render_template(
