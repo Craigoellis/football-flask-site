@@ -1515,6 +1515,53 @@
   </tbody>
 </table>
 
+<!-- Over/Under Half Goals Table -->
+<table border="1" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th colspan="7" class="section-header">Over/Under Half Goals (First Half)</th>
+    </tr>
+    <tr>
+      <th>Outcome</th>
+      <th>Over Probability</th>
+      <th>Over Implied Odds</th>
+      <th>Over Odds</th>
+      <th>Under Probability</th>
+      <th>Under Implied Odds</th>
+      <th>Under Odds</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% set over = game_data.get('over_0_5_half_goals', {}) %}
+    {% set under = game_data.get('under_0_5_half_goals', {}) %}
+    <tr>
+      <td>0.5 First Half Goals</td>
+      <td>{{ over.get('probability', 'N/A') }}%</td>
+      <td>{{ over.get('implied_odds', 'N/A') }}</td>
+      <td class="odds-value"
+          data-implied="{{ over.get('implied_odds', 'N/A') }}"
+          data-actual_odds="{{ over.get('actual_odds', 'N/A') }}"
+          data-pinnacle_odds="{{ over.get('pinnacle_odds', 'N/A') }}"
+          data-onexbet_odds="{{ over.get('onexbet_odds', 'N/A') }}"
+          data-williamhill_odds="{{ over.get('williamhill_odds', 'N/A') }}"
+          data-betfair_exchange_odds="{{ over.get('betfair_exchange_odds', 'N/A') }}">
+        {{ over.get('actual_odds', 'N/A') }}
+      </td>
+      <td>{{ under.get('probability', 'N/A') }}%</td>
+      <td>{{ under.get('implied_odds', 'N/A') }}</td>
+      <td class="odds-value"
+          data-implied="{{ under.get('implied_odds', 'N/A') }}"
+          data-actual_odds="{{ under.get('actual_odds', 'N/A') }}"
+          data-pinnacle_odds="{{ under.get('pinnacle_odds', 'N/A') }}"
+          data-onexbet_odds="{{ under.get('onexbet_odds', 'N/A') }}"
+          data-williamhill_odds="{{ under.get('williamhill_odds', 'N/A') }}"
+          data-betfair_exchange_odds="{{ under.get('betfair_exchange_odds', 'N/A') }}">
+        {{ under.get('actual_odds', 'N/A') }}
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <!-- Over/Under Team Goals Table -->
 <table border="1" cellpadding="8" cellspacing="0">
   <thead>
