@@ -1066,8 +1066,6 @@ def update_predictability_cache_from_fixtures(fixtures_data):
                     if predictability and competition_id:
                         break  # Found valid data
 
-                print(f"[DEBUG] Processing League: {league} | Predictability: {predictability} | Competition ID: {competition_id}")
-
                 if predictability and competition_id:
                     grouped.setdefault(country, {}).update({
                         competition_id: {
