@@ -2559,7 +2559,7 @@ def generate_betslip():
         page = 1
 
         while len(betslip_results) < max_betslips:
-            # Include pagination parameter if supported (e.g., page=page)
+            # Include pagination parameter if supported (e.g. page=page)
             max_retries = 25
             retry_delay = 2  # seconds
 
@@ -2571,7 +2571,7 @@ def generate_betslip():
                     break  # successful, exit loop
                 except requests.exceptions.HTTPError as http_err:
                     if response.status_code == 429:
-                        print(f"429 Too Many Requests. Retrying in {retry_delay} seconds... (Attempt {attempt + 1}/{max_retries})")
+                        print(f"429 Too Many Requests. Retrying in {retry_delay} seconds. (Attempt {attempt + 1}/{max_retries})")
                         time.sleep(retry_delay)
                     else:
                         raise http_err  # other errors are not retried
@@ -2580,7 +2580,7 @@ def generate_betslip():
 
             if not page_data:
                 break  # Stop if there are no more results
-            
+
             betslip_results.extend(page_data)
             page += 1
 
@@ -2592,29 +2592,58 @@ def generate_betslip():
         for betslip in betslip_results:
             selections = betslip.get('selections', [])
             total_odds = betslip.get('total_odds', 'N/A')
-            combined_probability = 1  # For calculating true combined probability
+            combined_probability = 1.0  # For calculating true combined probability
 
             for selection in selections:
-                probability = selection.get('probability', 0)
+                raw_prob = selection.get('probability', 0)
+
+                # Safely convert probability to a float; fall back to 0 if it's invalid
+                try:
+                    probability = float(raw_prob)
+                except (TypeError, ValueError):
+                    probability = 0.0
+
                 implied_odds = round(1 / (probability / 100), 2) if probability > 0 else "N/A"
+
+                # Normalise probability to numeric for downstream use (templates etc.)
+                selection['probability'] = probability
                 selection['implied_odds'] = implied_odds
-                selection['fixture_id'] = selection.get('fixture_id')  # ✅ Add this line
-                combined_probability *= (probability / 100)
+                selection['fixture_id'] = selection.get('fixture_id')
+
+                # Use the numeric probability when building the combined probability
+                if probability > 0:
+                    combined_probability *= (probability / 100)
 
             true_combined_probability = round(combined_probability * 100, 2)
-            implied_odds_combined = round(1 / (true_combined_probability / 100), 2) if true_combined_probability > 0 else "N/A"
-            value_percentage = round(((total_odds - implied_odds_combined) / abs(implied_odds_combined)) * 100, 2) if isinstance(total_odds, (int, float)) else "N/A"
+            implied_odds_combined = (
+                round(1 / (true_combined_probability / 100), 2)
+                if true_combined_probability > 0
+                else "N/A"
+            )
+
+            if isinstance(total_odds, (int, float)) and isinstance(implied_odds_combined, (int, float)) and implied_odds_combined != 0:
+                value_percentage = round(
+                    ((total_odds - implied_odds_combined) / abs(implied_odds_combined)) * 100,
+                    2
+                )
+                value_percentage_str = f"{value_percentage}%"
+            else:
+                value_percentage_str = "N/A"
 
             processed_betslips.append({
                 "selections": selections,
                 "total_odds": total_odds,
                 "true_combined_probability": f"{true_combined_probability}%",
                 "implied_odds_combined": implied_odds_combined,
-                "value_percentage": f"{value_percentage}%"
+                "value_percentage": value_percentage_str
             })
 
         # Sort processed betslips by true combined probability in descending order
-        processed_betslips.sort(key=lambda x: x['true_combined_probability'], reverse=True)
+        # Note: strip '%' and sort numerically to avoid string-sorting issues
+        processed_betslips.sort(
+            key=lambda x: float(str(x['true_combined_probability']).rstrip('%') or 0),
+            reverse=True
+        )
 
         return render_template('betslip_results.html', betslips=processed_betslips)
 
