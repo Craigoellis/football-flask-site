@@ -2669,10 +2669,15 @@ def custom_date(value):
 # =========================
 # Scheduler Setup
 # =========================
-scheduler = BackgroundScheduler()
-scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=2)
-scheduler.add_job(refresh_value_bets_cache, 'interval', minutes=10)
-scheduler.start()
+# Only run the scheduler if explicitly enabled via environment variable.
+if os.environ.get("RUN_SCHEDULER") == "1":
+    print("[SCHEDULER] RUN_SCHEDULER=1 → starting background jobs.")
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=10)
+    scheduler.add_job(refresh_value_bets_cache, 'interval', minutes=10)
+    scheduler.start()
+else:
+    print("[SCHEDULER] RUN_SCHEDULER!=1 → scheduler disabled in this process.")
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
