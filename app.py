@@ -207,17 +207,17 @@ def refresh_fixtures_cache():
     print("[CACHE] Predictability Cache Updated from Fixtures.")
 
     # Step 2: Fetch Season Stats
-    print("[CACHE] Fetching Season Stats...")
-    fetch_season_stats(unique_season_ids, API_TOKEN)
+    # print("[CACHE] Fetching Season Stats...")
+    # fetch_season_stats(unique_season_ids, API_TOKEN)
     # 🔁 Ensure in-memory season stats are refreshed from disk immediately
-    load_season_stats_cache_from_disk()
-    print("[CACHE] Season Stats Cache Updated and Reloaded in Memory.")
+    # load_season_stats_cache_from_disk()
+    # print("[CACHE] Season Stats Cache Updated and Reloaded in Memory.")
 
     # Step 2.5: Fetch "Last 25 Games" Season Stats
-    print("[CACHE] Fetching Last 25 Games Season Stats...")
-    fetch_season_stats_last25(unique_season_ids, API_TOKEN)
-    load_season_stats_cache_last25_from_disk()
-    print("[CACHE] Last 25 Games Season Stats Cache Updated and Reloaded in Memory.")
+    # print("[CACHE] Fetching Last 25 Games Season Stats...")
+    # fetch_season_stats_last25(unique_season_ids, API_TOKEN)
+    # load_season_stats_cache_last25_from_disk()
+    # print("[CACHE] Last 25 Games Season Stats Cache Updated and Reloaded in Memory.")
 
     # Step 3: Fetch Game Details
     print("[CACHE] Fetching Game Details...")
@@ -2673,7 +2673,7 @@ def custom_date(value):
 if os.environ.get("RUN_SCHEDULER") == "1":
     print("[SCHEDULER] RUN_SCHEDULER=1 → starting background jobs.")
     scheduler = BackgroundScheduler()
-    scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=10)
+    scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=2)
     scheduler.add_job(refresh_value_bets_cache, 'interval', minutes=10)
     scheduler.start()
 else:
