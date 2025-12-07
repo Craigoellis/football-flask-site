@@ -58,8 +58,8 @@ VALUE_BETS_CACHE_FILE = os.path.join(DATA_DIR, "value_bets_cache.json")
 SEASON_STATS_CACHE_FILE = os.path.join(DATA_DIR, "season_stats_cache.json")
 
 # NEW: separate cache file + in-memory cache for "Last 25 Games"
-#SEASON_STATS_CACHE_FILE_LAST25 = os.path.join(DATA_DIR, "season_stats_last25.json")
-#season_stats_cache_last25 = {}
+SEASON_STATS_CACHE_FILE_LAST25 = os.path.join(DATA_DIR, "season_stats_last25.json")
+season_stats_cache_last25 = {}
 
 # Timestamp files for caches
 GAME_DETAILS_CACHE_TIME_FILE = os.path.join(DATA_DIR, "game_details_cache_time.txt")
@@ -554,7 +554,7 @@ def fetch_season_stats(season_ids, api_token):
     print(f"[CACHE] Fetched and cached season stats for {len(season_stats)} Season IDs.")
     return season_stats
 
-## CURRENTLY DISABLED def fetch_season_stats_last25(season_ids, api_token):
+def fetch_season_stats_last25(season_ids, api_token):
     """Fetch and cache 'Last 25 Games' season stats for each season."""
     cache_file = SEASON_STATS_CACHE_FILE_LAST25
     cache_expiry_days = 3
@@ -666,37 +666,37 @@ def load_season_stats_cache_from_disk():
         season_stats_cache = {}
 
 
-#def load_season_stats_cache_last25_from_disk():
-    #"""Load the 'Last 25 Games' season stats cache from disk into memory."""
-    #global season_stats_cache_last25
-    #try:
-        #if os.path.exists(SEASON_STATS_CACHE_FILE_LAST25):
-            #with open(SEASON_STATS_CACHE_FILE_LAST25, "r", encoding="utf-8") as f:
-                #season_stats_cache_last25 = json.load(f)
-            #print(f"[CACHE] Loaded Last 25 Games cache with {len(season_stats_cache_last25)} seasons.")
-        #else:
-            #season_stats_cache_last25 = {}
-            #print("[CACHE] No Last 25 Games cache file found; starting empty.")
-    #except Exception as e:
-        #print(f"[ERROR] Failed to load Last 25 Games cache: {e}")
-        #season_stats_cache_last25 = {}
+def load_season_stats_cache_last25_from_disk():
+    """Load the 'Last 25 Games' season stats cache from disk into memory."""
+    global season_stats_cache_last25
+    try:
+        if os.path.exists(SEASON_STATS_CACHE_FILE_LAST25):
+            with open(SEASON_STATS_CACHE_FILE_LAST25, "r", encoding="utf-8") as f:
+                season_stats_cache_last25 = json.load(f)
+            print(f"[CACHE] Loaded Last 25 Games cache with {len(season_stats_cache_last25)} seasons.")
+        else:
+            season_stats_cache_last25 = {}
+            print("[CACHE] No Last 25 Games cache file found; starting empty.")
+    except Exception as e:
+        print(f"[ERROR] Failed to load Last 25 Games cache: {e}")
+        season_stats_cache_last25 = {}
 
 
-#def save_season_stats_cache_last25_to_disk():
-    #"""Save the in-memory 'Last 25 Games' season stats cache to disk (atomic)."""
-    #try:
-        #os.makedirs(os.path.dirname(SEASON_STATS_CACHE_FILE_LAST25), exist_ok=True)
-        #tmp = SEASON_STATS_CACHE_FILE_LAST25 + ".tmp"
-        #with open(tmp, "w", encoding="utf-8") as f:
-            #json.dump(season_stats_cache_last25, f, indent=2)
-        #os.replace(tmp, SEASON_STATS_CACHE_FILE_LAST25)
+def save_season_stats_cache_last25_to_disk():
+    """Save the in-memory 'Last 25 Games' season stats cache to disk (atomic)."""
+    try:
+        os.makedirs(os.path.dirname(SEASON_STATS_CACHE_FILE_LAST25), exist_ok=True)
+        tmp = SEASON_STATS_CACHE_FILE_LAST25 + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(season_stats_cache_last25, f, indent=2)
+        os.replace(tmp, SEASON_STATS_CACHE_FILE_LAST25)
 
         # UPDATED: timestamp now uses DATA_DIR path
-        #with open(SEASON_STATS_LAST25_CACHE_TIME_FILE, "w", encoding="utf-8") as t:
-            #t.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        with open(SEASON_STATS_LAST25_CACHE_TIME_FILE, "w", encoding="utf-8") as t:
+            t.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-    #except Exception as e:
-        #print(f"[ERROR] Failed to save Last 25 Games cache: {e}")
+    except Exception as e:
+        print(f"[ERROR] Failed to save Last 25 Games cache: {e}")
 
 @app.route('/debug/season-stats-cache')
 def debug_season_stats_cache():
