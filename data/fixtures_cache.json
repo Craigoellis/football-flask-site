@@ -1,0 +1,5884 @@
+{
+  "2025-12-08": {
+    "Bolivia": {
+      "Liga De Futbol Prof": [
+        {
+          "fixture_name": "Nacional Potosí vs ABB",
+          "unix": 1765234800,
+          "fixture_id": 420443392,
+          "season_id": 77767,
+          "competition_predictability": "high",
+          "competition_id": 758,
+          "home_id": 15763,
+          "away_id": 21332,
+          "home_position": 9,
+          "away_position": 14,
+          "competition_country": "Bolivia",
+          "competition_name": "Liga De Futbol Prof"
+        },
+        {
+          "fixture_name": "San Antonio Bulo Bulo vs Real Tomayapo",
+          "unix": 1765220400,
+          "fixture_id": 420443399,
+          "season_id": 77767,
+          "competition_predictability": "high",
+          "competition_id": 758,
+          "home_id": 21345,
+          "away_id": 15509,
+          "home_position": 5,
+          "away_position": 11,
+          "competition_country": "Bolivia",
+          "competition_name": "Liga De Futbol Prof"
+        }
+      ]
+    },
+    "Bulgaria": {
+      "First League": [
+        {
+          "fixture_name": "CSKA 1948 Sofia vs Dobrudzha 1919",
+          "unix": 1765198800,
+          "fixture_id": 381304618,
+          "season_id": 660536,
+          "competition_predictability": "high",
+          "competition_id": 161,
+          "home_id": 5548,
+          "away_id": 7540,
+          "home_position": 2,
+          "away_position": 16,
+          "competition_country": "Bulgaria",
+          "competition_name": "First League"
+        },
+        {
+          "fixture_name": "Ludogorets vs Slavia Sofia",
+          "unix": 1765207800,
+          "fixture_id": 381304620,
+          "season_id": 660536,
+          "competition_predictability": "high",
+          "competition_id": 161,
+          "home_id": 4695,
+          "away_id": 5034,
+          "home_position": 3,
+          "away_position": 7,
+          "competition_country": "Bulgaria",
+          "competition_name": "First League"
+        }
+      ]
+    },
+    "Nigeria": {
+      "Npfl": [
+        {
+          "fixture_name": "Nasarawa United vs Shooting Stars",
+          "unix": 1765206000,
+          "fixture_id": 373087751,
+          "season_id": 964735,
+          "competition_predictability": "poor",
+          "competition_id": 771,
+          "home_id": 15933,
+          "away_id": 22741,
+          "home_position": 2,
+          "away_position": 10,
+          "competition_country": "Nigeria",
+          "competition_name": "Npfl"
+        }
+      ]
+    },
+    "Poland": {
+      "1. Liga": [
+        {
+          "fixture_name": "Śląsk Wrocław vs Stal Rzeszów",
+          "unix": 1765216800,
+          "fixture_id": 343889229,
+          "season_id": 718522,
+          "competition_predictability": "medium",
+          "competition_id": 158,
+          "home_id": 7243,
+          "away_id": 6568,
+          "home_position": 9,
+          "away_position": 7,
+          "competition_country": "Poland",
+          "competition_name": "1. Liga"
+        }
+      ],
+      "Ekstraklasa": [
+        {
+          "fixture_name": "Korona Kielce vs Wisła Płock",
+          "unix": 1765216800,
+          "fixture_id": 343889007,
+          "season_id": 602683,
+          "competition_predictability": "poor",
+          "competition_id": 165,
+          "home_id": 8024,
+          "away_id": 8554,
+          "home_position": 9,
+          "away_position": 2,
+          "competition_country": "Poland",
+          "competition_name": "Ekstraklasa"
+        }
+      ]
+    },
+    "Northern Ireland": {
+      "Premiership Development League": [
+        {
+          "fixture_name": "Portadown U20 vs Glenavon U20",
+          "unix": 1765223100,
+          "fixture_id": 366136773,
+          "season_id": 964738,
+          "competition_predictability": "poor",
+          "competition_id": 640,
+          "home_id": 14369,
+          "away_id": 14370,
+          "home_position": 7,
+          "away_position": 11,
+          "competition_country": "Northern Ireland",
+          "competition_name": "Premiership Development League"
+        },
+        {
+          "fixture_name": "Glentoran U20 vs Linfield U20",
+          "unix": 1765223100,
+          "fixture_id": 366136775,
+          "season_id": 964738,
+          "competition_predictability": "poor",
+          "competition_id": 640,
+          "home_id": 13773,
+          "away_id": 14368,
+          "home_position": 1,
+          "away_position": 2,
+          "competition_country": "Northern Ireland",
+          "competition_name": "Premiership Development League"
+        },
+        {
+          "fixture_name": "Coleraine U20 vs Crusaders U20",
+          "unix": 1765223100,
+          "fixture_id": 366136774,
+          "season_id": 964738,
+          "competition_predictability": "poor",
+          "competition_id": 640,
+          "home_id": 13776,
+          "away_id": 13769,
+          "home_position": 8,
+          "away_position": 3,
+          "competition_country": "Northern Ireland",
+          "competition_name": "Premiership Development League"
+        },
+        {
+          "fixture_name": "Carrick Rangers U20 vs Dungannon Swifts U20",
+          "unix": 1765223100,
+          "fixture_id": 366136766,
+          "season_id": 964738,
+          "competition_predictability": "poor",
+          "competition_id": 640,
+          "home_id": 14367,
+          "away_id": 13771,
+          "home_position": 12,
+          "away_position": 9,
+          "competition_country": "Northern Ireland",
+          "competition_name": "Premiership Development League"
+        }
+      ]
+    },
+    "Albania": {
+      "1st Division": [
+        {
+          "fixture_name": "Besa Kavajë vs Burreli",
+          "unix": 1765197000,
+          "fixture_id": 374118840,
+          "season_id": 910988,
+          "competition_predictability": "poor",
+          "competition_id": 713,
+          "home_id": 15121,
+          "away_id": 15069,
+          "home_position": 10,
+          "away_position": 7,
+          "competition_country": "Albania",
+          "competition_name": "1st Division"
+        }
+      ],
+      "Superliga": [
+        {
+          "fixture_name": "Egnatia Rrogozhinë vs Vora",
+          "unix": 1765206000,
+          "fixture_id": 373089294,
+          "season_id": 895794,
+          "competition_predictability": "medium",
+          "competition_id": 425,
+          "home_id": 15072,
+          "away_id": 15066,
+          "home_position": 3,
+          "away_position": 7,
+          "competition_country": "Albania",
+          "competition_name": "Superliga"
+        },
+        {
+          "fixture_name": "Flamurtari vs Dinamo City",
+          "unix": 1765216800,
+          "fixture_id": 373089328,
+          "season_id": 895794,
+          "competition_predictability": "medium",
+          "competition_id": 425,
+          "home_id": 15075,
+          "away_id": 15064,
+          "home_position": 9,
+          "away_position": 4,
+          "competition_country": "Albania",
+          "competition_name": "Superliga"
+        },
+        {
+          "fixture_name": "AF Elbasani vs Vllaznia Shkodër",
+          "unix": 1765216800,
+          "fixture_id": 373089327,
+          "season_id": 895794,
+          "competition_predictability": "medium",
+          "competition_id": 425,
+          "home_id": 29843,
+          "away_id": 10672,
+          "home_position": 1,
+          "away_position": 2,
+          "competition_country": "Albania",
+          "competition_name": "Superliga"
+        }
+      ]
+    },
+    "Bosnia and Herzegovina": {
+      "Premier Liga": [
+        {
+          "fixture_name": "Siroki Brijeg vs Radnik Bijeljina",
+          "unix": 1765206000,
+          "fixture_id": 350295925,
+          "season_id": 784067,
+          "competition_predictability": "high",
+          "competition_id": 275,
+          "home_id": 7648,
+          "away_id": 8837,
+          "home_position": 6,
+          "away_position": 8,
+          "competition_country": "Bosnia and Herzegovina",
+          "competition_name": "Premier Liga"
+        },
+        {
+          "fixture_name": "Sloga Doboj vs Rudar Prijedor",
+          "unix": 1765213200,
+          "fixture_id": 350295992,
+          "season_id": 784067,
+          "competition_predictability": "high",
+          "competition_id": 275,
+          "home_id": 7018,
+          "away_id": 6907,
+          "home_position": 7,
+          "away_position": 10,
+          "competition_country": "Bosnia and Herzegovina",
+          "competition_name": "Premier Liga"
+        }
+      ]
+    },
+    "Serbia": {
+      "Super Liga": [
+        {
+          "fixture_name": "Radnik Surdulica vs Mladost Lučani",
+          "unix": 1765202400,
+          "fixture_id": 343991100,
+          "season_id": 660538,
+          "competition_predictability": "poor",
+          "competition_id": 155,
+          "home_id": 7574,
+          "away_id": 7576,
+          "home_position": 7,
+          "away_position": 9,
+          "competition_country": "Serbia",
+          "competition_name": "Super Liga"
+        },
+        {
+          "fixture_name": "Spartak Subotica vs Bačka Topola",
+          "unix": 1765216800,
+          "fixture_id": 343991101,
+          "season_id": 660538,
+          "competition_predictability": "poor",
+          "competition_id": 155,
+          "home_id": 8648,
+          "away_id": 5280,
+          "home_position": 15,
+          "away_position": 13,
+          "competition_country": "Serbia",
+          "competition_name": "Super Liga"
+        },
+        {
+          "fixture_name": "Radnički Niš vs Čukarički",
+          "unix": 1765209600,
+          "fixture_id": 343990957,
+          "season_id": 660538,
+          "competition_predictability": "poor",
+          "competition_id": 155,
+          "home_id": 7579,
+          "away_id": 5610,
+          "home_position": 14,
+          "away_position": 8,
+          "competition_country": "Serbia",
+          "competition_name": "Super Liga"
+        }
+      ],
+      "Prva Liga": [
+        {
+          "fixture_name": "Zemun vs Tekstilac Odzaci",
+          "unix": 1765195200,
+          "fixture_id": 373745342,
+          "season_id": 972456,
+          "competition_predictability": "poor",
+          "competition_id": 156,
+          "home_id": 6973,
+          "away_id": 20235,
+          "home_position": 1,
+          "away_position": 10,
+          "competition_country": "Serbia",
+          "competition_name": "Prva Liga"
+        }
+      ]
+    },
+    "Algeria": {
+      "Ligue 1": [
+        {
+          "fixture_name": "MC Alger vs CR Belouizdad",
+          "unix": 1765220400,
+          "fixture_id": 358776853,
+          "season_id": 1003455,
+          "competition_predictability": "good",
+          "competition_id": 751,
+          "home_id": 15553,
+          "away_id": 15401,
+          "home_position": 1,
+          "away_position": 10,
+          "competition_country": "Algeria",
+          "competition_name": "Ligue 1"
+        },
+        {
+          "fixture_name": "JS Kabylie vs USM Alger",
+          "unix": 1765215900,
+          "fixture_id": 358776859,
+          "season_id": 1003455,
+          "competition_predictability": "good",
+          "competition_id": 751,
+          "home_id": 15600,
+          "away_id": 15400,
+          "home_position": 8,
+          "away_position": 7,
+          "competition_country": "Algeria",
+          "competition_name": "Ligue 1"
+        }
+      ]
+    },
+    "Israel": {
+      "Liga Leumit": [
+        {
+          "fixture_name": "Beitar Jerusalem vs Hapoel Jerusalem",
+          "unix": 1765216800,
+          "fixture_id": 374117125,
+          "season_id": 843112,
+          "competition_predictability": "medium",
+          "competition_id": 126,
+          "home_id": 4918,
+          "away_id": 5007,
+          "home_position": 3,
+          "away_position": 13,
+          "competition_country": "Israel",
+          "competition_name": "Liga Leumit"
+        },
+        {
+          "fixture_name": "Ashdod vs Ironi Tiberias",
+          "unix": 1765215900,
+          "fixture_id": 374117122,
+          "season_id": 843112,
+          "competition_predictability": "medium",
+          "competition_id": 126,
+          "home_id": 7315,
+          "away_id": 13058,
+          "home_position": 7,
+          "away_position": 10,
+          "competition_country": "Israel",
+          "competition_name": "Liga Leumit"
+        },
+        {
+          "fixture_name": "Ironi Modi'in vs Hapoel Ra'anana",
+          "unix": 1765213200,
+          "fixture_id": 374972728,
+          "season_id": 843112,
+          "competition_predictability": "medium",
+          "competition_id": 126,
+          "home_id": 14441,
+          "away_id": 5012,
+          "home_position": 8,
+          "away_position": 13,
+          "competition_country": "Israel",
+          "competition_name": "Liga Leumit"
+        },
+        {
+          "fixture_name": "Hapoel Kfar Shalem vs Hapoel Acre",
+          "unix": 1765213200,
+          "fixture_id": 374972654,
+          "season_id": 843112,
+          "competition_predictability": "medium",
+          "competition_id": 126,
+          "home_id": 8852,
+          "away_id": 5004,
+          "home_position": 7,
+          "away_position": 12,
+          "competition_country": "Israel",
+          "competition_name": "Liga Leumit"
+        },
+        {
+          "fixture_name": "Maccabi Herzliya vs Maccabi Petah Tikva",
+          "unix": 1765213200,
+          "fixture_id": 374972739,
+          "season_id": 843112,
+          "competition_predictability": "medium",
+          "competition_id": 126,
+          "home_id": 13370,
+          "away_id": 8651,
+          "home_position": 2,
+          "away_position": 1,
+          "competition_country": "Israel",
+          "competition_name": "Liga Leumit"
+        }
+      ]
+    },
+    "Italy": {
+      "Serie C: Girone A": [
+        {
+          "fixture_name": "Lecco vs Alcione",
+          "unix": 1765200600,
+          "fixture_id": 374119699,
+          "season_id": 964731,
+          "competition_predictability": "good",
+          "competition_id": 554,
+          "home_id": 10472,
+          "away_id": 21222,
+          "home_position": 3,
+          "away_position": 5,
+          "competition_country": "Italy",
+          "competition_name": "Serie C: Girone A"
+        },
+        {
+          "fixture_name": "AlbinoLeffe vs Ospitaletto",
+          "unix": 1765200600,
+          "fixture_id": 374119716,
+          "season_id": 964731,
+          "competition_predictability": "good",
+          "competition_id": 554,
+          "home_id": 12297,
+          "away_id": 64207,
+          "home_position": 16,
+          "away_position": 17,
+          "competition_country": "Italy",
+          "competition_name": "Serie C: Girone A"
+        },
+        {
+          "fixture_name": "Giana Erminio vs Triestina",
+          "unix": 1765202400,
+          "fixture_id": 374119698,
+          "season_id": 964731,
+          "competition_predictability": "good",
+          "competition_id": 554,
+          "home_id": 12177,
+          "away_id": 10124,
+          "home_position": 11,
+          "away_position": 13,
+          "competition_country": "Italy",
+          "competition_name": "Serie C: Girone A"
+        },
+        {
+          "fixture_name": "Virtus Verona vs Pergolettese",
+          "unix": 1765200600,
+          "fixture_id": 374119664,
+          "season_id": 964731,
+          "competition_predictability": "good",
+          "competition_id": 554,
+          "home_id": 10417,
+          "away_id": 12780,
+          "home_position": 19,
+          "away_position": 18,
+          "competition_country": "Italy",
+          "competition_name": "Serie C: Girone A"
+        }
+      ],
+      "Serie B": [
+        {
+          "fixture_name": "Monza vs Südtirol",
+          "unix": 1765202400,
+          "fixture_id": 373090275,
+          "season_id": 972473,
+          "competition_predictability": "poor",
+          "competition_id": 545,
+          "home_id": 9875,
+          "away_id": 9586,
+          "home_position": 1,
+          "away_position": 17,
+          "competition_country": "Italy",
+          "competition_name": "Serie B"
+        },
+        {
+          "fixture_name": "Modena vs Catanzaro",
+          "unix": 1765193400,
+          "fixture_id": 373090271,
+          "season_id": 972473,
+          "competition_predictability": "poor",
+          "competition_id": 545,
+          "home_id": 12179,
+          "away_id": 12408,
+          "home_position": 3,
+          "away_position": 8,
+          "competition_country": "Italy",
+          "competition_name": "Serie B"
+        },
+        {
+          "fixture_name": "Bari 1908 vs Pescara",
+          "unix": 1765210500,
+          "fixture_id": 373090266,
+          "season_id": 972473,
+          "competition_predictability": "poor",
+          "competition_id": 545,
+          "home_id": 12411,
+          "away_id": 10600,
+          "home_position": 16,
+          "away_position": 20,
+          "competition_country": "Italy",
+          "competition_name": "Serie B"
+        },
+        {
+          "fixture_name": "Mantova vs Reggiana",
+          "unix": 1765202400,
+          "fixture_id": 373090269,
+          "season_id": 972473,
+          "competition_predictability": "poor",
+          "competition_id": 545,
+          "home_id": 11610,
+          "away_id": 10953,
+          "home_position": 15,
+          "away_position": 11,
+          "competition_country": "Italy",
+          "competition_name": "Serie B"
+        },
+        {
+          "fixture_name": "Frosinone vs Juve Stabia",
+          "unix": 1765202400,
+          "fixture_id": 373090274,
+          "season_id": 972473,
+          "competition_predictability": "poor",
+          "competition_id": 545,
+          "home_id": 10435,
+          "away_id": 12414,
+          "home_position": 2,
+          "away_position": 9,
+          "competition_country": "Italy",
+          "competition_name": "Serie B"
+        },
+        {
+          "fixture_name": "Virtus Entella vs Spezia",
+          "unix": 1765218600,
+          "fixture_id": 373090268,
+          "season_id": 972473,
+          "competition_predictability": "poor",
+          "competition_id": 545,
+          "home_id": 10758,
+          "away_id": 12180,
+          "home_position": 14,
+          "away_position": 18,
+          "competition_country": "Italy",
+          "competition_name": "Serie B"
+        },
+        {
+          "fixture_name": "Avellino vs Venezia",
+          "unix": 1765202400,
+          "fixture_id": 373090265,
+          "season_id": 972473,
+          "competition_predictability": "poor",
+          "competition_id": 545,
+          "home_id": 12417,
+          "away_id": 11361,
+          "home_position": 10,
+          "away_position": 5,
+          "competition_country": "Italy",
+          "competition_name": "Serie B"
+        },
+        {
+          "fixture_name": "Calcio Padova vs Cesena",
+          "unix": 1765202400,
+          "fixture_id": 373090272,
+          "season_id": 972473,
+          "competition_predictability": "poor",
+          "competition_id": 545,
+          "home_id": 9296,
+          "away_id": 11676,
+          "home_position": 12,
+          "away_position": 4,
+          "competition_country": "Italy",
+          "competition_name": "Serie B"
+        }
+      ],
+      "Serie C: Girone B": [
+        {
+          "fixture_name": "Ascoli vs Forlì",
+          "unix": 1765200600,
+          "fixture_id": 373090625,
+          "season_id": 964732,
+          "competition_predictability": "medium",
+          "competition_id": 552,
+          "home_id": 10130,
+          "away_id": 12587,
+          "home_position": 3,
+          "away_position": 8,
+          "competition_country": "Italy",
+          "competition_name": "Serie C: Girone B"
+        },
+        {
+          "fixture_name": "Athletic Carpi vs Vis Pesaro",
+          "unix": 1765200600,
+          "fixture_id": 373090622,
+          "season_id": 964732,
+          "competition_predictability": "medium",
+          "competition_id": 552,
+          "home_id": 21225,
+          "away_id": 10129,
+          "home_position": 7,
+          "away_position": 10,
+          "competition_country": "Italy",
+          "competition_name": "Serie C: Girone B"
+        }
+      ],
+      "Serie A": [
+        {
+          "fixture_name": "Udinese vs Genoa",
+          "unix": 1765213200,
+          "fixture_id": 374120234,
+          "season_id": 602681,
+          "competition_predictability": "high",
+          "competition_id": 499,
+          "home_id": 9511,
+          "away_id": 10539,
+          "home_position": 11,
+          "away_position": 16,
+          "competition_country": "Italy",
+          "competition_name": "Serie A"
+        },
+        {
+          "fixture_name": "Pisa vs Parma",
+          "unix": 1765202400,
+          "fixture_id": 374120233,
+          "season_id": 602681,
+          "competition_predictability": "high",
+          "competition_id": 499,
+          "home_id": 11847,
+          "away_id": 10126,
+          "home_position": 18,
+          "away_position": 17,
+          "competition_country": "Italy",
+          "competition_name": "Serie A"
+        },
+        {
+          "fixture_name": "Torino vs Milan",
+          "unix": 1765223100,
+          "fixture_id": 374120013,
+          "season_id": 602681,
+          "competition_predictability": "high",
+          "competition_id": 499,
+          "home_id": 9507,
+          "away_id": 9346,
+          "home_position": 14,
+          "away_position": 2,
+          "competition_country": "Italy",
+          "competition_name": "Serie A"
+        }
+      ],
+      "Serie A Women": [
+        {
+          "fixture_name": "Sassuolo W vs Lazio W",
+          "unix": 1765193400,
+          "fixture_id": 406894384,
+          "season_id": 964737,
+          "competition_predictability": "poor",
+          "competition_id": 291,
+          "home_id": 8574,
+          "away_id": 12555,
+          "home_position": 10,
+          "away_position": 8,
+          "competition_country": "Italy",
+          "competition_name": "Serie A Women"
+        }
+      ]
+    },
+    "Turkey": {
+      "Super Lig": [
+        {
+          "fixture_name": "Alanyaspor vs Antalyaspor",
+          "unix": 1765213200,
+          "fixture_id": 362634792,
+          "season_id": 784063,
+          "competition_predictability": "good",
+          "competition_id": 414,
+          "home_id": 5498,
+          "away_id": 8873,
+          "home_position": 10,
+          "away_position": 15,
+          "competition_country": "Turkey",
+          "competition_name": "Super Lig"
+        },
+        {
+          "fixture_name": "Beşiktaş vs Gaziantep F.K.",
+          "unix": 1765213200,
+          "fixture_id": 362634717,
+          "season_id": 784063,
+          "competition_predictability": "good",
+          "competition_id": 414,
+          "home_id": 4146,
+          "away_id": 6959,
+          "home_position": 6,
+          "away_position": 7,
+          "competition_country": "Turkey",
+          "competition_name": "Super Lig"
+        }
+      ],
+      "1. Lig": [
+        {
+          "fixture_name": "Çorum Belediyespor vs Pendikspor",
+          "unix": 1765213200,
+          "fixture_id": 362635181,
+          "season_id": 813383,
+          "competition_predictability": "high",
+          "competition_id": 410,
+          "home_id": 11968,
+          "away_id": 11977,
+          "home_position": 7,
+          "away_position": 1,
+          "competition_country": "Turkey",
+          "competition_name": "1. Lig"
+        },
+        {
+          "fixture_name": "Bandırmaspor vs Bodrumspor",
+          "unix": 1765193400,
+          "fixture_id": 362635140,
+          "season_id": 813383,
+          "competition_predictability": "high",
+          "competition_id": 410,
+          "home_id": 9284,
+          "away_id": 11980,
+          "home_position": 10,
+          "away_position": 4,
+          "competition_country": "Turkey",
+          "competition_name": "1. Lig"
+        },
+        {
+          "fixture_name": "Hatayspor vs Sarıyer",
+          "unix": 1765193400,
+          "fixture_id": 362635029,
+          "season_id": 813383,
+          "competition_predictability": "high",
+          "competition_id": 410,
+          "home_id": 4237,
+          "away_id": 12098,
+          "home_position": 19,
+          "away_position": 18,
+          "competition_country": "Turkey",
+          "competition_name": "1. Lig"
+        }
+      ]
+    },
+    "Spain": {
+      "La Liga 2": [
+        {
+          "fixture_name": "Las Palmas vs Mirandés",
+          "unix": 1765215000,
+          "fixture_id": 368377041,
+          "season_id": 769465,
+          "competition_predictability": "poor",
+          "competition_id": 420,
+          "home_id": 9577,
+          "away_id": 4697,
+          "home_position": 4,
+          "away_position": 21,
+          "competition_country": "Spain",
+          "competition_name": "La Liga 2"
+        },
+        {
+          "fixture_name": "Málaga vs Real Zaragoza",
+          "unix": 1765222200,
+          "fixture_id": 368377212,
+          "season_id": 769465,
+          "competition_predictability": "poor",
+          "competition_id": 420,
+          "home_id": 4677,
+          "away_id": 10958,
+          "home_position": 13,
+          "away_position": 22,
+          "competition_country": "Spain",
+          "competition_name": "La Liga 2"
+        },
+        {
+          "fixture_name": "Burgos vs Albacete",
+          "unix": 1765206900,
+          "fixture_id": 368377037,
+          "season_id": 769465,
+          "competition_predictability": "poor",
+          "competition_id": 420,
+          "home_id": 10502,
+          "away_id": 9297,
+          "home_position": 6,
+          "away_position": 16,
+          "competition_country": "Spain",
+          "competition_name": "La Liga 2"
+        }
+      ],
+      "Primera Division RFEF: Group 1": [
+        {
+          "fixture_name": "Tarazona vs Europa",
+          "unix": 1765215000,
+          "fixture_id": 378379770,
+          "season_id": 813415,
+          "competition_predictability": "poor",
+          "competition_id": 1033,
+          "home_id": 14139,
+          "away_id": 11517,
+          "home_position": 16,
+          "away_position": 3,
+          "competition_country": "Spain",
+          "competition_name": "Primera Division RFEF: Group 1"
+        },
+        {
+          "fixture_name": "Unionistas de Salamanca vs Ponferradina",
+          "unix": 1765206000,
+          "fixture_id": 378352181,
+          "season_id": 813415,
+          "competition_predictability": "poor",
+          "competition_id": 1033,
+          "home_id": 11518,
+          "away_id": 4302,
+          "home_position": 12,
+          "away_position": 17,
+          "competition_country": "Spain",
+          "competition_name": "Primera Division RFEF: Group 1"
+        },
+        {
+          "fixture_name": "FC Cartagena vs Real Murcia",
+          "unix": 1765214100,
+          "fixture_id": 378379769,
+          "season_id": 813415,
+          "competition_predictability": "poor",
+          "competition_id": 1033,
+          "home_id": 4276,
+          "away_id": 11665,
+          "home_position": 4,
+          "away_position": 7,
+          "competition_country": "Spain",
+          "competition_name": "Primera Division RFEF: Group 1"
+        }
+      ],
+      "La Liga": [
+        {
+          "fixture_name": "Osasuna vs Levante",
+          "unix": 1765224000,
+          "fixture_id": 368374911,
+          "season_id": 762170,
+          "competition_predictability": "high",
+          "competition_id": 419,
+          "home_id": 4698,
+          "away_id": 5040,
+          "home_position": 17,
+          "away_position": 20,
+          "competition_country": "Spain",
+          "competition_name": "La Liga"
+        }
+      ]
+    },
+    "France": {
+      "Ligue 2": [
+        {
+          "fixture_name": "Reims vs Laval",
+          "unix": 1765223100,
+          "fixture_id": 363519928,
+          "season_id": 762169,
+          "competition_predictability": "poor",
+          "competition_id": 256,
+          "home_id": 8034,
+          "away_id": 5728,
+          "home_position": 6,
+          "away_position": 15,
+          "competition_country": "France",
+          "competition_name": "Ligue 2"
+        }
+      ]
+    },
+    "Azerbaijan": {
+      "Premier League": [
+        {
+          "fixture_name": "Sabah vs Neftçi",
+          "unix": 1765209600,
+          "fixture_id": 375569806,
+          "season_id": 895796,
+          "competition_predictability": "good",
+          "competition_id": 405,
+          "home_id": 11345,
+          "away_id": 4963,
+          "home_position": 3,
+          "away_position": 8,
+          "competition_country": "Azerbaijan",
+          "competition_name": "Premier League"
+        },
+        {
+          "fixture_name": "Qabala vs Turan",
+          "unix": 1765198800,
+          "fixture_id": 375569763,
+          "season_id": 895796,
+          "competition_predictability": "good",
+          "competition_id": 405,
+          "home_id": 11346,
+          "away_id": 12942,
+          "home_position": 10,
+          "away_position": 4,
+          "competition_country": "Azerbaijan",
+          "competition_name": "Premier League"
+        }
+      ]
+    },
+    "Portugal": {
+      "Liga Portugal": [
+        {
+          "fixture_name": "Vitória SC vs Gil Vicente",
+          "unix": 1765225800,
+          "fixture_id": 362638126,
+          "season_id": 813379,
+          "competition_predictability": "high",
+          "competition_id": 475,
+          "home_id": 10341,
+          "away_id": 10680,
+          "home_position": 8,
+          "away_position": 4,
+          "competition_country": "Portugal",
+          "competition_name": "Liga Portugal"
+        }
+      ],
+      "Liga Revelacao U23": [
+        {
+          "fixture_name": "Famalicão U23 vs Sporting Braga U23",
+          "unix": 1765206000,
+          "fixture_id": 364704029,
+          "season_id": 926276,
+          "competition_predictability": "medium",
+          "competition_id": 427,
+          "home_id": 10701,
+          "away_id": 10702,
+          "home_position": 4,
+          "away_position": 3,
+          "competition_country": "Portugal",
+          "competition_name": "Liga Revelacao U23"
+        }
+      ],
+      "Liga Portugal 2": [
+        {
+          "fixture_name": "Farense vs Vizela",
+          "unix": 1765207800,
+          "fixture_id": 363518768,
+          "season_id": 791378,
+          "competition_predictability": "poor",
+          "competition_id": 397,
+          "home_id": 4246,
+          "away_id": 9506,
+          "home_position": 10,
+          "away_position": 6,
+          "competition_country": "Portugal",
+          "competition_name": "Liga Portugal 2"
+        }
+      ]
+    },
+    "Romania": {
+      "Superliga": [
+        {
+          "fixture_name": "UTA Arad vs Petrolul 52",
+          "unix": 1765207800,
+          "fixture_id": 339199373,
+          "season_id": 718528,
+          "competition_predictability": "medium",
+          "competition_id": 159,
+          "home_id": 5752,
+          "away_id": 8938,
+          "home_position": 10,
+          "away_position": 11,
+          "competition_country": "Romania",
+          "competition_name": "Superliga"
+        },
+        {
+          "fixture_name": "Botoşani vs Rapid Bucuresti",
+          "unix": 1765218600,
+          "fixture_id": 339199367,
+          "season_id": 718528,
+          "competition_predictability": "medium",
+          "competition_id": 159,
+          "home_id": 4913,
+          "away_id": 8015,
+          "home_position": 2,
+          "away_position": 1,
+          "competition_country": "Romania",
+          "competition_name": "Superliga"
+        }
+      ]
+    },
+    "England": {
+      "FA Cup": [
+        {
+          "fixture_name": "Brackley Town vs Burton Albion",
+          "unix": 1765222200,
+          "fixture_id": 420452178,
+          "season_id": 865563,
+          "competition_predictability": "poor",
+          "competition_id": 327,
+          "home_id": 12977,
+          "away_id": 5142,
+          "home_position": 1,
+          "away_position": 2,
+          "competition_country": "England",
+          "competition_name": "FA Cup"
+        }
+      ],
+      "Premier League": [
+        {
+          "fixture_name": "Wolverhampton Wanderers vs Manchester United",
+          "unix": 1765224000,
+          "fixture_id": 365992574,
+          "season_id": 667780,
+          "competition_predictability": "medium",
+          "competition_id": 423,
+          "home_id": 11392,
+          "away_id": 10659,
+          "home_position": 20,
+          "away_position": 12,
+          "competition_country": "England",
+          "competition_name": "Premier League"
+        }
+      ]
+    },
+    "Ukraine": {
+      "Premier League": [
+        {
+          "fixture_name": "SK Poltava vs Epitsentr Dunayivtsi",
+          "unix": 1765200600,
+          "fixture_id": 355159799,
+          "season_id": 769467,
+          "competition_predictability": "good",
+          "competition_id": 409,
+          "home_id": 19537,
+          "away_id": 8387,
+          "home_position": 16,
+          "away_position": 14,
+          "competition_country": "Ukraine",
+          "competition_name": "Premier League"
+        }
+      ]
+    },
+    "Argentina": {
+      "Liga Profesional de Fútbol": [
+        {
+          "fixture_name": "Gimnasia La Plata vs Estudiantes",
+          "unix": 1765224000,
+          "fixture_id": 420460273,
+          "season_id": 7402,
+          "competition_predictability": "poor",
+          "competition_id": 699,
+          "home_id": 14720,
+          "away_id": 14760,
+          "home_position": 1,
+          "away_position": 2,
+          "competition_country": "Argentina",
+          "competition_name": "Liga Profesional de Fútbol"
+        }
+      ]
+    },
+    "Denmark": {
+      "Superliga": [
+        {
+          "fixture_name": "Vejle Boldklub vs Brøndby IF",
+          "unix": 1765216800,
+          "fixture_id": 343891148,
+          "season_id": 609909,
+          "competition_predictability": "good",
+          "competition_id": 413,
+          "home_id": 8858,
+          "away_id": 4883,
+          "home_position": 12,
+          "away_position": 3,
+          "competition_country": "Denmark",
+          "competition_name": "Superliga"
+        }
+      ]
+    },
+    "Greece": {
+      "Super League": [
+        {
+          "fixture_name": "Panserraikos vs Panaitolikos",
+          "unix": 1765209600,
+          "fixture_id": 374120362,
+          "season_id": 813391,
+          "competition_predictability": "high",
+          "competition_id": 406,
+          "home_id": 5117,
+          "away_id": 10944,
+          "home_position": 14,
+          "away_position": 10,
+          "competition_country": "Greece",
+          "competition_name": "Super League"
+        }
+      ]
+    }
+  },
+  "2025-12-10": {
+    "Europe": {
+      "UEFA Women's Champions League": [
+        {
+          "fixture_name": "Barcelona W vs SL Benfica W",
+          "unix": 1765388700,
+          "fixture_id": 397490388,
+          "season_id": 813366,
+          "competition_predictability": "high",
+          "competition_id": 50,
+          "home_id": 4144,
+          "away_id": 15383,
+          "home_position": 1,
+          "away_position": 15,
+          "competition_country": "Europe",
+          "competition_name": "UEFA Women's Champions League"
+        },
+        {
+          "fixture_name": "Chelsea W vs Roma W",
+          "unix": 1765396800,
+          "fixture_id": 397490391,
+          "season_id": 813366,
+          "competition_predictability": "high",
+          "competition_id": 50,
+          "home_id": 10065,
+          "away_id": 8571,
+          "home_position": 6,
+          "away_position": 16,
+          "competition_country": "Europe",
+          "competition_name": "UEFA Women's Champions League"
+        },
+        {
+          "fixture_name": "Vålerenga W vs Paris W",
+          "unix": 1765388700,
+          "fixture_id": 404466379,
+          "season_id": 813366,
+          "competition_predictability": "high",
+          "competition_id": 50,
+          "home_id": 4649,
+          "away_id": 5801,
+          "home_position": 13,
+          "away_position": 12,
+          "competition_country": "Europe",
+          "competition_name": "UEFA Women's Champions League"
+        },
+        {
+          "fixture_name": "Atletico Madrid W vs Bayern Munich W",
+          "unix": 1765396800,
+          "fixture_id": 404466380,
+          "season_id": 813366,
+          "competition_predictability": "high",
+          "competition_id": 50,
+          "home_id": 12990,
+          "away_id": 9963,
+          "home_position": 9,
+          "away_position": 5,
+          "competition_country": "Europe",
+          "competition_name": "UEFA Women's Champions League"
+        },
+        {
+          "fixture_name": "Manchester United W vs OL Lyonnes W",
+          "unix": 1765396800,
+          "fixture_id": 397490389,
+          "season_id": 813366,
+          "competition_predictability": "high",
+          "competition_id": 50,
+          "home_id": 10064,
+          "away_id": 4740,
+          "home_position": 4,
+          "away_position": 2,
+          "competition_country": "Europe",
+          "competition_name": "UEFA Women's Champions League"
+        }
+      ],
+      "Champions League": [
+        {
+          "fixture_name": "Borussia Dortmund vs Bodø / Glimt",
+          "unix": 1765396800,
+          "fixture_id": 377653920,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 5089,
+          "away_id": 4967,
+          "home_position": 6,
+          "away_position": 32,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Juventus vs Pafos FC",
+          "unix": 1765396800,
+          "fixture_id": 377653938,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 11357,
+          "away_id": 5535,
+          "home_position": 22,
+          "away_position": 24,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Real Madrid vs Manchester City",
+          "unix": 1765396800,
+          "fixture_id": 377653983,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 10988,
+          "away_id": 10660,
+          "home_position": 5,
+          "away_position": 9,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Benfica vs Napoli",
+          "unix": 1765396800,
+          "fixture_id": 377653883,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 4245,
+          "away_id": 9566,
+          "home_position": 30,
+          "away_position": 20,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Villarreal vs FC København",
+          "unix": 1765388700,
+          "fixture_id": 377653997,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 4168,
+          "away_id": 6436,
+          "home_position": 34,
+          "away_position": 29,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Bayer 04 Leverkusen vs Newcastle United",
+          "unix": 1765396800,
+          "fixture_id": 377653877,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 10170,
+          "away_id": 4008,
+          "home_position": 17,
+          "away_position": 11,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Qarabağ vs Ajax",
+          "unix": 1765388700,
+          "fixture_id": 377653978,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 4615,
+          "away_id": 3991,
+          "home_position": 19,
+          "away_position": 36,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Club Brugge vs Arsenal",
+          "unix": 1765396800,
+          "fixture_id": 377653893,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 8053,
+          "away_id": 5303,
+          "home_position": 26,
+          "away_position": 1,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Athletic Club vs Paris Saint Germain",
+          "unix": 1765396800,
+          "fixture_id": 377653902,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 9306,
+          "away_id": 10524,
+          "home_position": 27,
+          "away_position": 2,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        }
+      ]
+    },
+    "England": {
+      "Enterprise National League": [
+        {
+          "fixture_name": "Carlisle United vs Woking",
+          "unix": 1765395900,
+          "fixture_id": 363524744,
+          "season_id": 813386,
+          "competition_predictability": "high",
+          "competition_id": 581,
+          "home_id": 8957,
+          "away_id": 11835,
+          "home_position": 3,
+          "away_position": 11,
+          "competition_country": "England",
+          "competition_name": "Enterprise National League"
+        }
+      ],
+      "Championship": [
+        {
+          "fixture_name": "Ipswich Town vs Stoke City",
+          "unix": 1765395900,
+          "fixture_id": 362637080,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 3997,
+          "away_id": 6869,
+          "home_position": 4,
+          "away_position": 6,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Bristol City vs Leicester City",
+          "unix": 1765395900,
+          "fixture_id": 362637014,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 5827,
+          "away_id": 4357,
+          "home_position": 7,
+          "away_position": 14,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Derby County vs Millwall",
+          "unix": 1765395900,
+          "fixture_id": 362637015,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 8929,
+          "away_id": 8902,
+          "home_position": 15,
+          "away_position": 3,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Hull City vs Wrexham",
+          "unix": 1765396800,
+          "fixture_id": 362636976,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 9770,
+          "away_id": 11522,
+          "home_position": 9,
+          "away_position": 12,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        }
+      ],
+      "League Two": [
+        {
+          "fixture_name": "Crewe Alexandra vs Newport County",
+          "unix": 1765395900,
+          "fixture_id": 356485993,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 4009,
+          "away_id": 9777,
+          "home_position": 11,
+          "away_position": 24,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Oldham Athletic vs Walsall",
+          "unix": 1765395900,
+          "fixture_id": 356485972,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 6874,
+          "away_id": 6877,
+          "home_position": 16,
+          "away_position": 1,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        }
+      ],
+      "League One": [
+        {
+          "fixture_name": "Rotherham United vs Blackpool",
+          "unix": 1765395900,
+          "fixture_id": 355360500,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 8887,
+          "away_id": 5144,
+          "home_position": 14,
+          "away_position": 22,
+          "competition_country": "England",
+          "competition_name": "League One"
+        }
+      ],
+      "Non League Premier: Southern South": [
+        {
+          "fixture_name": "Gosport Borough vs Hanwell Town",
+          "unix": 1765395900,
+          "fixture_id": 363527127,
+          "season_id": 910996,
+          "competition_predictability": "good",
+          "competition_id": 489,
+          "home_id": 10493,
+          "away_id": 9788,
+          "home_position": 3,
+          "away_position": 15,
+          "competition_country": "England",
+          "competition_name": "Non League Premier: Southern South"
+        }
+      ],
+      "Enterprise National League North": [
+        {
+          "fixture_name": "King's Lynn Town vs Macclesfield",
+          "unix": 1765395900,
+          "fixture_id": 363525926,
+          "season_id": 820757,
+          "competition_predictability": "poor",
+          "competition_id": 586,
+          "home_id": 9783,
+          "away_id": 18875,
+          "home_position": 15,
+          "away_position": 14,
+          "competition_country": "England",
+          "competition_name": "Enterprise National League North"
+        }
+      ],
+      "Non League Premier: Northern": [
+        {
+          "fixture_name": "Stocksbridge Park Steels vs United of Manchester",
+          "unix": 1765395900,
+          "fixture_id": 363526397,
+          "season_id": 910991,
+          "competition_predictability": "poor",
+          "competition_id": 492,
+          "home_id": 10797,
+          "away_id": 10473,
+          "home_position": 20,
+          "away_position": 4,
+          "competition_country": "England",
+          "competition_name": "Non League Premier: Northern"
+        }
+      ]
+    },
+    "Ecuador": {
+      "Liga Pro": [
+        {
+          "fixture_name": "Independiente del Valle vs LDU Quito",
+          "unix": 1765404000,
+          "fixture_id": 420456341,
+          "season_id": 7522,
+          "competition_predictability": "medium",
+          "competition_id": 40,
+          "home_id": 4206,
+          "away_id": 4255,
+          "home_position": 2,
+          "away_position": 1,
+          "competition_country": "Ecuador",
+          "competition_name": "Liga Pro"
+        }
+      ]
+    },
+    "Asia": {
+      "AFC Champions League Elite": [
+        {
+          "fixture_name": "Sanfrecce Hiroshima vs Shanghai Shenhua",
+          "unix": 1765360800,
+          "fixture_id": 391377406,
+          "season_id": 725787,
+          "competition_predictability": "medium",
+          "competition_id": 456,
+          "home_id": 6171,
+          "away_id": 5164,
+          "home_position": 6,
+          "away_position": 11,
+          "competition_country": "Asia",
+          "competition_name": "AFC Champions League Elite"
+        },
+        {
+          "fixture_name": "Seoul vs Melbourne City",
+          "unix": 1765360800,
+          "fixture_id": 391377437,
+          "season_id": 725787,
+          "competition_predictability": "medium",
+          "competition_id": 456,
+          "home_id": 7928,
+          "away_id": 4272,
+          "home_position": 5,
+          "away_position": 2,
+          "competition_country": "Asia",
+          "competition_name": "AFC Champions League Elite"
+        }
+      ]
+    },
+    "Switzerland": {
+      "Challenge League": [
+        {
+          "fixture_name": "Stade Lausanne-Ouchy vs Neuchâtel Xamax",
+          "unix": 1765386000,
+          "fixture_id": 349321395,
+          "season_id": 784062,
+          "competition_predictability": "good",
+          "competition_id": 472,
+          "home_id": 4242,
+          "away_id": 5298,
+          "home_position": 5,
+          "away_position": 4,
+          "competition_country": "Switzerland",
+          "competition_name": "Challenge League"
+        }
+      ]
+    },
+    "Germany": {
+      "Regionalliga: Nordost": [
+        {
+          "fixture_name": "Hertha Zehlendorf vs Chemie Leipzig",
+          "unix": 1765389600,
+          "fixture_id": 349320581,
+          "season_id": 784066,
+          "competition_predictability": "poor",
+          "competition_id": 24,
+          "home_id": 8090,
+          "away_id": 6845,
+          "home_position": 18,
+          "away_position": 15,
+          "competition_country": "Germany",
+          "competition_name": "Regionalliga: Nordost"
+        }
+      ]
+    },
+    "Australia": {
+      "A-League Women": [
+        {
+          "fixture_name": "Canberra United W vs Sydney FC W",
+          "unix": 1765346400,
+          "fixture_id": 420447012,
+          "season_id": 1035415,
+          "competition_predictability": "poor",
+          "competition_id": 797,
+          "home_id": 16159,
+          "away_id": 16149,
+          "home_position": 5,
+          "away_position": 2,
+          "competition_country": "Australia",
+          "competition_name": "A-League Women"
+        }
+      ]
+    }
+  },
+  "2025-12-14": {
+    "Germany": {
+      "Bundesliga": [
+        {
+          "fixture_name": "FC Bayern München vs FSV Mainz 05",
+          "unix": 1765729800,
+          "fixture_id": 373090106,
+          "season_id": 725788,
+          "competition_predictability": "high",
+          "competition_id": 477,
+          "home_id": 11648,
+          "away_id": 6288,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "Bundesliga"
+        },
+        {
+          "fixture_name": "SC Freiburg vs Borussia Dortmund",
+          "unix": 1765722600,
+          "fixture_id": 373090006,
+          "season_id": 725788,
+          "competition_predictability": "high",
+          "competition_id": 477,
+          "home_id": 6464,
+          "away_id": 5089,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "Bundesliga"
+        },
+        {
+          "fixture_name": "Werder Bremen vs VfB Stuttgart",
+          "unix": 1765737000,
+          "fixture_id": 373090105,
+          "season_id": 725788,
+          "competition_predictability": "high",
+          "competition_id": 477,
+          "home_id": 6589,
+          "away_id": 4397,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "Bundesliga"
+        }
+      ],
+      "2. Bundesliga": [
+        {
+          "fixture_name": "Darmstadt 98 vs Preußen Münster",
+          "unix": 1765715400,
+          "fixture_id": 355359599,
+          "season_id": 747609,
+          "competition_predictability": "medium",
+          "competition_id": 471,
+          "home_id": 5830,
+          "away_id": 6594,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "2. Bundesliga"
+        },
+        {
+          "fixture_name": "Schalke 04 vs Nürnberg",
+          "unix": 1765715400,
+          "fixture_id": 355359658,
+          "season_id": 747609,
+          "competition_predictability": "medium",
+          "competition_id": 471,
+          "home_id": 9278,
+          "away_id": 6440,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "2. Bundesliga"
+        },
+        {
+          "fixture_name": "Elversberg vs Fortuna Düsseldorf",
+          "unix": 1765715400,
+          "fixture_id": 355359824,
+          "season_id": 747609,
+          "competition_predictability": "medium",
+          "competition_id": 471,
+          "home_id": 4675,
+          "away_id": 5578,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "2. Bundesliga"
+        }
+      ]
+    },
+    "France": {
+      "Ligue 1": [
+        {
+          "fixture_name": "Olympique Lyonnais vs Le Havre",
+          "unix": 1765720800,
+          "fixture_id": 368376695,
+          "season_id": 725793,
+          "competition_predictability": "high",
+          "competition_id": 200,
+          "home_id": 5771,
+          "away_id": 7502,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "France",
+          "competition_name": "Ligue 1"
+        },
+        {
+          "fixture_name": "Lens vs Nice",
+          "unix": 1765728900,
+          "fixture_id": 368376702,
+          "season_id": 725793,
+          "competition_predictability": "high",
+          "competition_id": 200,
+          "home_id": 10148,
+          "away_id": 7676,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "France",
+          "competition_name": "Ligue 1"
+        },
+        {
+          "fixture_name": "Olympique Marseille vs Monaco",
+          "unix": 1765741500,
+          "fixture_id": 368376701,
+          "season_id": 725793,
+          "competition_predictability": "high",
+          "competition_id": 200,
+          "home_id": 8675,
+          "away_id": 8139,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "France",
+          "competition_name": "Ligue 1"
+        },
+        {
+          "fixture_name": "Strasbourg vs Lorient",
+          "unix": 1765728900,
+          "fixture_id": 368376697,
+          "season_id": 725793,
+          "competition_predictability": "high",
+          "competition_id": 200,
+          "home_id": 7675,
+          "away_id": 8143,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "France",
+          "competition_name": "Ligue 1"
+        },
+        {
+          "fixture_name": "Auxerre vs LOSC Lille",
+          "unix": 1765728900,
+          "fixture_id": 368376453,
+          "season_id": 725793,
+          "competition_predictability": "high",
+          "competition_id": 200,
+          "home_id": 7501,
+          "away_id": 8035,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "France",
+          "competition_name": "Ligue 1"
+        }
+      ]
+    },
+    "Netherlands": {
+      "Eredivisie": [
+        {
+          "fixture_name": "AZ vs Excelsior",
+          "unix": 1765727100,
+          "fixture_id": 362632482,
+          "season_id": 718521,
+          "competition_predictability": "good",
+          "competition_id": 437,
+          "home_id": 4441,
+          "away_id": 6918,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Netherlands",
+          "competition_name": "Eredivisie"
+        },
+        {
+          "fixture_name": "FC Twente vs Go Ahead Eagles",
+          "unix": 1765719000,
+          "fixture_id": 362632629,
+          "season_id": 718521,
+          "competition_predictability": "good",
+          "competition_id": 437,
+          "home_id": 9843,
+          "away_id": 8442,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Netherlands",
+          "competition_name": "Eredivisie"
+        },
+        {
+          "fixture_name": "Sparta Rotterdam vs SC Heerenveen",
+          "unix": 1765710900,
+          "fixture_id": 362632634,
+          "season_id": 718521,
+          "competition_predictability": "good",
+          "competition_id": 437,
+          "home_id": 5036,
+          "away_id": 9698,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Netherlands",
+          "competition_name": "Eredivisie"
+        },
+        {
+          "fixture_name": "NAC Breda vs FC Utrecht",
+          "unix": 1765727100,
+          "fixture_id": 362632630,
+          "season_id": 718521,
+          "competition_predictability": "good",
+          "competition_id": 437,
+          "home_id": 5111,
+          "away_id": 9745,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Netherlands",
+          "competition_name": "Eredivisie"
+        },
+        {
+          "fixture_name": "Ajax vs Feyenoord",
+          "unix": 1765719000,
+          "fixture_id": 362632625,
+          "season_id": 718521,
+          "competition_predictability": "good",
+          "competition_id": 437,
+          "home_id": 3991,
+          "away_id": 4019,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Netherlands",
+          "competition_name": "Eredivisie"
+        }
+      ]
+    },
+    "Italy": {
+      "Serie A": [
+        {
+          "fixture_name": "Milan vs Sassuolo",
+          "unix": 1765711800,
+          "fixture_id": 374119984,
+          "season_id": 602681,
+          "competition_predictability": "high",
+          "competition_id": 499,
+          "home_id": 9346,
+          "away_id": 12099,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Italy",
+          "competition_name": "Serie A"
+        },
+        {
+          "fixture_name": "Fiorentina vs Hellas Verona",
+          "unix": 1765720800,
+          "fixture_id": 374120235,
+          "season_id": 602681,
+          "competition_predictability": "high",
+          "competition_id": 499,
+          "home_id": 10134,
+          "away_id": 9576,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Italy",
+          "competition_name": "Serie A"
+        },
+        {
+          "fixture_name": "Bologna vs Juventus",
+          "unix": 1765741500,
+          "fixture_id": 374119983,
+          "season_id": 602681,
+          "competition_predictability": "high",
+          "competition_id": 499,
+          "home_id": 10204,
+          "away_id": 11357,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Italy",
+          "competition_name": "Serie A"
+        },
+        {
+          "fixture_name": "Udinese vs Napoli",
+          "unix": 1765720800,
+          "fixture_id": 374120229,
+          "season_id": 602681,
+          "competition_predictability": "high",
+          "competition_id": 499,
+          "home_id": 9511,
+          "away_id": 9566,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Italy",
+          "competition_name": "Serie A"
+        },
+        {
+          "fixture_name": "Genoa vs Inter",
+          "unix": 1765731600,
+          "fixture_id": 374120245,
+          "season_id": 602681,
+          "competition_predictability": "high",
+          "competition_id": 499,
+          "home_id": 10539,
+          "away_id": 11523,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Italy",
+          "competition_name": "Serie A"
+        }
+      ]
+    },
+    "Switzerland": {
+      "Super League": [
+        {
+          "fixture_name": "Young Boys vs Luzern",
+          "unix": 1765717200,
+          "fixture_id": 349322528,
+          "season_id": 791375,
+          "competition_predictability": "medium",
+          "competition_id": 500,
+          "home_id": 5314,
+          "away_id": 4001,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Switzerland",
+          "competition_name": "Super League"
+        },
+        {
+          "fixture_name": "Basel vs Lausanne Sport",
+          "unix": 1765726200,
+          "fixture_id": 349322454,
+          "season_id": 791375,
+          "competition_predictability": "medium",
+          "competition_id": 500,
+          "home_id": 4154,
+          "away_id": 10543,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Switzerland",
+          "competition_name": "Super League"
+        }
+      ]
+    },
+    "Greece": {
+      "Super League": [
+        {
+          "fixture_name": "Panathinaikos vs Volos NFC",
+          "unix": 1765738800,
+          "fixture_id": 374120440,
+          "season_id": 813391,
+          "competition_predictability": "high",
+          "competition_id": 406,
+          "home_id": 4762,
+          "away_id": 4559,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Greece",
+          "competition_name": "Super League"
+        },
+        {
+          "fixture_name": "Aris vs Olympiacos F.C.",
+          "unix": 1765735200,
+          "fixture_id": 374120369,
+          "season_id": 813391,
+          "competition_predictability": "high",
+          "competition_id": 406,
+          "home_id": 5116,
+          "away_id": 8646,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Greece",
+          "competition_name": "Super League"
+        },
+        {
+          "fixture_name": "Atromitos vs PAOK",
+          "unix": 1765728000,
+          "fixture_id": 374120423,
+          "season_id": 813391,
+          "competition_predictability": "high",
+          "competition_id": 406,
+          "home_id": 5822,
+          "away_id": 4145,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Greece",
+          "competition_name": "Super League"
+        },
+        {
+          "fixture_name": "Panaitolikos vs AEK Athens",
+          "unix": 1765726200,
+          "fixture_id": 374120365,
+          "season_id": 813391,
+          "competition_predictability": "high",
+          "competition_id": 406,
+          "home_id": 10944,
+          "away_id": 8645,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Greece",
+          "competition_name": "Super League"
+        }
+      ]
+    },
+    "Scotland": {
+      "Premiership": [
+        {
+          "fixture_name": "Aberdeen vs Kilmarnock",
+          "unix": 1765724400,
+          "fixture_id": 356485711,
+          "season_id": 704014,
+          "competition_predictability": "high",
+          "competition_id": 259,
+          "home_id": 5050,
+          "away_id": 6792,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "Premiership"
+        }
+      ]
+    },
+    "England": {
+      "Premier League": [
+        {
+          "fixture_name": "Nottingham Forest vs Tottenham Hotspur",
+          "unix": 1765720800,
+          "fixture_id": 365992494,
+          "season_id": 667780,
+          "competition_predictability": "medium",
+          "competition_id": 423,
+          "home_id": 9771,
+          "away_id": 5489,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Premier League"
+        },
+        {
+          "fixture_name": "Brentford vs Leeds United",
+          "unix": 1765729800,
+          "fixture_id": 365992488,
+          "season_id": 667780,
+          "competition_predictability": "medium",
+          "competition_id": 423,
+          "home_id": 6599,
+          "away_id": 10956,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Premier League"
+        },
+        {
+          "fixture_name": "Sunderland vs Newcastle United",
+          "unix": 1765720800,
+          "fixture_id": 365992495,
+          "season_id": 667780,
+          "competition_predictability": "medium",
+          "competition_id": 423,
+          "home_id": 9769,
+          "away_id": 4008,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Premier League"
+        },
+        {
+          "fixture_name": "Crystal Palace vs Manchester City",
+          "unix": 1765720800,
+          "fixture_id": 365992453,
+          "season_id": 667780,
+          "competition_predictability": "medium",
+          "competition_id": 423,
+          "home_id": 4076,
+          "away_id": 10660,
+          "home_position": 6,
+          "away_position": 5,
+          "competition_country": "England",
+          "competition_name": "Premier League"
+        },
+        {
+          "fixture_name": "West Ham United vs Aston Villa",
+          "unix": 1765720800,
+          "fixture_id": 365992496,
+          "season_id": 667780,
+          "competition_predictability": "medium",
+          "competition_id": 423,
+          "home_id": 3998,
+          "away_id": 10661,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Premier League"
+        }
+      ]
+    },
+    "Austria": {
+      "Admiral Bundesliga": [
+        {
+          "fixture_name": "Salzburg vs Wolfsberger AC",
+          "unix": 1765719000,
+          "fixture_id": 355359883,
+          "season_id": 747610,
+          "competition_predictability": "poor",
+          "competition_id": 411,
+          "home_id": 4016,
+          "away_id": 5565,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Austria",
+          "competition_name": "Admiral Bundesliga"
+        },
+        {
+          "fixture_name": "Austria Wien vs Sturm Graz",
+          "unix": 1765728000,
+          "fixture_id": 355359889,
+          "season_id": 747610,
+          "competition_predictability": "poor",
+          "competition_id": 411,
+          "home_id": 7983,
+          "away_id": 5763,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Austria",
+          "competition_name": "Admiral Bundesliga"
+        },
+        {
+          "fixture_name": "Blau-Weiß Linz vs SK Rapid",
+          "unix": 1765719000,
+          "fixture_id": 355359940,
+          "season_id": 747610,
+          "competition_predictability": "poor",
+          "competition_id": 411,
+          "home_id": 4094,
+          "away_id": 4668,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Austria",
+          "competition_name": "Admiral Bundesliga"
+        }
+      ]
+    },
+    "Poland": {
+      "Ekstraklasa": [
+        {
+          "fixture_name": "Legia Warszawa vs Piast Gliwice",
+          "unix": 1765739700,
+          "fixture_id": 325269731,
+          "season_id": 602683,
+          "competition_predictability": "poor",
+          "competition_id": 165,
+          "home_id": 4755,
+          "away_id": 4924,
+          "home_position": 5,
+          "away_position": 17,
+          "competition_country": "Poland",
+          "competition_name": "Ekstraklasa"
+        },
+        {
+          "fixture_name": "Motor Lublin vs Jagiellonia Białystok",
+          "unix": 1765729800,
+          "fixture_id": 420449859,
+          "season_id": 602683,
+          "competition_predictability": "poor",
+          "competition_id": 165,
+          "home_id": 7617,
+          "away_id": 7625,
+          "home_position": 12,
+          "away_position": 3,
+          "competition_country": "Poland",
+          "competition_name": "Ekstraklasa"
+        }
+      ]
+    },
+    "Spain": {
+      "La Liga": [
+        {
+          "fixture_name": "Sevilla vs Real Oviedo",
+          "unix": 1765717200,
+          "fixture_id": 368374803,
+          "season_id": 762170,
+          "competition_predictability": "high",
+          "competition_id": 419,
+          "home_id": 11575,
+          "away_id": 9546,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Spain",
+          "competition_name": "La Liga"
+        },
+        {
+          "fixture_name": "Celta de Vigo vs Athletic Club",
+          "unix": 1765725300,
+          "fixture_id": 368374919,
+          "season_id": 762170,
+          "competition_predictability": "high",
+          "competition_id": 419,
+          "home_id": 9449,
+          "away_id": 9306,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Spain",
+          "competition_name": "La Liga"
+        },
+        {
+          "fixture_name": "Levante vs Villarreal",
+          "unix": 1765733400,
+          "fixture_id": 368375092,
+          "season_id": 762170,
+          "competition_predictability": "high",
+          "competition_id": 419,
+          "home_id": 5040,
+          "away_id": 4168,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Spain",
+          "competition_name": "La Liga"
+        },
+        {
+          "fixture_name": "Deportivo Alavés vs Real Madrid",
+          "unix": 1765742400,
+          "fixture_id": 368374920,
+          "season_id": 762170,
+          "competition_predictability": "high",
+          "competition_id": 419,
+          "home_id": 4679,
+          "away_id": 10988,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Spain",
+          "competition_name": "La Liga"
+        }
+      ]
+    },
+    "Australia": {
+      "A-League Men": [
+        {
+          "fixture_name": "Wellington Phoenix vs Newcastle Jets",
+          "unix": 1765677600,
+          "fixture_id": 417043098,
+          "season_id": 1035414,
+          "competition_predictability": "poor",
+          "competition_id": 72,
+          "home_id": 16157,
+          "away_id": 16182,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Australia",
+          "competition_name": "A-League Men"
+        }
+      ]
+    },
+    "Indonesia": {
+      "Liga 1": [
+        {
+          "fixture_name": "Malut United vs Persib",
+          "unix": 1765693800,
+          "fixture_id": 362122865,
+          "season_id": 865594,
+          "competition_predictability": "high",
+          "competition_id": 10,
+          "home_id": 35135,
+          "away_id": 5443,
+          "home_position": 3,
+          "away_position": 4,
+          "competition_country": "Indonesia",
+          "competition_name": "Liga 1"
+        }
+      ]
+    }
+  },
+  "2025-12-13": {
+    "England": {
+      "Premier League": [
+        {
+          "fixture_name": "Arsenal vs Wolverhampton Wanderers",
+          "unix": 1765656000,
+          "fixture_id": 365992489,
+          "season_id": 667780,
+          "competition_predictability": "medium",
+          "competition_id": 423,
+          "home_id": 5303,
+          "away_id": 11392,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Premier League"
+        },
+        {
+          "fixture_name": "Chelsea vs Everton",
+          "unix": 1765638000,
+          "fixture_id": 365992490,
+          "season_id": 667780,
+          "competition_predictability": "medium",
+          "competition_id": 423,
+          "home_id": 11402,
+          "away_id": 8948,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Premier League"
+        },
+        {
+          "fixture_name": "Liverpool vs Brighton & Hove Albion",
+          "unix": 1765638000,
+          "fixture_id": 365992492,
+          "season_id": 667780,
+          "competition_predictability": "medium",
+          "competition_id": 423,
+          "home_id": 4017,
+          "away_id": 10206,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Premier League"
+        },
+        {
+          "fixture_name": "Burnley vs Fulham",
+          "unix": 1765647000,
+          "fixture_id": 365992491,
+          "season_id": 667780,
+          "competition_predictability": "medium",
+          "competition_id": 423,
+          "home_id": 9447,
+          "away_id": 10719,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Premier League"
+        }
+      ],
+      "Championship": [
+        {
+          "fixture_name": "Birmingham City vs Charlton Athletic",
+          "unix": 1765638000,
+          "fixture_id": 362637065,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 4356,
+          "away_id": 8936,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Coventry City vs Bristol City",
+          "unix": 1765638000,
+          "fixture_id": 362637081,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 5143,
+          "away_id": 5827,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Wrexham vs Watford",
+          "unix": 1765638000,
+          "fixture_id": 362637016,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 11522,
+          "away_id": 9779,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Millwall vs Hull City",
+          "unix": 1765638000,
+          "fixture_id": 362637048,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 8902,
+          "away_id": 9770,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Middlesbrough vs Queens Park Rangers",
+          "unix": 1765638000,
+          "fixture_id": 362637083,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 3978,
+          "away_id": 6596,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Stoke City vs Swansea City",
+          "unix": 1765629000,
+          "fixture_id": 362637042,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 6869,
+          "away_id": 8900,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Leicester City vs Ipswich Town",
+          "unix": 1765638000,
+          "fixture_id": 362637082,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 4357,
+          "away_id": 3997,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Portsmouth vs Blackburn Rovers",
+          "unix": 1765638000,
+          "fixture_id": 362637067,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 5828,
+          "away_id": 5145,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Norwich City vs Southampton",
+          "unix": 1765629000,
+          "fixture_id": 362637055,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 4244,
+          "away_id": 10784,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Oxford United vs Preston North End",
+          "unix": 1765629000,
+          "fixture_id": 362636972,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 4077,
+          "away_id": 4025,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        }
+      ],
+      "League One": [
+        {
+          "fixture_name": "Bolton Wanderers vs Exeter City",
+          "unix": 1765638000,
+          "fixture_id": 355360678,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 5829,
+          "away_id": 4165,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Bradford City vs Reading",
+          "unix": 1765638000,
+          "fixture_id": 355360657,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 4761,
+          "away_id": 5490,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Luton Town vs Port Vale",
+          "unix": 1765638000,
+          "fixture_id": 355360605,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 4151,
+          "away_id": 9768,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "AFC Wimbledon vs Mansfield Town",
+          "unix": 1765629000,
+          "fixture_id": 355360458,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 8935,
+          "away_id": 6867,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Cardiff City vs Doncaster Rovers",
+          "unix": 1765638000,
+          "fixture_id": 355360604,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 9775,
+          "away_id": 6868,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Huddersfield Town vs Wigan Athletic",
+          "unix": 1765629000,
+          "fixture_id": 355360459,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 4483,
+          "away_id": 9764,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Stockport County vs Stevenage",
+          "unix": 1765638000,
+          "fixture_id": 355360679,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 4026,
+          "away_id": 6870,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Peterborough United vs Northampton Town",
+          "unix": 1765638000,
+          "fixture_id": 355360606,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 9773,
+          "away_id": 6875,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Barnsley vs Leyton Orient",
+          "unix": 1765638000,
+          "fixture_id": 355360635,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 6871,
+          "away_id": 9286,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Plymouth Argyle vs Rotherham United",
+          "unix": 1765638000,
+          "fixture_id": 355360607,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 3977,
+          "away_id": 8887,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Blackpool vs Lincoln City",
+          "unix": 1765638000,
+          "fixture_id": 355360677,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 5144,
+          "away_id": 9762,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Burton Albion vs Wycombe Wanderers",
+          "unix": 1765638000,
+          "fixture_id": 355360501,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 5142,
+          "away_id": 4003,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League One"
+        }
+      ],
+      "League Two": [
+        {
+          "fixture_name": "Walsall vs Shrewsbury Town",
+          "unix": 1765638000,
+          "fixture_id": 356486011,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 6877,
+          "away_id": 9585,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Cheltenham Town vs Harrogate Town",
+          "unix": 1765638000,
+          "fixture_id": 356485902,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 9774,
+          "away_id": 4167,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Milton Keynes Dons vs Cambridge United",
+          "unix": 1765638000,
+          "fixture_id": 356486036,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 5302,
+          "away_id": 9776,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Crawley Town vs Oldham Athletic",
+          "unix": 1765638000,
+          "fixture_id": 356486078,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 9694,
+          "away_id": 6874,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Grimsby Town vs Notts County",
+          "unix": 1765638000,
+          "fixture_id": 356485995,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 9765,
+          "away_id": 9633,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Salford City vs Colchester United",
+          "unix": 1765629000,
+          "fixture_id": 356485829,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 4027,
+          "away_id": 6876,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Gillingham vs Barrow",
+          "unix": 1765638000,
+          "fixture_id": 356486035,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 9695,
+          "away_id": 9662,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Accrington Stanley vs Bromley",
+          "unix": 1765638000,
+          "fixture_id": 356486033,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 9598,
+          "away_id": 10212,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Tranmere Rovers vs Crewe Alexandra",
+          "unix": 1765638000,
+          "fixture_id": 356486010,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 4024,
+          "away_id": 4009,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Chesterfield vs Barnet",
+          "unix": 1765638000,
+          "fixture_id": 356486034,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 10331,
+          "away_id": 10890,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Newport County vs Fleetwood Town",
+          "unix": 1765638000,
+          "fixture_id": 356486065,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 9777,
+          "away_id": 4484,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Bristol Rovers vs Swindon Town",
+          "unix": 1765629000,
+          "fixture_id": 356485894,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 9778,
+          "away_id": 9772,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        }
+      ],
+      "Enterprise National League North": [
+        {
+          "fixture_name": "Spennymoor Town vs Buxton",
+          "unix": 1765638000,
+          "fixture_id": 419577944,
+          "season_id": 820757,
+          "competition_predictability": "poor",
+          "competition_id": 586,
+          "home_id": 10679,
+          "away_id": 10499,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "England",
+          "competition_name": "Enterprise National League North"
+        }
+      ]
+    },
+    "Netherlands": {
+      "Eredivisie": [
+        {
+          "fixture_name": "PSV vs Heracles Almelo",
+          "unix": 1765652400,
+          "fixture_id": 362632683,
+          "season_id": 718521,
+          "competition_predictability": "good",
+          "competition_id": 437,
+          "home_id": 6588,
+          "away_id": 3993,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Netherlands",
+          "competition_name": "Eredivisie"
+        },
+        {
+          "fixture_name": "FC Groningen vs FC Volendam",
+          "unix": 1765647900,
+          "fixture_id": 362632626,
+          "season_id": 718521,
+          "competition_predictability": "good",
+          "competition_id": 437,
+          "home_id": 6590,
+          "away_id": 8021,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Netherlands",
+          "competition_name": "Eredivisie"
+        },
+        {
+          "fixture_name": "PEC Zwolle vs Fortuna Sittard",
+          "unix": 1765656000,
+          "fixture_id": 362632624,
+          "season_id": 718521,
+          "competition_predictability": "good",
+          "competition_id": 437,
+          "home_id": 9699,
+          "away_id": 4364,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Netherlands",
+          "competition_name": "Eredivisie"
+        },
+        {
+          "fixture_name": "Telstar vs NEC Nijmegen",
+          "unix": 1765639800,
+          "fixture_id": 362632632,
+          "season_id": 718521,
+          "competition_predictability": "good",
+          "competition_id": 437,
+          "home_id": 3994,
+          "away_id": 5774,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Netherlands",
+          "competition_name": "Eredivisie"
+        }
+      ]
+    },
+    "Spain": {
+      "La Liga": [
+        {
+          "fixture_name": "FC Barcelona vs Osasuna",
+          "unix": 1765647000,
+          "fixture_id": 368374917,
+          "season_id": 762170,
+          "competition_predictability": "high",
+          "competition_id": 419,
+          "home_id": 10963,
+          "away_id": 4698,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Spain",
+          "competition_name": "La Liga"
+        },
+        {
+          "fixture_name": "Atlético Madrid vs Valencia",
+          "unix": 1765630800,
+          "fixture_id": 368374918,
+          "season_id": 762170,
+          "competition_predictability": "high",
+          "competition_id": 419,
+          "home_id": 11509,
+          "away_id": 5755,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Spain",
+          "competition_name": "La Liga"
+        },
+        {
+          "fixture_name": "Mallorca vs Elche",
+          "unix": 1765638900,
+          "fixture_id": 368375110,
+          "season_id": 762170,
+          "competition_predictability": "high",
+          "competition_id": 419,
+          "home_id": 5041,
+          "away_id": 10695,
+          "home_position": 18,
+          "away_position": 8,
+          "competition_country": "Spain",
+          "competition_name": "La Liga"
+        },
+        {
+          "fixture_name": "Getafe vs Espanyol",
+          "unix": 1765656000,
+          "fixture_id": 368374797,
+          "season_id": 762170,
+          "competition_predictability": "high",
+          "competition_id": 419,
+          "home_id": 10342,
+          "away_id": 8613,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Spain",
+          "competition_name": "La Liga"
+        }
+      ]
+    },
+    "Italy": {
+      "Serie A": [
+        {
+          "fixture_name": "Atalanta vs Cagliari",
+          "unix": 1765655100,
+          "fixture_id": 374120014,
+          "season_id": 602681,
+          "competition_predictability": "high",
+          "competition_id": 499,
+          "home_id": 11513,
+          "away_id": 10950,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Italy",
+          "competition_name": "Serie A"
+        },
+        {
+          "fixture_name": "Torino vs Cremonese",
+          "unix": 1765634400,
+          "fixture_id": 374119980,
+          "season_id": 602681,
+          "competition_predictability": "high",
+          "competition_id": 499,
+          "home_id": 9507,
+          "away_id": 10120,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Italy",
+          "competition_name": "Serie A"
+        },
+        {
+          "fixture_name": "Parma vs Lazio",
+          "unix": 1765645200,
+          "fixture_id": 374120074,
+          "season_id": 602681,
+          "competition_predictability": "high",
+          "competition_id": 499,
+          "home_id": 10126,
+          "away_id": 9295,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Italy",
+          "competition_name": "Serie A"
+        }
+      ]
+    },
+    "Scotland": {
+      "League One": [
+        {
+          "fixture_name": "Inverness CT vs Hamilton Academical",
+          "unix": 1765638000,
+          "fixture_id": 356486478,
+          "season_id": 769454,
+          "competition_predictability": "high",
+          "competition_id": 642,
+          "home_id": 12949,
+          "away_id": 7466,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Peterhead vs Kelty Hearts",
+          "unix": 1765638000,
+          "fixture_id": 356486394,
+          "season_id": 769454,
+          "competition_predictability": "high",
+          "competition_id": 642,
+          "home_id": 12192,
+          "away_id": 11899,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Alloa Athletic vs Queen of the South",
+          "unix": 1765638000,
+          "fixture_id": 356486475,
+          "season_id": 769454,
+          "competition_predictability": "high",
+          "competition_id": 642,
+          "home_id": 12298,
+          "away_id": 12819,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Cove Rangers vs East Fife",
+          "unix": 1765638000,
+          "fixture_id": 356486477,
+          "season_id": 769454,
+          "competition_predictability": "high",
+          "competition_id": 642,
+          "home_id": 13392,
+          "away_id": 12950,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Montrose vs Stenhousemuir",
+          "unix": 1765638000,
+          "fixture_id": 356486479,
+          "season_id": 769454,
+          "competition_predictability": "high",
+          "competition_id": 642,
+          "home_id": 12194,
+          "away_id": 12453,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "League One"
+        }
+      ],
+      "Premiership": [
+        {
+          "fixture_name": "Livingston vs Dundee",
+          "unix": 1765638000,
+          "fixture_id": 356485783,
+          "season_id": 704014,
+          "competition_predictability": "high",
+          "competition_id": 259,
+          "home_id": 6793,
+          "away_id": 12195,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "Premiership"
+        }
+      ],
+      "League Two": [
+        {
+          "fixture_name": "Elgin City vs Stranraer",
+          "unix": 1765638000,
+          "fixture_id": 356486912,
+          "season_id": 843111,
+          "competition_predictability": "poor",
+          "competition_id": 643,
+          "home_id": 12451,
+          "away_id": 11902,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Edinburgh City vs Clyde",
+          "unix": 1765638000,
+          "fixture_id": 356486908,
+          "season_id": 843111,
+          "competition_predictability": "poor",
+          "competition_id": 643,
+          "home_id": 13116,
+          "away_id": 13397,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Annan Athletic vs Forfar Athletic",
+          "unix": 1765638000,
+          "fixture_id": 356486891,
+          "season_id": 843111,
+          "competition_predictability": "poor",
+          "competition_id": 643,
+          "home_id": 13114,
+          "away_id": 12818,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Stirling Albion vs Spartans",
+          "unix": 1765638000,
+          "fixture_id": 356486909,
+          "season_id": 843111,
+          "competition_predictability": "poor",
+          "competition_id": 643,
+          "home_id": 13112,
+          "away_id": 13412,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Dumbarton vs East Kilbride",
+          "unix": 1765638000,
+          "fixture_id": 356486911,
+          "season_id": 843111,
+          "competition_predictability": "poor",
+          "competition_id": 643,
+          "home_id": 12798,
+          "away_id": 11901,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "League Two"
+        }
+      ],
+      "Championship": [
+        {
+          "fixture_name": "Greenock Morton vs Airdrieonians",
+          "unix": 1765638000,
+          "fixture_id": 355360329,
+          "season_id": 718527,
+          "competition_predictability": "poor",
+          "competition_id": 637,
+          "home_id": 13115,
+          "away_id": 11900,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Raith Rovers vs Ross County",
+          "unix": 1765638000,
+          "fixture_id": 355360330,
+          "season_id": 718527,
+          "competition_predictability": "poor",
+          "competition_id": 637,
+          "home_id": 12452,
+          "away_id": 6794,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Arbroath vs Partick Thistle",
+          "unix": 1765638000,
+          "fixture_id": 355360327,
+          "season_id": 718527,
+          "competition_predictability": "poor",
+          "competition_id": 637,
+          "home_id": 12817,
+          "away_id": 12821,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Queen's Park vs Dunfermline Athletic",
+          "unix": 1765638000,
+          "fixture_id": 355360406,
+          "season_id": 718527,
+          "competition_predictability": "poor",
+          "competition_id": 637,
+          "home_id": 13398,
+          "away_id": 12951,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Scotland",
+          "competition_name": "Championship"
+        }
+      ]
+    },
+    "Wales": {
+      "FAW Championship - North": [
+        {
+          "fixture_name": "Caersws vs Ruthin Town",
+          "unix": 1765634400,
+          "fixture_id": 349322641,
+          "season_id": 791385,
+          "competition_predictability": "high",
+          "competition_id": 995,
+          "home_id": 20180,
+          "away_id": 19344,
+          "home_position": 13,
+          "away_position": 14,
+          "competition_country": "Wales",
+          "competition_name": "FAW Championship - North"
+        }
+      ]
+    },
+    "France": {
+      "Ligue 1": [
+        {
+          "fixture_name": "Rennes vs Brest",
+          "unix": 1765641600,
+          "fixture_id": 368376698,
+          "season_id": 725793,
+          "competition_predictability": "high",
+          "competition_id": 200,
+          "home_id": 6967,
+          "away_id": 8674,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "France",
+          "competition_name": "Ligue 1"
+        },
+        {
+          "fixture_name": "Paris vs Toulouse",
+          "unix": 1765656300,
+          "fixture_id": 368376439,
+          "season_id": 725793,
+          "competition_predictability": "high",
+          "competition_id": 200,
+          "home_id": 7506,
+          "away_id": 7497,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "France",
+          "competition_name": "Ligue 1"
+        },
+        {
+          "fixture_name": "Metz vs Paris Saint Germain",
+          "unix": 1765648800,
+          "fixture_id": 368376694,
+          "season_id": 725793,
+          "competition_predictability": "high",
+          "competition_id": 200,
+          "home_id": 8138,
+          "away_id": 10524,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "France",
+          "competition_name": "Ligue 1"
+        }
+      ],
+      "Ligue 2": [
+        {
+          "fixture_name": "Saint-Étienne vs Bastia",
+          "unix": 1765652400,
+          "fixture_id": 363520007,
+          "season_id": 762169,
+          "competition_predictability": "poor",
+          "competition_id": 256,
+          "home_id": 8142,
+          "away_id": 8877,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "France",
+          "competition_name": "Ligue 2"
+        },
+        {
+          "fixture_name": "Grenoble Foot 38 vs Montpellier",
+          "unix": 1765630800,
+          "fixture_id": 363520005,
+          "season_id": 762169,
+          "competition_predictability": "poor",
+          "competition_id": 256,
+          "home_id": 7496,
+          "away_id": 6968,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "France",
+          "competition_name": "Ligue 2"
+        }
+      ]
+    },
+    "Greece": {
+      "Super League": [
+        {
+          "fixture_name": "OFI vs Panserraikos",
+          "unix": 1765641600,
+          "fixture_id": 374120364,
+          "season_id": 813391,
+          "competition_predictability": "high",
+          "competition_id": 406,
+          "home_id": 4763,
+          "away_id": 5117,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Greece",
+          "competition_name": "Super League"
+        },
+        {
+          "fixture_name": "Levadiakos vs Larissa",
+          "unix": 1765638000,
+          "fixture_id": 374120360,
+          "season_id": 813391,
+          "competition_predictability": "high",
+          "competition_id": 406,
+          "home_id": 10594,
+          "away_id": 5361,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Greece",
+          "competition_name": "Super League"
+        },
+        {
+          "fixture_name": "Kifisia vs Asteras Tripolis",
+          "unix": 1765648800,
+          "fixture_id": 374120445,
+          "season_id": 813391,
+          "competition_predictability": "high",
+          "competition_id": 406,
+          "home_id": 13493,
+          "away_id": 9277,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Greece",
+          "competition_name": "Super League"
+        }
+      ]
+    },
+    "Germany": {
+      "Bundesliga": [
+        {
+          "fixture_name": "Bayer 04 Leverkusen vs FC Köln",
+          "unix": 1765647000,
+          "fixture_id": 373090101,
+          "season_id": 725788,
+          "competition_predictability": "high",
+          "competition_id": 477,
+          "home_id": 10170,
+          "away_id": 6629,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "Bundesliga"
+        },
+        {
+          "fixture_name": "Eintracht Frankfurt vs FC Augsburg",
+          "unix": 1765636200,
+          "fixture_id": 373090004,
+          "season_id": 725788,
+          "competition_predictability": "high",
+          "competition_id": 477,
+          "home_id": 7567,
+          "away_id": 5824,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "Bundesliga"
+        },
+        {
+          "fixture_name": "TSG Hoffenheim vs Hamburger SV",
+          "unix": 1765636200,
+          "fixture_id": 373090007,
+          "season_id": 725788,
+          "competition_predictability": "high",
+          "competition_id": 477,
+          "home_id": 6287,
+          "away_id": 4398,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "Bundesliga"
+        },
+        {
+          "fixture_name": "St. Pauli vs Heidenheim",
+          "unix": 1765636200,
+          "fixture_id": 373090005,
+          "season_id": 725788,
+          "competition_predictability": "high",
+          "competition_id": 477,
+          "home_id": 9976,
+          "away_id": 6597,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "Bundesliga"
+        },
+        {
+          "fixture_name": "Borussia Mönchengladbach vs VfL Wolfsburg",
+          "unix": 1765636200,
+          "fixture_id": 373090003,
+          "season_id": 725788,
+          "competition_predictability": "high",
+          "competition_id": 477,
+          "home_id": 4899,
+          "away_id": 6630,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "Bundesliga"
+        }
+      ],
+      "2. Bundesliga": [
+        {
+          "fixture_name": "Hannover 96 vs VfL Bochum 1848",
+          "unix": 1765654200,
+          "fixture_id": 355359682,
+          "season_id": 747609,
+          "competition_predictability": "medium",
+          "competition_id": 471,
+          "home_id": 4561,
+          "away_id": 4395,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "2. Bundesliga"
+        },
+        {
+          "fixture_name": "DSC Arminia Bielefeld vs Kaiserslautern",
+          "unix": 1765627200,
+          "fixture_id": 355359578,
+          "season_id": 747609,
+          "competition_predictability": "medium",
+          "competition_id": 471,
+          "home_id": 4018,
+          "away_id": 5469,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "2. Bundesliga"
+        },
+        {
+          "fixture_name": "Magdeburg vs Holstein Kiel",
+          "unix": 1765627200,
+          "fixture_id": 355359823,
+          "season_id": 747609,
+          "competition_predictability": "medium",
+          "competition_id": 471,
+          "home_id": 4005,
+          "away_id": 3992,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "2. Bundesliga"
+        },
+        {
+          "fixture_name": "Karlsruher SC vs Paderborn",
+          "unix": 1765627200,
+          "fixture_id": 355359685,
+          "season_id": 747609,
+          "competition_predictability": "medium",
+          "competition_id": 471,
+          "home_id": 4358,
+          "away_id": 5090,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Germany",
+          "competition_name": "2. Bundesliga"
+        }
+      ],
+      "Regionalliga: Nord": [
+        {
+          "fixture_name": "Hamburger SV II vs St. Pauli II",
+          "unix": 1765634400,
+          "fixture_id": 367589376,
+          "season_id": 850582,
+          "competition_predictability": "poor",
+          "competition_id": 351,
+          "home_id": 6232,
+          "away_id": 6432,
+          "home_position": 16,
+          "away_position": 18,
+          "competition_country": "Germany",
+          "competition_name": "Regionalliga: Nord"
+        },
+        {
+          "fixture_name": "Schöningen vs Hannover 96 II",
+          "unix": 1765645200,
+          "fixture_id": 367589360,
+          "season_id": 850582,
+          "competition_predictability": "poor",
+          "competition_id": 351,
+          "home_id": 25653,
+          "away_id": 9595,
+          "home_position": 12,
+          "away_position": 10,
+          "competition_country": "Germany",
+          "competition_name": "Regionalliga: Nord"
+        }
+      ]
+    },
+    "Switzerland": {
+      "Super League": [
+        {
+          "fixture_name": "Zürich vs Winterthur",
+          "unix": 1765645200,
+          "fixture_id": 349322527,
+          "season_id": 791375,
+          "competition_predictability": "medium",
+          "competition_id": 500,
+          "home_id": 4002,
+          "away_id": 4155,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Switzerland",
+          "competition_name": "Super League"
+        },
+        {
+          "fixture_name": "Sion vs Grasshopper",
+          "unix": 1765645200,
+          "fixture_id": 349322535,
+          "season_id": 791375,
+          "competition_predictability": "medium",
+          "competition_id": 500,
+          "home_id": 5836,
+          "away_id": 4097,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Switzerland",
+          "competition_name": "Super League"
+        },
+        {
+          "fixture_name": "Thun vs St. Gallen",
+          "unix": 1765654200,
+          "fixture_id": 349322524,
+          "season_id": 791375,
+          "competition_predictability": "medium",
+          "competition_id": 500,
+          "home_id": 5835,
+          "away_id": 6463,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Switzerland",
+          "competition_name": "Super League"
+        }
+      ]
+    },
+    "Australia": {
+      "A-League Men": [
+        {
+          "fixture_name": "Melbourne Victory vs Adelaide United",
+          "unix": 1765614900,
+          "fixture_id": 417043007,
+          "season_id": 1035414,
+          "competition_predictability": "poor",
+          "competition_id": 72,
+          "home_id": 15526,
+          "away_id": 16152,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Australia",
+          "competition_name": "A-League Men"
+        },
+        {
+          "fixture_name": "Western Sydney Wanderers vs Brisbane Roar",
+          "unix": 1765605600,
+          "fixture_id": 417043082,
+          "season_id": 1035414,
+          "competition_predictability": "poor",
+          "competition_id": 72,
+          "home_id": 16143,
+          "away_id": 16156,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Australia",
+          "competition_name": "A-League Men"
+        },
+        {
+          "fixture_name": "Perth Glory vs Sydney",
+          "unix": 1765622700,
+          "fixture_id": 417043014,
+          "season_id": 1035414,
+          "competition_predictability": "poor",
+          "competition_id": 72,
+          "home_id": 4313,
+          "away_id": 5168,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Australia",
+          "competition_name": "A-League Men"
+        }
+      ],
+      "A-League Women": [
+        {
+          "fixture_name": "Newcastle Jets W vs Brisbane Roar W",
+          "unix": 1765594800,
+          "fixture_id": 420447457,
+          "season_id": 1035415,
+          "competition_predictability": "poor",
+          "competition_id": 797,
+          "home_id": 16150,
+          "away_id": 16151,
+          "home_position": 2,
+          "away_position": 4,
+          "competition_country": "Australia",
+          "competition_name": "A-League Women"
+        }
+      ]
+    },
+    "Austria": {
+      "Admiral Bundesliga": [
+        {
+          "fixture_name": "Ried vs Rheindorf Altach",
+          "unix": 1765641600,
+          "fixture_id": 355359884,
+          "season_id": 747610,
+          "competition_predictability": "poor",
+          "competition_id": 411,
+          "home_id": 5651,
+          "away_id": 5653,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Austria",
+          "competition_name": "Admiral Bundesliga"
+        },
+        {
+          "fixture_name": "Hartberg vs WSG Tirol",
+          "unix": 1765641600,
+          "fixture_id": 355359892,
+          "season_id": 747610,
+          "competition_predictability": "poor",
+          "competition_id": 411,
+          "home_id": 4560,
+          "away_id": 7541,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Austria",
+          "competition_name": "Admiral Bundesliga"
+        },
+        {
+          "fixture_name": "Grazer AK vs LASK Linz",
+          "unix": 1765641600,
+          "fixture_id": 355359914,
+          "season_id": 747610,
+          "competition_predictability": "poor",
+          "competition_id": 411,
+          "home_id": 8593,
+          "away_id": 7659,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Austria",
+          "competition_name": "Admiral Bundesliga"
+        }
+      ]
+    },
+    "Denmark": {
+      "Landspokal Cup": [
+        {
+          "fixture_name": "Vejle Boldklub vs Viborg FF",
+          "unix": 1765634400,
+          "fixture_id": 420458369,
+          "season_id": 1019035,
+          "competition_predictability": "high",
+          "competition_id": 328,
+          "home_id": 8858,
+          "away_id": 4361,
+          "home_position": null,
+          "away_position": null,
+          "competition_country": "Denmark",
+          "competition_name": "Landspokal Cup"
+        }
+      ]
+    }
+  },
+  "2025-12-09": {
+    "Europe": {
+      "UEFA Women's Champions League": [
+        {
+          "fixture_name": "Paris SG W vs OH Leuven W",
+          "unix": 1765310400,
+          "fixture_id": 404466366,
+          "season_id": 813366,
+          "competition_predictability": "high",
+          "competition_id": 50,
+          "home_id": 4739,
+          "away_id": 8591,
+          "home_position": 18,
+          "away_position": 11,
+          "competition_country": "Europe",
+          "competition_name": "UEFA Women's Champions League"
+        },
+        {
+          "fixture_name": "Real Madrid W vs Wolfsburg W",
+          "unix": 1765310400,
+          "fixture_id": 397490387,
+          "season_id": 813366,
+          "competition_predictability": "high",
+          "competition_id": 50,
+          "home_id": 12993,
+          "away_id": 4143,
+          "home_position": 7,
+          "away_position": 3,
+          "competition_country": "Europe",
+          "competition_name": "UEFA Women's Champions League"
+        },
+        {
+          "fixture_name": "Arsenal W vs FC Twente W",
+          "unix": 1765310400,
+          "fixture_id": 397490386,
+          "season_id": 813366,
+          "competition_predictability": "high",
+          "competition_id": 50,
+          "home_id": 9959,
+          "away_id": 5075,
+          "home_position": 10,
+          "away_position": 14,
+          "competition_country": "Europe",
+          "competition_name": "UEFA Women's Champions League"
+        },
+        {
+          "fixture_name": "St. Polten W vs Juventus W",
+          "unix": 1765302300,
+          "fixture_id": 397490385,
+          "season_id": 813366,
+          "competition_predictability": "high",
+          "competition_id": 50,
+          "home_id": 15393,
+          "away_id": 7668,
+          "home_position": 17,
+          "away_position": 8,
+          "competition_country": "Europe",
+          "competition_name": "UEFA Women's Champions League"
+        }
+      ],
+      "Champions League": [
+        {
+          "fixture_name": "FC Barcelona vs Eintracht Frankfurt",
+          "unix": 1765310400,
+          "fixture_id": 377653909,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 10963,
+          "away_id": 7567,
+          "home_position": 18,
+          "away_position": 28,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "FC Bayern München vs Sporting CP",
+          "unix": 1765302300,
+          "fixture_id": 377653925,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 11648,
+          "away_id": 5095,
+          "home_position": 3,
+          "away_position": 8,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "PSV vs Atlético Madrid",
+          "unix": 1765310400,
+          "fixture_id": 377653968,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 6588,
+          "away_id": 11509,
+          "home_position": 15,
+          "away_position": 12,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Tottenham Hotspur vs Slavia Praha",
+          "unix": 1765310400,
+          "fixture_id": 377653993,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 5489,
+          "away_id": 7611,
+          "home_position": 16,
+          "away_position": 31,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Inter vs Liverpool",
+          "unix": 1765310400,
+          "fixture_id": 377653933,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 11523,
+          "away_id": 4017,
+          "home_position": 4,
+          "away_position": 13,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Atalanta vs Chelsea",
+          "unix": 1765310400,
+          "fixture_id": 377653885,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 11513,
+          "away_id": 11402,
+          "home_position": 10,
+          "away_position": 7,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Union Saint-Gilloise vs Olympique Marseille",
+          "unix": 1765310400,
+          "fixture_id": 377653859,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 8245,
+          "away_id": 8675,
+          "home_position": 25,
+          "away_position": 21,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Monaco vs Galatasaray",
+          "unix": 1765310400,
+          "fixture_id": 377653874,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 8139,
+          "away_id": 5491,
+          "home_position": 23,
+          "away_position": 14,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        },
+        {
+          "fixture_name": "Kairat vs Olympiacos F.C.",
+          "unix": 1765294200,
+          "fixture_id": 377653942,
+          "season_id": 660539,
+          "competition_predictability": "poor",
+          "competition_id": 51,
+          "home_id": 4914,
+          "away_id": 8646,
+          "home_position": 35,
+          "away_position": 33,
+          "competition_country": "Europe",
+          "competition_name": "Champions League"
+        }
+      ]
+    },
+    "World": {
+      "Arab Cup": [
+        {
+          "fixture_name": "United Arab Emirates vs Kuwait",
+          "unix": 1765290600,
+          "fixture_id": 420458583,
+          "season_id": 1035485,
+          "competition_predictability": null,
+          "competition_id": 967,
+          "home_id": 9881,
+          "away_id": 13244,
+          "home_position": 3,
+          "away_position": 4,
+          "competition_country": "World",
+          "competition_name": "Arab Cup"
+        },
+        {
+          "fixture_name": "Egypt vs Jordan",
+          "unix": 1765290600,
+          "fixture_id": 420451331,
+          "season_id": 1035485,
+          "competition_predictability": null,
+          "competition_id": 967,
+          "home_id": 8745,
+          "away_id": 13595,
+          "home_position": 2,
+          "away_position": 1,
+          "competition_country": "World",
+          "competition_name": "Arab Cup"
+        },
+        {
+          "fixture_name": "Algeria vs Iraq",
+          "unix": 1765299600,
+          "fixture_id": 420451333,
+          "season_id": 1035485,
+          "competition_predictability": null,
+          "competition_id": 967,
+          "home_id": 8753,
+          "away_id": 11387,
+          "home_position": 2,
+          "away_position": 1,
+          "competition_country": "World",
+          "competition_name": "Arab Cup"
+        },
+        {
+          "fixture_name": "Bahrain vs Sudan",
+          "unix": 1765299600,
+          "fixture_id": 420458584,
+          "season_id": 1035485,
+          "competition_predictability": null,
+          "competition_id": 967,
+          "home_id": 13249,
+          "away_id": 13583,
+          "home_position": 4,
+          "away_position": 3,
+          "competition_country": "World",
+          "competition_name": "Arab Cup"
+        }
+      ]
+    },
+    "England": {
+      "Non League Premier: Isthmian": [
+        {
+          "fixture_name": "Chatham Town vs Whitehawk",
+          "unix": 1765309500,
+          "fixture_id": 362635920,
+          "season_id": 910990,
+          "competition_predictability": "medium",
+          "competition_id": 490,
+          "home_id": 8969,
+          "away_id": 9787,
+          "home_position": 3,
+          "away_position": 15,
+          "competition_country": "England",
+          "competition_name": "Non League Premier: Isthmian"
+        },
+        {
+          "fixture_name": "Brentwood Town vs Cheshunt",
+          "unix": 1765309500,
+          "fixture_id": 362635977,
+          "season_id": 910990,
+          "competition_predictability": "medium",
+          "competition_id": 490,
+          "home_id": 5362,
+          "away_id": 11815,
+          "home_position": 2,
+          "away_position": 17,
+          "competition_country": "England",
+          "competition_name": "Non League Premier: Isthmian"
+        },
+        {
+          "fixture_name": "Canvey Island vs Chichester City",
+          "unix": 1765309500,
+          "fixture_id": 362635904,
+          "season_id": 910990,
+          "competition_predictability": "medium",
+          "competition_id": 490,
+          "home_id": 10848,
+          "away_id": 10157,
+          "home_position": 21,
+          "away_position": 18,
+          "competition_country": "England",
+          "competition_name": "Non League Premier: Isthmian"
+        }
+      ],
+      "EFL Trophy": [
+        {
+          "fixture_name": "Colchester United vs West Ham United U21",
+          "unix": 1765309500,
+          "fixture_id": 420455955,
+          "season_id": 1019034,
+          "competition_predictability": "poor",
+          "competition_id": 330,
+          "home_id": 6876,
+          "away_id": 10309,
+          "home_position": 1,
+          "away_position": 2,
+          "competition_country": "England",
+          "competition_name": "EFL Trophy"
+        }
+      ],
+      "League Two": [
+        {
+          "fixture_name": "Swindon Town vs Cheltenham Town",
+          "unix": 1765309500,
+          "fixture_id": 356486032,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 9772,
+          "away_id": 9774,
+          "home_position": 2,
+          "away_position": 22,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Bromley vs Crawley Town",
+          "unix": 1765309500,
+          "fixture_id": 356486063,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 10212,
+          "away_id": 9694,
+          "home_position": 5,
+          "away_position": 19,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Barnet vs Bristol Rovers",
+          "unix": 1765309500,
+          "fixture_id": 356486062,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 10890,
+          "away_id": 9778,
+          "home_position": 14,
+          "away_position": 21,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Cambridge United vs Chesterfield",
+          "unix": 1765309500,
+          "fixture_id": 356486077,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 9776,
+          "away_id": 10331,
+          "home_position": 7,
+          "away_position": 10,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Notts County vs Milton Keynes Dons",
+          "unix": 1765309500,
+          "fixture_id": 356486031,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 9633,
+          "away_id": 5302,
+          "home_position": 4,
+          "away_position": 3,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Fleetwood Town vs Salford City",
+          "unix": 1765309500,
+          "fixture_id": 356486030,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 4484,
+          "away_id": 4027,
+          "home_position": 13,
+          "away_position": 8,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Barrow vs Tranmere Rovers",
+          "unix": 1765309500,
+          "fixture_id": 356485971,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 9662,
+          "away_id": 4024,
+          "home_position": 18,
+          "away_position": 15,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Harrogate Town vs Accrington Stanley",
+          "unix": 1765309500,
+          "fixture_id": 356486064,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 4167,
+          "away_id": 9598,
+          "home_position": 23,
+          "away_position": 17,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        },
+        {
+          "fixture_name": "Shrewsbury Town vs Grimsby Town",
+          "unix": 1765309500,
+          "fixture_id": 356485994,
+          "season_id": 725792,
+          "competition_predictability": "poor",
+          "competition_id": 432,
+          "home_id": 9585,
+          "away_id": 9765,
+          "home_position": 20,
+          "away_position": 12,
+          "competition_country": "England",
+          "competition_name": "League Two"
+        }
+      ],
+      "League One": [
+        {
+          "fixture_name": "Wycombe Wanderers vs Plymouth Argyle",
+          "unix": 1765309500,
+          "fixture_id": 355360562,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 4003,
+          "away_id": 3977,
+          "home_position": 12,
+          "away_position": 23,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Leyton Orient vs Luton Town",
+          "unix": 1765309500,
+          "fixture_id": 355360601,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 9286,
+          "away_id": 4151,
+          "home_position": 13,
+          "away_position": 7,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Reading vs Peterborough United",
+          "unix": 1765310400,
+          "fixture_id": 355360563,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 5490,
+          "away_id": 9773,
+          "home_position": 17,
+          "away_position": 21,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Lincoln City vs Barnsley",
+          "unix": 1765309500,
+          "fixture_id": 355360497,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 9762,
+          "away_id": 6871,
+          "home_position": 4,
+          "away_position": 10,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Stevenage vs Cardiff City",
+          "unix": 1765309500,
+          "fixture_id": 355360603,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 6870,
+          "away_id": 9775,
+          "home_position": 3,
+          "away_position": 1,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Port Vale vs Bradford City",
+          "unix": 1765309500,
+          "fixture_id": 355360499,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 9768,
+          "away_id": 4761,
+          "home_position": 24,
+          "away_position": 2,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Exeter City vs AFC Wimbledon",
+          "unix": 1765309500,
+          "fixture_id": 355360560,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 4165,
+          "away_id": 8935,
+          "home_position": 20,
+          "away_position": 9,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Doncaster Rovers vs Stockport County",
+          "unix": 1765309500,
+          "fixture_id": 355360600,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 6868,
+          "away_id": 4026,
+          "home_position": 18,
+          "away_position": 5,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Mansfield Town vs Bolton Wanderers",
+          "unix": 1765309500,
+          "fixture_id": 355360498,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 6867,
+          "away_id": 5829,
+          "home_position": 16,
+          "away_position": 6,
+          "competition_country": "England",
+          "competition_name": "League One"
+        },
+        {
+          "fixture_name": "Northampton Town vs Huddersfield Town",
+          "unix": 1765309500,
+          "fixture_id": 355360634,
+          "season_id": 725791,
+          "competition_predictability": "poor",
+          "competition_id": 431,
+          "home_id": 6875,
+          "away_id": 4483,
+          "home_position": 15,
+          "away_position": 8,
+          "competition_country": "England",
+          "competition_name": "League One"
+        }
+      ],
+      "Championship": [
+        {
+          "fixture_name": "Sheffield United vs Norwich City",
+          "unix": 1765309500,
+          "fixture_id": 362637064,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 4007,
+          "away_id": 4244,
+          "home_position": 18,
+          "away_position": 23,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Watford vs Sheffield Wednesday",
+          "unix": 1765309500,
+          "fixture_id": 362637047,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 9779,
+          "away_id": 6282,
+          "home_position": 13,
+          "away_position": 24,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Swansea City vs Portsmouth",
+          "unix": 1765309500,
+          "fixture_id": 362637079,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 8900,
+          "away_id": 5828,
+          "home_position": 20,
+          "away_position": 22,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Southampton vs West Bromwich Albion",
+          "unix": 1765309500,
+          "fixture_id": 362637013,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 10784,
+          "away_id": 10207,
+          "home_position": 11,
+          "away_position": 16,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Blackburn Rovers vs Oxford United",
+          "unix": 1765309500,
+          "fixture_id": 362637063,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 5145,
+          "away_id": 4077,
+          "home_position": 19,
+          "away_position": 21,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Queens Park Rangers vs Birmingham City",
+          "unix": 1765310400,
+          "fixture_id": 362637066,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 6596,
+          "away_id": 4356,
+          "home_position": 10,
+          "away_position": 8,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Charlton Athletic vs Middlesbrough",
+          "unix": 1765309500,
+          "fixture_id": 362637112,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 8936,
+          "away_id": 3978,
+          "home_position": 17,
+          "away_position": 2,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        },
+        {
+          "fixture_name": "Preston North End vs Coventry City",
+          "unix": 1765309500,
+          "fixture_id": 362637046,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 4025,
+          "away_id": 5143,
+          "home_position": 5,
+          "away_position": 1,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        }
+      ],
+      "Non League Premier: Southern Central": [
+        {
+          "fixture_name": "Quorn vs Redditch United",
+          "unix": 1765309500,
+          "fixture_id": 363526651,
+          "season_id": 910993,
+          "competition_predictability": "medium",
+          "competition_id": 488,
+          "home_id": 9065,
+          "away_id": 11803,
+          "home_position": 3,
+          "away_position": 5,
+          "competition_country": "England",
+          "competition_name": "Non League Premier: Southern Central"
+        }
+      ],
+      "Enterprise National League North": [
+        {
+          "fixture_name": "Scarborough Athletic vs Hereford",
+          "unix": 1765309500,
+          "fixture_id": 363526024,
+          "season_id": 820757,
+          "competition_predictability": "poor",
+          "competition_id": 586,
+          "home_id": 11823,
+          "away_id": 11660,
+          "home_position": 6,
+          "away_position": 20,
+          "competition_country": "England",
+          "competition_name": "Enterprise National League North"
+        },
+        {
+          "fixture_name": "Leamington vs AFC Telford United",
+          "unix": 1765309500,
+          "fixture_id": 420447301,
+          "season_id": 820757,
+          "competition_predictability": "poor",
+          "competition_id": 586,
+          "home_id": 10677,
+          "away_id": 10549,
+          "home_position": 24,
+          "away_position": 16,
+          "competition_country": "England",
+          "competition_name": "Enterprise National League North"
+        }
+      ],
+      "Non League Premier: Southern South": [
+        {
+          "fixture_name": "Berkhamsted vs Uxbridge",
+          "unix": 1765309500,
+          "fixture_id": 363527158,
+          "season_id": 910996,
+          "competition_predictability": "good",
+          "competition_id": 489,
+          "home_id": 10860,
+          "away_id": 10832,
+          "home_position": 10,
+          "away_position": 9,
+          "competition_country": "England",
+          "competition_name": "Non League Premier: Southern South"
+        }
+      ],
+      "Enterprise National League South": [
+        {
+          "fixture_name": "Weston-super-Mare vs Worthing",
+          "unix": 1765309500,
+          "fixture_id": 363525222,
+          "season_id": 820759,
+          "competition_predictability": "good",
+          "competition_id": 593,
+          "home_id": 10475,
+          "away_id": 11821,
+          "home_position": 4,
+          "away_position": 2,
+          "competition_country": "England",
+          "competition_name": "Enterprise National League South"
+        }
+      ],
+      "Non League Div One: Northern West": [
+        {
+          "fixture_name": "Stalybridge Celtic vs Nantwich Town",
+          "unix": 1765309500,
+          "fixture_id": 363523379,
+          "season_id": 911002,
+          "competition_predictability": "poor",
+          "competition_id": 1016,
+          "home_id": 4174,
+          "away_id": 10903,
+          "home_position": 7,
+          "away_position": 13,
+          "competition_country": "England",
+          "competition_name": "Non League Div One: Northern West"
+        }
+      ]
+    },
+    "Asia": {
+      "AFC Champions League Elite": [
+        {
+          "fixture_name": "Buriram United vs Gangwon",
+          "unix": 1765282500,
+          "fixture_id": 391377403,
+          "season_id": 725787,
+          "competition_predictability": "medium",
+          "competition_id": 456,
+          "home_id": 4339,
+          "away_id": 7998,
+          "home_position": 7,
+          "away_position": 9,
+          "competition_country": "Asia",
+          "competition_name": "AFC Champions League Elite"
+        },
+        {
+          "fixture_name": "Johor Darul Ta'zim vs Shanghai Port",
+          "unix": 1765282500,
+          "fixture_id": 391377404,
+          "season_id": 725787,
+          "competition_predictability": "medium",
+          "competition_id": 456,
+          "home_id": 5456,
+          "away_id": 4303,
+          "home_position": 8,
+          "away_position": 12,
+          "competition_country": "Asia",
+          "competition_name": "AFC Champions League Elite"
+        },
+        {
+          "fixture_name": "Machida Zelvia vs Ulsan HD",
+          "unix": 1765274400,
+          "fixture_id": 391377402,
+          "season_id": 725787,
+          "competition_predictability": "medium",
+          "competition_id": 456,
+          "home_id": 7991,
+          "away_id": 7927,
+          "home_position": 4,
+          "away_position": 3,
+          "competition_country": "Asia",
+          "competition_name": "AFC Champions League Elite"
+        },
+        {
+          "fixture_name": "Vissel Kobe vs Chengdu Rongcheng",
+          "unix": 1765274400,
+          "fixture_id": 391377431,
+          "season_id": 725787,
+          "competition_predictability": "medium",
+          "competition_id": 456,
+          "home_id": 5292,
+          "away_id": 10714,
+          "home_position": 1,
+          "away_position": 10,
+          "competition_country": "Asia",
+          "competition_name": "AFC Champions League Elite"
+        }
+      ]
+    },
+    "Bulgaria": {
+      "First League": [
+        {
+          "fixture_name": "Botev Vratsa vs Montana",
+          "unix": 1765294200,
+          "fixture_id": 381304619,
+          "season_id": 660536,
+          "competition_predictability": "high",
+          "competition_id": 161,
+          "home_id": 5739,
+          "away_id": 7436,
+          "home_position": 10,
+          "away_position": 15,
+          "competition_country": "Bulgaria",
+          "competition_name": "First League"
+        }
+      ]
+    },
+    "Wales": {
+      "Premier League": [
+        {
+          "fixture_name": "Penybont vs Barry Town United",
+          "unix": 1765309500,
+          "fixture_id": 362635690,
+          "season_id": 843116,
+          "competition_predictability": "good",
+          "competition_id": 430,
+          "home_id": 10767,
+          "away_id": 10765,
+          "home_position": 3,
+          "away_position": 7,
+          "competition_country": "Wales",
+          "competition_name": "Premier League"
+        },
+        {
+          "fixture_name": "Briton Ferry vs The New Saints",
+          "unix": 1765309500,
+          "fixture_id": 362635750,
+          "season_id": 843116,
+          "competition_predictability": "good",
+          "competition_id": 430,
+          "home_id": 19318,
+          "away_id": 5014,
+          "home_position": 10,
+          "away_position": 1,
+          "competition_country": "Wales",
+          "competition_name": "Premier League"
+        }
+      ]
+    },
+    "Azerbaijan": {
+      "Premier League": [
+        {
+          "fixture_name": "Araz vs Kapaz",
+          "unix": 1765285200,
+          "fixture_id": 375569764,
+          "season_id": 895796,
+          "competition_predictability": "good",
+          "competition_id": 405,
+          "home_id": 27403,
+          "away_id": 12937,
+          "home_position": 6,
+          "away_position": 11,
+          "competition_country": "Azerbaijan",
+          "competition_name": "Premier League"
+        },
+        {
+          "fixture_name": "Sumqayıt vs Mil-Muğan",
+          "unix": 1765294200,
+          "fixture_id": 375569821,
+          "season_id": 895796,
+          "competition_predictability": "good",
+          "competition_id": 405,
+          "home_id": 4971,
+          "away_id": 27402,
+          "home_position": 5,
+          "away_position": 7,
+          "competition_country": "Azerbaijan",
+          "competition_name": "Premier League"
+        }
+      ]
+    },
+    "Ecuador": {
+      "Liga Pro": [
+        {
+          "fixture_name": "Emelec vs Macará",
+          "unix": 1765238400,
+          "fixture_id": 420457935,
+          "season_id": 7522,
+          "competition_predictability": "medium",
+          "competition_id": 40,
+          "home_id": 4807,
+          "away_id": 4190,
+          "home_position": 3,
+          "away_position": 1,
+          "competition_country": "Ecuador",
+          "competition_name": "Liga Pro"
+        }
+      ]
+    },
+    "Jamaica": {
+      "Premier League": [
+        {
+          "fixture_name": "Tivoli Gardens vs Waterhouse",
+          "unix": 1765240200,
+          "fixture_id": 387923958,
+          "season_id": 1034749,
+          "competition_predictability": "high",
+          "competition_id": 970,
+          "home_id": 18766,
+          "away_id": 15163,
+          "home_position": 6,
+          "away_position": 5,
+          "competition_country": "Jamaica",
+          "competition_name": "Premier League"
+        }
+      ]
+    },
+    "Northern Ireland": {
+      "Premiership": [
+        {
+          "fixture_name": "Crusaders vs Cliftonville",
+          "unix": 1765309500,
+          "fixture_id": 363524432,
+          "season_id": 718525,
+          "competition_predictability": "medium",
+          "competition_id": 644,
+          "home_id": 9780,
+          "away_id": 12809,
+          "home_position": 10,
+          "away_position": 6,
+          "competition_country": "Northern Ireland",
+          "competition_name": "Premiership"
+        }
+      ]
+    },
+    "Belgium": {
+      "Challenger Pro League": [
+        {
+          "fixture_name": "Jong KRC Genk U23 vs RSCA Futures U23",
+          "unix": 1765306800,
+          "fixture_id": 362633291,
+          "season_id": 813371,
+          "competition_predictability": "medium",
+          "competition_id": 194,
+          "home_id": 25634,
+          "away_id": 26731,
+          "home_position": 15,
+          "away_position": 13,
+          "competition_country": "Belgium",
+          "competition_name": "Challenger Pro League"
+        }
+      ]
+    }
+  },
+  "2025-12-11": {
+    "Malawi": {
+      "Super League": [
+        {
+          "fixture_name": "Mighty Mukuru Wanderers vs Moyale Barracks",
+          "unix": 1765456200,
+          "fixture_id": 281409292,
+          "season_id": 63753,
+          "competition_predictability": "poor",
+          "competition_id": 753,
+          "home_id": 15705,
+          "away_id": 15707,
+          "home_position": 12,
+          "away_position": 14,
+          "competition_country": "Malawi",
+          "competition_name": "Super League"
+        }
+      ]
+    },
+    "Europe": {
+      "Europa League": [
+        {
+          "fixture_name": "Olympique Lyonnais vs Go Ahead Eagles",
+          "unix": 1765483200,
+          "fixture_id": 378035323,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 5771,
+          "away_id": 8442,
+          "home_position": 1,
+          "away_position": 27,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "Porto vs Malmö FF",
+          "unix": 1765483200,
+          "fixture_id": 378035259,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 11893,
+          "away_id": 5276,
+          "home_position": 8,
+          "away_position": 34,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "Celtic vs Roma",
+          "unix": 1765483200,
+          "fixture_id": 378035248,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 5235,
+          "away_id": 10436,
+          "home_position": 21,
+          "away_position": 15,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "FC Midtjylland vs Genk",
+          "unix": 1765475100,
+          "fixture_id": 378035255,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 4696,
+          "away_id": 8052,
+          "home_position": 2,
+          "away_position": 9,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "Ferencvárosi vs Rangers",
+          "unix": 1765475100,
+          "fixture_id": 378035272,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 4771,
+          "away_id": 7467,
+          "home_position": 6,
+          "away_position": 33,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "Panathinaikos vs Viktoria Plzeň",
+          "unix": 1765483200,
+          "fixture_id": 378035325,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 4762,
+          "away_id": 4442,
+          "home_position": 14,
+          "away_position": 13,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "SC Freiburg vs Salzburg",
+          "unix": 1765483200,
+          "fixture_id": 378035348,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 6464,
+          "away_id": 4016,
+          "home_position": 4,
+          "away_position": 29,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "VfB Stuttgart vs Maccabi Tel Aviv",
+          "unix": 1765475100,
+          "fixture_id": 378035365,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 4397,
+          "away_id": 4613,
+          "home_position": 12,
+          "away_position": 35,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "Dinamo Zagreb vs Real Betis",
+          "unix": 1765475100,
+          "fixture_id": 378035284,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 4754,
+          "away_id": 11355,
+          "home_position": 23,
+          "away_position": 5,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "FC Utrecht vs Nottingham Forest",
+          "unix": 1765475100,
+          "fixture_id": 378035266,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 9745,
+          "away_id": 9771,
+          "home_position": 32,
+          "away_position": 16,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "Basel vs Aston Villa",
+          "unix": 1765483200,
+          "fixture_id": 378035236,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 4154,
+          "away_id": 10661,
+          "home_position": 24,
+          "away_position": 3,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "Ludogorets vs PAOK",
+          "unix": 1765475100,
+          "fixture_id": 378035301,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 4695,
+          "away_id": 4145,
+          "home_position": 25,
+          "away_position": 17,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "Brann vs Fenerbahçe",
+          "unix": 1765483200,
+          "fixture_id": 378035353,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 7654,
+          "away_id": 5497,
+          "home_position": 19,
+          "away_position": 20,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "Young Boys vs LOSC Lille",
+          "unix": 1765475100,
+          "fixture_id": 378035372,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 5314,
+          "away_id": 8035,
+          "home_position": 26,
+          "away_position": 11,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "FCSB vs Feyenoord",
+          "unix": 1765483200,
+          "fixture_id": 378035260,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 5046,
+          "away_id": 4019,
+          "home_position": 31,
+          "away_position": 30,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "Celta de Vigo vs Bologna",
+          "unix": 1765483200,
+          "fixture_id": 378035247,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 9449,
+          "away_id": 10204,
+          "home_position": 10,
+          "away_position": 18,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "Nice vs Sporting Braga",
+          "unix": 1765475100,
+          "fixture_id": 378035313,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 7676,
+          "away_id": 9279,
+          "home_position": 36,
+          "away_position": 7,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        },
+        {
+          "fixture_name": "Sturm Graz vs Crvena Zvezda",
+          "unix": 1765475100,
+          "fixture_id": 378035357,
+          "season_id": 667779,
+          "competition_predictability": "medium",
+          "competition_id": 32,
+          "home_id": 5763,
+          "away_id": 5137,
+          "home_position": 28,
+          "away_position": 22,
+          "competition_country": "Europe",
+          "competition_name": "Europa League"
+        }
+      ],
+      "Europa Conference League": [
+        {
+          "fixture_name": "Raków Częstochowa vs Zrinjski",
+          "unix": 1765483200,
+          "fixture_id": 378035648,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 4157,
+          "away_id": 5029,
+          "home_position": 6,
+          "away_position": 19,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Fiorentina vs Dynamo Kyiv",
+          "unix": 1765475100,
+          "fixture_id": 378035620,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 10134,
+          "away_id": 4149,
+          "home_position": 17,
+          "away_position": 27,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Lech Poznań vs FSV Mainz 05",
+          "unix": 1765483200,
+          "fixture_id": 378035636,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 5060,
+          "away_id": 6288,
+          "home_position": 16,
+          "away_position": 5,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Breidablik vs Shamrock Rovers",
+          "unix": 1765475100,
+          "fixture_id": 378035601,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 5272,
+          "away_id": 5286,
+          "home_position": 32,
+          "away_position": 35,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Skendija 79 vs Slovan Bratislava",
+          "unix": 1765475100,
+          "fixture_id": 378035634,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 4972,
+          "away_id": 8844,
+          "home_position": 25,
+          "away_position": 29,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Jagiellonia Białystok vs Rayo Vallecano",
+          "unix": 1765475100,
+          "fixture_id": 378035629,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 7625,
+          "away_id": 5406,
+          "home_position": 9,
+          "away_position": 12,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Noah vs Legia Warszawa",
+          "unix": 1765475100,
+          "fixture_id": 378035618,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 4915,
+          "away_id": 4755,
+          "home_position": 23,
+          "away_position": 28,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Universitatea Craiova vs Sparta Praha",
+          "unix": 1765475100,
+          "fixture_id": 378035681,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 4998,
+          "away_id": 8630,
+          "home_position": 15,
+          "away_position": 11,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "KuPS vs Lausanne Sport",
+          "unix": 1765483200,
+          "fixture_id": 378035640,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 7222,
+          "away_id": 10543,
+          "home_position": 22,
+          "away_position": 13,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "SK Rapid vs Omonia Nicosia",
+          "unix": 1765483200,
+          "fixture_id": 378035676,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 4668,
+          "away_id": 4756,
+          "home_position": 36,
+          "away_position": 21,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Aberdeen vs Strasbourg",
+          "unix": 1765483200,
+          "fixture_id": 378035587,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 5050,
+          "away_id": 7675,
+          "home_position": 33,
+          "away_position": 2,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Häcken vs AEK Larnaca",
+          "unix": 1765475100,
+          "fixture_id": 378035600,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 8111,
+          "away_id": 8638,
+          "home_position": 31,
+          "away_position": 7,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Rijeka vs Celje",
+          "unix": 1765483200,
+          "fixture_id": 378035625,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 7280,
+          "away_id": 4614,
+          "home_position": 24,
+          "away_position": 3,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Samsunspor vs AEK Athens",
+          "unix": 1765475100,
+          "fixture_id": 378035665,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 7216,
+          "away_id": 8645,
+          "home_position": 1,
+          "away_position": 10,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Lincoln Red Imps vs Sigma Olomouc",
+          "unix": 1765483200,
+          "fixture_id": 378035647,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 5320,
+          "away_id": 8631,
+          "home_position": 26,
+          "away_position": 14,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Drita vs AZ",
+          "unix": 1765475100,
+          "fixture_id": 378035604,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 10662,
+          "away_id": 4441,
+          "home_position": 8,
+          "away_position": 20,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Hamrun Spartans vs Shakhtar Donetsk",
+          "unix": 1765483200,
+          "fixture_id": 378035611,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 12173,
+          "away_id": 4148,
+          "home_position": 30,
+          "away_position": 4,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        },
+        {
+          "fixture_name": "Shelbourne vs Crystal Palace",
+          "unix": 1765483200,
+          "fixture_id": 378035671,
+          "season_id": 667778,
+          "competition_predictability": "poor",
+          "competition_id": 976,
+          "home_id": 5770,
+          "away_id": 4076,
+          "home_position": 34,
+          "away_position": 18,
+          "competition_country": "Europe",
+          "competition_name": "Europa Conference League"
+        }
+      ]
+    },
+    "Brazil": {
+      "Copa do Brasil": [
+        {
+          "fixture_name": "Cruzeiro vs Corinthians",
+          "unix": 1765413000,
+          "fixture_id": 420452179,
+          "season_id": 7595,
+          "competition_predictability": "high",
+          "competition_id": 58,
+          "home_id": 4777,
+          "away_id": 5243,
+          "home_position": 1,
+          "away_position": 2,
+          "competition_country": "Brazil",
+          "competition_name": "Copa do Brasil"
+        },
+        {
+          "fixture_name": "Vasco da Gama vs Fluminense",
+          "unix": 1765494000,
+          "fixture_id": 420452184,
+          "season_id": 7595,
+          "competition_predictability": "high",
+          "competition_id": 58,
+          "home_id": 5245,
+          "away_id": 5162,
+          "home_position": 1,
+          "away_position": 2,
+          "competition_country": "Brazil",
+          "competition_name": "Copa do Brasil"
+        }
+      ]
+    },
+    "England": {
+      "Women's Super League": [
+        {
+          "fixture_name": "Aston Villa W vs Liverpool W",
+          "unix": 1765479600,
+          "fixture_id": 372580149,
+          "season_id": 949316,
+          "competition_predictability": "high",
+          "competition_id": 367,
+          "home_id": 9737,
+          "away_id": 9988,
+          "home_position": 8,
+          "away_position": 12,
+          "competition_country": "England",
+          "competition_name": "Women's Super League"
+        }
+      ]
+    },
+    "Denmark": {
+      "Landspokal Cup": [
+        {
+          "fixture_name": "Odense BK vs AGF",
+          "unix": 1765476000,
+          "fixture_id": 420458368,
+          "season_id": 1019035,
+          "competition_predictability": "high",
+          "competition_id": 328,
+          "home_id": 4871,
+          "away_id": 4987,
+          "home_position": 1,
+          "away_position": 2,
+          "competition_country": "Denmark",
+          "competition_name": "Landspokal Cup"
+        }
+      ]
+    }
+  },
+  "2025-12-07": {
+    "Dominican Republic": {
+      "Liga Mayor": [
+        {
+          "fixture_name": "Cibao vs Delfines Del Este",
+          "unix": 1765144800,
+          "fixture_id": 362638504,
+          "season_id": 7533,
+          "competition_predictability": "high",
+          "competition_id": 612,
+          "home_id": 13570,
+          "away_id": 13572,
+          "home_position": 2,
+          "away_position": 5,
+          "competition_country": "Dominican Republic",
+          "competition_name": "Liga Mayor"
+        }
+      ]
+    },
+    "Bolivia": {
+      "Liga De Futbol Prof": [
+        {
+          "fixture_name": "Aurora vs Universitario de Vinto",
+          "unix": 1765150200,
+          "fixture_id": 420443391,
+          "season_id": 77767,
+          "competition_predictability": "high",
+          "competition_id": 758,
+          "home_id": 15765,
+          "away_id": 21347,
+          "home_position": 16,
+          "away_position": 13,
+          "competition_country": "Bolivia",
+          "competition_name": "Liga De Futbol Prof"
+        },
+        {
+          "fixture_name": "The Strongest vs Always Ready",
+          "unix": 1765142100,
+          "fixture_id": 420443405,
+          "season_id": 77767,
+          "competition_predictability": "high",
+          "competition_id": 758,
+          "home_id": 15772,
+          "away_id": 15762,
+          "home_position": 2,
+          "away_position": 1,
+          "competition_country": "Bolivia",
+          "competition_name": "Liga De Futbol Prof"
+        }
+      ]
+    },
+    "Chile": {
+      "Primera B": [
+        {
+          "fixture_name": "Cobreloa vs Concepcion",
+          "unix": 1765149300,
+          "fixture_id": 420458945,
+          "season_id": 7577,
+          "competition_predictability": "poor",
+          "competition_id": 293,
+          "home_id": 7298,
+          "away_id": 11549,
+          "home_position": 1,
+          "away_position": 2,
+          "competition_country": "Chile",
+          "competition_name": "Primera B"
+        }
+      ],
+      "Primera Division": [
+        {
+          "fixture_name": "Colo-Colo vs Audax Italiano",
+          "unix": 1765141200,
+          "fixture_id": 281631745,
+          "season_id": 7526,
+          "competition_predictability": "poor",
+          "competition_id": 306,
+          "home_id": 7570,
+          "away_id": 8928,
+          "home_position": 8,
+          "away_position": 6,
+          "competition_country": "Chile",
+          "competition_name": "Primera Division"
+        },
+        {
+          "fixture_name": "Ñublense vs Cobresal",
+          "unix": 1765141200,
+          "fixture_id": 281631704,
+          "season_id": 7526,
+          "competition_predictability": "poor",
+          "competition_id": 306,
+          "home_id": 7671,
+          "away_id": 9555,
+          "home_position": 11,
+          "away_position": 7,
+          "competition_country": "Chile",
+          "competition_name": "Primera Division"
+        }
+      ]
+    },
+    "Spain": {
+      "Segunda Division RFEF: Group 4": [
+        {
+          "fixture_name": "Extremadura 1924 vs Linares Deportivo",
+          "unix": 1765143000,
+          "fixture_id": 384639702,
+          "season_id": 813403,
+          "competition_predictability": "poor",
+          "competition_id": 1046,
+          "home_id": 35198,
+          "away_id": 14210,
+          "home_position": 15,
+          "away_position": 7,
+          "competition_country": "Spain",
+          "competition_name": "Segunda Division RFEF: Group 4"
+        }
+      ]
+    },
+    "Costa Rica": {
+      "Primera Division": [
+        {
+          "fixture_name": "Cartaginés vs Municipal Liberia",
+          "unix": 1765144800,
+          "fixture_id": 348758574,
+          "season_id": 813393,
+          "competition_predictability": "high",
+          "competition_id": 309,
+          "home_id": 9443,
+          "away_id": 10987,
+          "home_position": 3,
+          "away_position": 4,
+          "competition_country": "Costa Rica",
+          "competition_name": "Primera Division"
+        },
+        {
+          "fixture_name": "Pérez Zeledón vs Herediano",
+          "unix": 1765144800,
+          "fixture_id": 348758565,
+          "season_id": 813393,
+          "competition_predictability": "high",
+          "competition_id": 309,
+          "home_id": 7723,
+          "away_id": 7831,
+          "home_position": 5,
+          "away_position": 6,
+          "competition_country": "Costa Rica",
+          "competition_name": "Primera Division"
+        }
+      ]
+    },
+    "Argentina": {
+      "Liga Profesional de Fútbol": [
+        {
+          "fixture_name": "Boca Juniors vs Racing Club",
+          "unix": 1765144800,
+          "fixture_id": 420460272,
+          "season_id": 7402,
+          "competition_predictability": "poor",
+          "competition_id": 699,
+          "home_id": 11603,
+          "away_id": 11572,
+          "home_position": 1,
+          "away_position": 2,
+          "competition_country": "Argentina",
+          "competition_name": "Liga Profesional de Fútbol"
+        }
+      ]
+    },
+    "Ecuador": {
+      "Liga Pro": [
+        {
+          "fixture_name": "Barcelona Guayaquil vs Universidad Católica",
+          "unix": 1765143000,
+          "fixture_id": 420457934,
+          "season_id": 7522,
+          "competition_predictability": "medium",
+          "competition_id": 40,
+          "home_id": 4838,
+          "away_id": 4682,
+          "home_position": 3,
+          "away_position": 4,
+          "competition_country": "Ecuador",
+          "competition_name": "Liga Pro"
+        }
+      ]
+    }
+  },
+  "2025-12-12": {
+    "France": {
+      "National": [
+        {
+          "fixture_name": "Le Puy-en-Velay vs Fleury 91",
+          "unix": 1765564200,
+          "fixture_id": 362380059,
+          "season_id": 895798,
+          "competition_predictability": "medium",
+          "competition_id": 192,
+          "home_id": 7331,
+          "away_id": 7239,
+          "home_position": 10,
+          "away_position": 7,
+          "competition_country": "France",
+          "competition_name": "National"
+        },
+        {
+          "fixture_name": "Rouen vs Quevilly Rouen",
+          "unix": 1765564200,
+          "fixture_id": 362380266,
+          "season_id": 895798,
+          "competition_predictability": "medium",
+          "competition_id": 192,
+          "home_id": 5745,
+          "away_id": 5723,
+          "home_position": 2,
+          "away_position": 15,
+          "competition_country": "France",
+          "competition_name": "National"
+        },
+        {
+          "fixture_name": "Paris 13 Atletico vs Concarneau",
+          "unix": 1765564200,
+          "fixture_id": 362380265,
+          "season_id": 895798,
+          "competition_predictability": "medium",
+          "competition_id": 192,
+          "home_id": 6834,
+          "away_id": 5726,
+          "home_position": 11,
+          "away_position": 8,
+          "competition_country": "France",
+          "competition_name": "National"
+        },
+        {
+          "fixture_name": "Valenciennes vs Sochaux",
+          "unix": 1765564200,
+          "fixture_id": 362380261,
+          "season_id": 895798,
+          "competition_predictability": "medium",
+          "competition_id": 192,
+          "home_id": 7507,
+          "away_id": 7510,
+          "home_position": 13,
+          "away_position": 3,
+          "competition_country": "France",
+          "competition_name": "National"
+        },
+        {
+          "fixture_name": "Orléans vs Versailles",
+          "unix": 1765564200,
+          "fixture_id": 362380112,
+          "season_id": 895798,
+          "competition_predictability": "medium",
+          "competition_id": 192,
+          "home_id": 5725,
+          "away_id": 7358,
+          "home_position": 5,
+          "away_position": 4,
+          "competition_country": "France",
+          "competition_name": "National"
+        },
+        {
+          "fixture_name": "Villefranche vs Bourg-en-Bresse",
+          "unix": 1765564200,
+          "fixture_id": 362380268,
+          "season_id": 895798,
+          "competition_predictability": "medium",
+          "competition_id": 192,
+          "home_id": 5732,
+          "away_id": 5718,
+          "home_position": 14,
+          "away_position": 16,
+          "competition_country": "France",
+          "competition_name": "National"
+        },
+        {
+          "fixture_name": "Stade Briochin vs Aubagne",
+          "unix": 1765564200,
+          "fixture_id": 362380267,
+          "season_id": 895798,
+          "competition_predictability": "medium",
+          "competition_id": 192,
+          "home_id": 5727,
+          "away_id": 7339,
+          "home_position": 17,
+          "away_position": 6,
+          "competition_country": "France",
+          "competition_name": "National"
+        },
+        {
+          "fixture_name": "Châteauroux vs Dijon",
+          "unix": 1765564200,
+          "fixture_id": 362380058,
+          "season_id": 895798,
+          "competition_predictability": "medium",
+          "competition_id": 192,
+          "home_id": 7500,
+          "away_id": 5772,
+          "home_position": 12,
+          "away_position": 1,
+          "competition_country": "France",
+          "competition_name": "National"
+        }
+      ],
+      "Ligue 2": [
+        {
+          "fixture_name": "Pau vs Amiens SC",
+          "unix": 1765566000,
+          "fixture_id": 363519932,
+          "season_id": 762169,
+          "competition_predictability": "poor",
+          "competition_id": 256,
+          "home_id": 7504,
+          "away_id": 7503,
+          "home_position": 5,
+          "away_position": 16,
+          "competition_country": "France",
+          "competition_name": "Ligue 2"
+        },
+        {
+          "fixture_name": "Nancy vs Clermont",
+          "unix": 1765566000,
+          "fixture_id": 363519951,
+          "season_id": 762169,
+          "competition_predictability": "poor",
+          "competition_id": 256,
+          "home_id": 6537,
+          "away_id": 7499,
+          "home_position": 17,
+          "away_position": 12,
+          "competition_country": "France",
+          "competition_name": "Ligue 2"
+        },
+        {
+          "fixture_name": "Annecy vs Le Mans",
+          "unix": 1765566000,
+          "fixture_id": 363519944,
+          "season_id": 762169,
+          "competition_predictability": "poor",
+          "competition_id": 256,
+          "home_id": 5719,
+          "away_id": 5722,
+          "home_position": 10,
+          "away_position": 4,
+          "competition_country": "France",
+          "competition_name": "Ligue 2"
+        },
+        {
+          "fixture_name": "Rodez vs Guingamp",
+          "unix": 1765566000,
+          "fixture_id": 363520120,
+          "season_id": 762169,
+          "competition_predictability": "poor",
+          "competition_id": 256,
+          "home_id": 7505,
+          "away_id": 6538,
+          "home_position": 13,
+          "away_position": 9,
+          "competition_country": "France",
+          "competition_name": "Ligue 2"
+        }
+      ],
+      "Ligue 1": [
+        {
+          "fixture_name": "Angers SCO vs Nantes",
+          "unix": 1765568700,
+          "fixture_id": 368376451,
+          "season_id": 725793,
+          "competition_predictability": "high",
+          "competition_id": 200,
+          "home_id": 8136,
+          "away_id": 8140,
+          "home_position": 11,
+          "away_position": 17,
+          "competition_country": "France",
+          "competition_name": "Ligue 1"
+        }
+      ]
+    },
+    "Macedonia": {
+      "Second League": [
+        {
+          "fixture_name": "Detonit Plachkovica vs Skopje",
+          "unix": 1765540800,
+          "fixture_id": 374118343,
+          "season_id": 1003453,
+          "competition_predictability": "high",
+          "competition_id": 274,
+          "home_id": 26644,
+          "away_id": 8434,
+          "home_position": 9,
+          "away_position": 6,
+          "competition_country": "Macedonia",
+          "competition_name": "Second League"
+        }
+      ]
+    },
+    "Bulgaria": {
+      "Second League": [
+        {
+          "fixture_name": "Ludogorets II vs Hebar 1918",
+          "unix": 1765540800,
+          "fixture_id": 381456484,
+          "season_id": 653300,
+          "competition_predictability": "good",
+          "competition_id": 19,
+          "home_id": 5563,
+          "away_id": 7077,
+          "home_position": 11,
+          "away_position": 13,
+          "competition_country": "Bulgaria",
+          "competition_name": "Second League"
+        }
+      ]
+    },
+    "Spain": {
+      "La Liga": [
+        {
+          "fixture_name": "Real Sociedad vs Girona",
+          "unix": 1765569600,
+          "fixture_id": 368374799,
+          "season_id": 762170,
+          "competition_predictability": "high",
+          "competition_id": 419,
+          "home_id": 5424,
+          "away_id": 10989,
+          "home_position": 13,
+          "away_position": 18,
+          "competition_country": "Spain",
+          "competition_name": "La Liga"
+        }
+      ]
+    },
+    "Germany": {
+      "2. Bundesliga": [
+        {
+          "fixture_name": "Dynamo Dresden vs Eintracht Braunschweig",
+          "unix": 1765560600,
+          "fixture_id": 355359606,
+          "season_id": 747609,
+          "competition_predictability": "medium",
+          "competition_id": 471,
+          "home_id": 4243,
+          "away_id": 4023,
+          "home_position": 17,
+          "away_position": 14,
+          "competition_country": "Germany",
+          "competition_name": "2. Bundesliga"
+        },
+        {
+          "fixture_name": "SpVgg Greuther Fürth vs Hertha BSC",
+          "unix": 1765560600,
+          "fixture_id": 355359683,
+          "season_id": 747609,
+          "competition_predictability": "medium",
+          "competition_id": 471,
+          "home_id": 4900,
+          "away_id": 4022,
+          "home_position": 16,
+          "away_position": 7,
+          "competition_country": "Germany",
+          "competition_name": "2. Bundesliga"
+        }
+      ],
+      "Bundesliga": [
+        {
+          "fixture_name": "FC Union Berlin vs RB Leipzig",
+          "unix": 1765567800,
+          "fixture_id": 373090002,
+          "season_id": 725788,
+          "competition_predictability": "high",
+          "competition_id": 477,
+          "home_id": 7725,
+          "away_id": 10760,
+          "home_position": 12,
+          "away_position": 2,
+          "competition_country": "Germany",
+          "competition_name": "Bundesliga"
+        }
+      ]
+    },
+    "England": {
+      "Championship": [
+        {
+          "fixture_name": "West Bromwich Albion vs Sheffield United",
+          "unix": 1765569600,
+          "fixture_id": 362637054,
+          "season_id": 725790,
+          "competition_predictability": "good",
+          "competition_id": 418,
+          "home_id": 10207,
+          "away_id": 4007,
+          "home_position": 16,
+          "away_position": 18,
+          "competition_country": "England",
+          "competition_name": "Championship"
+        }
+      ]
+    },
+    "Scotland": {
+      "Championship": [
+        {
+          "fixture_name": "Ayr United vs St. Johnstone",
+          "unix": 1765568700,
+          "fixture_id": 355360328,
+          "season_id": 718527,
+          "competition_predictability": "poor",
+          "competition_id": 637,
+          "home_id": 13042,
+          "away_id": 6790,
+          "home_position": 4,
+          "away_position": 1,
+          "competition_country": "Scotland",
+          "competition_name": "Championship"
+        }
+      ]
+    },
+    "Italy": {
+      "Serie A": [
+        {
+          "fixture_name": "Lecce vs Pisa",
+          "unix": 1765568700,
+          "fixture_id": 374120073,
+          "season_id": 602681,
+          "competition_predictability": "high",
+          "competition_id": 499,
+          "home_id": 10951,
+          "away_id": 11847,
+          "home_position": 15,
+          "away_position": 18,
+          "competition_country": "Italy",
+          "competition_name": "Serie A"
+        }
+      ]
+    },
+    "Australia": {
+      "A-League Women": [
+        {
+          "fixture_name": "Perth Glory W vs Wellington Phoenix W",
+          "unix": 1765537200,
+          "fixture_id": 420447762,
+          "season_id": 1035415,
+          "competition_predictability": "poor",
+          "competition_id": 797,
+          "home_id": 16158,
+          "away_id": 22679,
+          "home_position": 11,
+          "away_position": 7,
+          "competition_country": "Australia",
+          "competition_name": "A-League Women"
+        }
+      ],
+      "A-League Men": [
+        {
+          "fixture_name": "Central Coast Mariners vs Auckland",
+          "unix": 1765528500,
+          "fixture_id": 417043081,
+          "season_id": 1035414,
+          "competition_predictability": "poor",
+          "competition_id": 72,
+          "home_id": 16181,
+          "away_id": 63485,
+          "home_position": 8,
+          "away_position": 2,
+          "competition_country": "Australia",
+          "competition_name": "A-League Men"
+        }
+      ]
+    },
+    "Wales": {
+      "FAW Championship - North": [
+        {
+          "fixture_name": "Flint Mountain vs Mold Alexandra",
+          "unix": 1765568700,
+          "fixture_id": 349322634,
+          "season_id": 791385,
+          "competition_predictability": "high",
+          "competition_id": 995,
+          "home_id": 28571,
+          "away_id": 20184,
+          "home_position": 12,
+          "away_position": 9,
+          "competition_country": "Wales",
+          "competition_name": "FAW Championship - North"
+        }
+      ]
+    }
+  }
+}

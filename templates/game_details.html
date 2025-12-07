@@ -145,24 +145,32 @@
     <p style="text-align: center;">League Predictability: {{ game_data.competition_predictability | capitalize }}</p>
 </div>
 
-    <div style="display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap;">
+<div style="display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap;">
 
-        <!-- LEFT SIDE: Season Stats -->
-        <div style="flex: 1;">
+    <!-- LEFT SIDE: Season Stats -->
+    <div style="flex: 1;">
 
-            <!-- NEW: Toggle buttons for Season Stats / Last 25 Games -->
-            <div class="stats-toggle-buttons" style="margin-bottom: 15px; text-align: center;">
-                <a href="{{ url_for('game_details', fixture_id=fixture_id, stats='season') }}"
-                  class="toggle-button {% if stats_type == 'season' %}active{% endif %}">
-                  Season Stats
-                </a>
-                <a href="{{ url_for('game_details', fixture_id=fixture_id, stats='last25') }}"
-                  class="toggle-button {% if stats_type == 'last25' %}active{% endif %}">
-                  Last 25 Games
-                </a>
-            </div>
+        <!-- Toggle buttons -->
+        <div class="stats-toggle-buttons" style="margin-bottom: 15px; text-align: center;">
 
-            <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
+            <!-- Season Stats button (kept) -->
+            <a href="{{ url_for('game_details', fixture_id=fixture_id, stats='season') }}"
+              class="toggle-button {% if stats_type == 'season' %}active{% endif %}">
+              Season Stats
+            </a>
+
+            {# 
+            <!-- Last 25 Games button (commented out) -->
+            <a href="{{ url_for('game_details', fixture_id=fixture_id, stats='last25') }}"
+              class="toggle-button {% if stats_type == 'last25' %}active{% endif %}">
+              Last 25 Games
+            </a>
+            #}
+
+        </div>
+
+        <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
+
 
 <thead>
     <!-- Main Title Row -->

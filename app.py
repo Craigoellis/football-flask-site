@@ -3,13 +3,22 @@ import requests
 import json
 import os
 import pytz
+import random
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from datetime import datetime, timedelta, timezone
+from google import genai
+from zoneinfo import ZoneInfo
 
 print(f"Flask process PID: {os.getpid()}")
 
 app = Flask(__name__)
+
+# Gemini client (for AI Bets page)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    print("[WARNING] GEMINI_API_KEY not set – /api/generate will fail until you set it.")
+gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 # =========================
 # API Configuration
@@ -17,20 +26,45 @@ app = Flask(__name__)
 API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"  # Replace with your actual token
 HEADERS = {"Authorization": f"Bearer {API_TOKEN}"}
 
+# Base directory for cached JSON/data files.
+# - Locally: defaults to a ./data folder in your project
+# - On Render: set DATA_DIR=/data in the environment
+DATA_DIR = os.getenv("DATA_DIR")
+
+if not DATA_DIR:
+    # Default for local development: a "data" folder next to app.py
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    DATA_DIR = os.path.join(BASE_DIR, "data")
+
+# Make sure the directory exists
+os.makedirs(DATA_DIR, exist_ok=True)
+
+AI_BETS_CACHE_FILE = os.path.join(DATA_DIR, "ai_bets_cache.json")
+AI_BETS_CARDS_FILE = os.path.join(DATA_DIR, "ai_bets_latest_cards.json")
+
+
+FIXTURES_MULTIPLE_URL = "https://data.oddalerts.com/api/fixtures/multiple"
+
+
 # Fixtures API
 FIXTURES_API_URL = "https://data.oddalerts.com/api/probability/ft_result"
-FIXTURES_CACHE_FILE = '/data/fixtures_cache.json'
+FIXTURES_CACHE_FILE = os.path.join(DATA_DIR, "fixtures_cache.json")
 
 # Value Bets API
 VALUE_BETS_API_URL = "https://data.oddalerts.com/api/value/upcoming"
-VALUE_BETS_CACHE_FILE = '/data/value_bets_cache.json'
+VALUE_BETS_CACHE_FILE = os.path.join(DATA_DIR, "value_bets_cache.json")
 
 # Season Stats API Cache
-SEASON_STATS_CACHE_FILE = '/data/season_stats_cache.json'
+SEASON_STATS_CACHE_FILE = os.path.join(DATA_DIR, "season_stats_cache.json")
 
 # NEW: separate cache file + in-memory cache for "Last 25 Games"
-SEASON_STATS_CACHE_FILE_LAST25 = "/data/season_stats_last25.json"
-season_stats_cache_last25 = {}
+#SEASON_STATS_CACHE_FILE_LAST25 = os.path.join(DATA_DIR, "season_stats_last25.json")
+#season_stats_cache_last25 = {}
+
+# Timestamp files for caches
+GAME_DETAILS_CACHE_TIME_FILE = os.path.join(DATA_DIR, "game_details_cache_time.txt")
+SEASON_STATS_CACHE_TIME_FILE = os.path.join(DATA_DIR, "season_stats_cache_time.txt")
+SEASON_STATS_LAST25_CACHE_TIME_FILE = os.path.join(DATA_DIR, "season_stats_last25_time.txt")
 
 # NEW: season stats sources (labels + URL templates)
 SEASON_STATS_SOURCES = {
@@ -44,10 +78,9 @@ SEASON_STATS_SOURCES = {
     },
 }
 
-
 # Betslip Generator API and Cache
 BETSLIP_GENERATOR_URL = f"https://data.oddalerts.com/api/betslips?api_token={API_TOKEN}"
-PREDICTABILITY_CACHE_FILE = '/data/predictability_cache.json'
+PREDICTABILITY_CACHE_FILE = os.path.join(DATA_DIR, "predictability_cache.json")
 
 # Set the secret key (needed for session management and flash messages)
 app.secret_key = 'dev_secret_key'  # Replace 'dev_secret_key' with any string you like for local development
@@ -56,21 +89,21 @@ app.secret_key = 'dev_secret_key'  # Replace 'dev_secret_key' with any string yo
 # Load Cached Data at Startup
 # =========================
 if os.path.exists(FIXTURES_CACHE_FILE):
-    with open(FIXTURES_CACHE_FILE, 'r') as f:
+    with open(FIXTURES_CACHE_FILE, 'r', encoding='utf-8') as f:
         try:
             cached_fixtures = json.load(f)
         except json.JSONDecodeError:
             cached_fixtures = {}
 
 if os.path.exists(VALUE_BETS_CACHE_FILE):
-    with open(VALUE_BETS_CACHE_FILE, 'r') as f:
+    with open(VALUE_BETS_CACHE_FILE, 'r', encoding='utf-8') as f:
         try:
             cached_value_bets = json.load(f)
         except json.JSONDecodeError:
             cached_value_bets = []
 
 if os.path.exists(PREDICTABILITY_CACHE_FILE):
-    with open(PREDICTABILITY_CACHE_FILE, 'r') as f:
+    with open(PREDICTABILITY_CACHE_FILE, 'r', encoding='utf-8') as f:
         try:
             predictability_cache = json.load(f)
         except json.JSONDecodeError:
@@ -78,9 +111,8 @@ if os.path.exists(PREDICTABILITY_CACHE_FILE):
 else:
     predictability_cache = {"timestamp": None, "data": {}}
 
-
 if os.path.exists(SEASON_STATS_CACHE_FILE):
-    with open(SEASON_STATS_CACHE_FILE, 'r') as f:
+    with open(SEASON_STATS_CACHE_FILE, 'r', encoding='utf-8') as f:
         try:
             season_stats_cache = json.load(f)
         except json.JSONDecodeError:
@@ -88,13 +120,9 @@ if os.path.exists(SEASON_STATS_CACHE_FILE):
 else:
     season_stats_cache = {}
 
+
 # ---- Global Cache ----
 cached_fixtures = {}
-
-# ---- Fetch & Cache Functions ----
-
-# ---- Global Cache ----
-cached_fixtures = {}  # Only use this globally
 
 # ---- Fetch & Cache Functions ----
 
@@ -322,7 +350,7 @@ def debug_value_bets_cache():
     return jsonify({})
 
 # H2H cache config
-H2H_CACHE_DIR = "/data/h2h"
+H2H_CACHE_DIR = os.path.join(DATA_DIR, "h2h")
 H2H_EXPIRY_DAYS = 3  # days to keep cache
 
 
@@ -526,7 +554,7 @@ def fetch_season_stats(season_ids, api_token):
     print(f"[CACHE] Fetched and cached season stats for {len(season_stats)} Season IDs.")
     return season_stats
 
-def fetch_season_stats_last25(season_ids, api_token):
+## CURRENTLY DISABLED def fetch_season_stats_last25(season_ids, api_token):
     """Fetch and cache 'Last 25 Games' season stats for each season."""
     cache_file = SEASON_STATS_CACHE_FILE_LAST25
     cache_expiry_days = 3
@@ -616,10 +644,14 @@ def save_season_stats_cache_to_disk():
         with open(tmp, "w", encoding="utf-8") as f:
             json.dump(season_stats_cache, f, indent=2)
         os.replace(tmp, SEASON_STATS_CACHE_FILE)
-        with open("/data/season_stats_cache_time.txt", "w", encoding="utf-8") as t:
+
+        # UPDATED: timestamp now uses DATA_DIR path
+        with open(SEASON_STATS_CACHE_TIME_FILE, "w", encoding="utf-8") as t:
             t.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
     except Exception as e:
         print(f"[ERROR] Failed to save season stats cache: {e}")
+
 
 # --- Load Season Stats Cache ---
 def load_season_stats_cache_from_disk():
@@ -632,37 +664,39 @@ def load_season_stats_cache_from_disk():
                 season_stats_cache = {}
     else:
         season_stats_cache = {}
-    
-def load_season_stats_cache_last25_from_disk():
-    """Load the 'Last 25 Games' season stats cache from disk into memory."""
-    global season_stats_cache_last25
-    try:
-        if os.path.exists(SEASON_STATS_CACHE_FILE_LAST25):
-            with open(SEASON_STATS_CACHE_FILE_LAST25, "r", encoding="utf-8") as f:
-                season_stats_cache_last25 = json.load(f)
-            print(f"[CACHE] Loaded Last 25 Games cache with {len(season_stats_cache_last25)} seasons.")
-        else:
-            season_stats_cache_last25 = {}
-            print("[CACHE] No Last 25 Games cache file found; starting empty.")
-    except Exception as e:
-        print(f"[ERROR] Failed to load Last 25 Games cache: {e}")
-        season_stats_cache_last25 = {}
-
-def save_season_stats_cache_last25_to_disk():
-    """Save the in-memory 'Last 25 Games' season stats cache to disk (atomic)."""
-    try:
-        os.makedirs(os.path.dirname(SEASON_STATS_CACHE_FILE_LAST25), exist_ok=True)
-        tmp = SEASON_STATS_CACHE_FILE_LAST25 + ".tmp"
-        with open(tmp, "w", encoding="utf-8") as f:
-            json.dump(season_stats_cache_last25, f, indent=2)
-        os.replace(tmp, SEASON_STATS_CACHE_FILE_LAST25)
-        # optional timestamp file (mirrors your existing saver style)
-        with open("/data/season_stats_last25_time.txt", "w", encoding="utf-8") as t:
-            t.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    except Exception as e:
-        print(f"[ERROR] Failed to save Last 25 Games cache: {e}")
 
 
+#def load_season_stats_cache_last25_from_disk():
+    #"""Load the 'Last 25 Games' season stats cache from disk into memory."""
+    #global season_stats_cache_last25
+    #try:
+        #if os.path.exists(SEASON_STATS_CACHE_FILE_LAST25):
+            #with open(SEASON_STATS_CACHE_FILE_LAST25, "r", encoding="utf-8") as f:
+                #season_stats_cache_last25 = json.load(f)
+            #print(f"[CACHE] Loaded Last 25 Games cache with {len(season_stats_cache_last25)} seasons.")
+        #else:
+            #season_stats_cache_last25 = {}
+            #print("[CACHE] No Last 25 Games cache file found; starting empty.")
+    #except Exception as e:
+        #print(f"[ERROR] Failed to load Last 25 Games cache: {e}")
+        #season_stats_cache_last25 = {}
+
+
+#def save_season_stats_cache_last25_to_disk():
+    #"""Save the in-memory 'Last 25 Games' season stats cache to disk (atomic)."""
+    #try:
+        #os.makedirs(os.path.dirname(SEASON_STATS_CACHE_FILE_LAST25), exist_ok=True)
+        #tmp = SEASON_STATS_CACHE_FILE_LAST25 + ".tmp"
+        #with open(tmp, "w", encoding="utf-8") as f:
+            #json.dump(season_stats_cache_last25, f, indent=2)
+        #os.replace(tmp, SEASON_STATS_CACHE_FILE_LAST25)
+
+        # UPDATED: timestamp now uses DATA_DIR path
+        #with open(SEASON_STATS_LAST25_CACHE_TIME_FILE, "w", encoding="utf-8") as t:
+            #t.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+    #except Exception as e:
+        #print(f"[ERROR] Failed to save Last 25 Games cache: {e}")
 
 @app.route('/debug/season-stats-cache')
 def debug_season_stats_cache():
@@ -677,17 +711,21 @@ def debug_season_stats_cache():
 
 
 API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"
-GAME_DETAILS_CACHE_FILE = '/data/game_details_cache.json'
+GAME_DETAILS_CACHE_FILE = os.path.join(DATA_DIR, "game_details_cache.json")
 
 # --- Save Game Details Cache ---
 def save_game_details_cache_to_disk():
     try:
         with open(GAME_DETAILS_CACHE_FILE, "w", encoding="utf-8") as f:
             json.dump(game_details_cache, f, indent=2)
-        with open("/data/game_details_cache_time.txt", "w", encoding="utf-8") as t:
+
+        # UPDATED: timestamp file now uses DATA_DIR
+        with open(GAME_DETAILS_CACHE_TIME_FILE, "w", encoding="utf-8") as t:
             t.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
     except Exception as e:
         print(f"[ERROR] Failed to save game details cache: {e}")
+
 
 # --- Load Game Details Cache ---
 def load_game_details_cache_from_disk():
@@ -1031,10 +1069,11 @@ load_game_details_cache_from_disk()
 
 def get_game_details_cache_last_updated():
     try:
-        with open("/data/game_details_cache_time.txt", "r", encoding="utf-8") as f:
+        with open(GAME_DETAILS_CACHE_TIME_FILE, "r", encoding="utf-8") as f:
             return f.read()
     except Exception:
         return "Unknown"
+
 
 @app.route('/debug/game-details-cache')
 def debug_game_details_cache():
@@ -1330,7 +1369,7 @@ def probability_rankings():
         game_details = {}
 
     try:
-        with open(FIXTURES_CACHE_FILE, 'r') as f:
+        with open(FIXTURES_CACHE_FILE, 'r', encoding='utf-8') as f:
             fixtures_data = json.load(f)
     except Exception as e:
         print("Error loading fixtures cache:", e)
@@ -2500,6 +2539,1356 @@ def _extract_homewin_stats(home_row, away_row):
         except: stats[k] = 0.0
     return stats
 
+@app.route("/ai-bets")
+def ai_bets_page():
+    """Render the AI Bets UI (ai_bets.html)."""
+    return render_template("ai_bets.html")
+
+# ------------------------
+# AI Bets – helper to pick best value market
+# ------------------------
+
+AI_MARKET_LABELS = {
+    "home_win": "Home Win",
+    "draw": "Draw",
+    "away_win": "Away Win",
+    "double_chance_1x": "Double Chance 1X",
+    "double_chance_12": "Double Chance 12",
+    "double_chance_x2": "Double Chance X2",
+    "over_1_goals": "Over 1.5 Goals",
+    "over_2_goals": "Over 2.5 Goals",
+    "over_3_goals": "Over 3.5 Goals",
+    "under_1_goals": "Under 1.5 Goals",
+    "under_2_goals": "Under 2.5 Goals",
+    "under_3_goals": "Under 3.5 Goals",
+    "btts_yes": "Both Teams To Score – Yes",
+}
+
+AI_MARKET_TYPE = {
+    # result markets
+    "home_win": "result",
+    "draw": "result",
+    "away_win": "result",
+    "double_chance_1x": "result",
+    "double_chance_12": "result",
+    "double_chance_x2": "result",
+    # goal lines
+    "over_1_goals": "goals",
+    "over_2_goals": "goals",
+    "over_3_goals": "goals",
+    "under_1_goals": "goals",
+    "under_2_goals": "goals",
+    "under_3_goals": "goals",
+    # BTTS
+    "btts_yes": "btts",
+}
+
+
+def _safe_float(x):
+    try:
+        return float(x)
+    except (TypeError, ValueError):
+        return None
+
+def pick_six_random_value_bets():
+    """
+    Returns up to 6 unique candidate value bets from the cache.
+    - Only includes fixtures being played TODAY (London time).
+    - No duplicates.
+    - Only includes markets with:
+        * bookmaker odds >= 1.70
+        * value/edge >= 10%
+    - Random selection from those markets.
+    - Tries to include at least one HIGH, one MEDIUM, and one LOW
+      confidence bet if they exist in the candidate pool.
+    """
+
+    global game_details_cache
+
+    if not game_details_cache:
+        load_game_details_cache_from_disk()
+
+    # Work out "today" in London
+    london_tz = pytz.timezone("Europe/London")
+    now_london = datetime.now(london_tz)
+    today_london = now_london.date()
+
+    candidates = []
+
+    for fixture_id, fd in game_details_cache.items():
+        if not isinstance(fd, dict):
+            continue
+
+        fixture_name = fd.get("fixture_name")
+        comp_name = fd.get("competition_name")
+        comp_country = fd.get("competition_country")
+        unix_ts = fd.get("unix")
+        season_id = fd.get("season_id")
+        home_id = fd.get("home_id")
+        away_id = fd.get("away_id")
+
+        # 🔹 Only keep fixtures whose KO date is TODAY (London)
+        if not unix_ts:
+            continue
+        try:
+            ko_dt_utc = datetime.fromtimestamp(int(unix_ts), pytz.utc)
+            ko_dt_london = ko_dt_utc.astimezone(london_tz)
+        except Exception:
+            continue
+
+        if ko_dt_london.date() != today_london:
+            # Fixture is not today → skip it entirely
+            continue
+
+        # 🔹 For this fixture (which IS today), scan markets
+        for mk, mdata in fd.items():
+            if mk not in AI_MARKET_LABELS:
+                continue
+
+            prob = _safe_float(mdata.get("probability"))
+            fair_odds = _safe_float(mdata.get("implied_odds"))
+            book_odds = _safe_float(mdata.get("actual_odds"))
+            if not prob or not fair_odds or not book_odds:
+                continue
+
+            if fair_odds <= 0:
+                continue
+
+            edge = ((book_odds - fair_odds) / abs(fair_odds)) * 100.0
+
+            # ✅ New constraints:
+            # - Only keep bets with bookmaker odds >= 1.70
+            # - Only keep bets with edge >= 10%
+            if book_odds < 1.7:
+                continue
+
+            if edge < 10.0:
+                continue
+
+            candidates.append({
+                "fixture_id": fixture_id,
+                "fixture_name": fixture_name,
+                "competition_name": comp_name,
+                "competition_country": comp_country,
+                "unix": unix_ts,
+                "season_id": season_id,
+                "home_id": home_id,
+                "away_id": away_id,
+                "market_key": mk,
+                "market_nice": AI_MARKET_LABELS[mk],
+                "market_type": AI_MARKET_TYPE.get(mk, "result"),
+                "prob": prob,
+                "fair_odds": fair_odds,
+                "book_odds": book_odds,
+                "edge": edge
+            })
+
+    if not candidates:
+        return []
+
+    # Group candidates by confidence
+    high = []
+    medium = []
+    low = []
+
+    for b in candidates:
+        prob = b["prob"]
+        edge = b["edge"]
+
+        if prob >= 70 and edge >= 5:
+            high.append(b)
+        elif prob >= 60 and edge >= 2:
+            medium.append(b)
+        else:
+            low.append(b)
+
+    final = []
+
+    # Ensure at least one of each confidence level IF available
+    if high:
+        final.append(random.choice(high))
+    if medium:
+        final.append(random.choice(medium))
+    if low:
+        final.append(random.choice(low))
+
+    # Fill remaining slots up to 6 with random candidates
+    remaining = [b for b in candidates if b not in final]
+    random.shuffle(remaining)
+    final.extend(remaining[: max(0, 6 - len(final))])
+
+    return final[:6]
+
+
+# ------------------------
+# AI Bets – API endpoint for front-end
+# ------------------------
+
+@app.route("/api/generate")
+def api_generate_ai_bet():
+    """
+    Picks up to six random value bets from game_details_cache, pulls season stats,
+    sends a structured prompt to Gemini for EACH, and returns HTML + summary JSON.
+    For now the first card is also returned at top level for backwards-compatibility
+    with the existing frontend.
+    """
+    if GEMINI_API_KEY is None:
+        return jsonify({"error": "GEMINI_API_KEY is not configured."}), 500
+
+    # 1) Pick up to six random value bets
+    bets = pick_six_random_value_bets()
+    if not bets:
+        return jsonify({"error": "No Available Bets"}), 404
+    
+    # 1b) Store these bets in the AI Bets cache for today's date (DD/MM/YYYY)
+    store_ai_bets_for_today_from_selected_bets(bets)
+
+    cards = []
+
+    # Make sure season stats cache is loaded once
+    load_season_stats_cache_from_disk()
+
+    for bet in bets:
+        name = bet["fixture_name"]
+        country = bet["competition_country"]
+        comp = bet["competition_name"]
+        comp_full = f"{country} - {comp}"
+        mk = bet["market_key"]
+        nice = bet["market_nice"]
+        market_type = bet["market_type"]
+        prob = bet["prob"]
+        implied = bet["fair_odds"]
+        book = bet["book_odds"]
+        edge = bet["edge"]
+        season_id = bet["season_id"]
+        home_id = bet["home_id"]
+        away_id = bet["away_id"]
+        unix_ts = bet["unix"]
+
+        # Confidence label
+        if prob >= 70 and edge >= 5:
+            confidence = "HIGH"
+        elif prob >= 60 and edge >= 2:
+            confidence = "MEDIUM"
+        else:
+            confidence = "LOW"
+
+        # Kickoff string
+        kickoff_str = format_kickoff_filter(unix_ts) if unix_ts else "N/A"
+
+        # ---- Season stats for THIS fixture ----
+        home_stats = {}
+        away_stats = {}
+        home_goals_profile = {}
+        away_goals_profile = {}
+        stats_prob = None  # optional stats-based probability
+
+        if season_id and season_stats_cache:
+            bucket = season_stats_cache.get(str(season_id), {}).get("data", [])
+            for row in bucket:
+                if row.get("team_id") == home_id:
+                    home_stats = row
+                    home_goals_profile = row.get("goals_over", {})
+                elif row.get("team_id") == away_id:
+                    away_stats = row
+                    away_goals_profile = row.get("goals_over", {})
+
+            # derive a simple stats_prob depending on market type (optional)
+            try:
+                if market_type == "btts":
+                    h = float(home_stats.get("btts", {}).get("home_percentage", 0))
+                    a = float(away_stats.get("btts", {}).get("away_percentage", 0))
+                    stats_prob = round((h + a) / 2, 2)
+                elif market_type == "goals":
+                    if mk in ("over_1_goals", "under_1_goals"):
+                        key = "o1"
+                    elif mk in ("over_2_goals", "under_2_goals"):
+                        key = "o2"
+                    else:
+                        key = "o3"
+                    h = float(home_goals_profile.get(key, {}).get("total_percentage", 0))
+                    a = float(away_goals_profile.get(key, {}).get("total_percentage", 0))
+                    stats_prob = round((h + a) / 2, 2)
+            except Exception:
+                stats_prob = None
+
+        is_fallback = stats_prob is None
+
+        # ---------- PROMPT (unchanged logic, but per bet) ----------
+        prompt = f"""
+You are generating a professional HTML betting analysis for Craig.
+
+IMPORTANT OUTPUT RULES (MUST FOLLOW EXACTLY):
+- Output valid HTML only.
+- The HTML must include:
+  1) A professional HTML table (NOT markdown) with these columns:
+        Market | Model Probability | Fair Odds | Bookmaker Odds | Value/Edge | Confidence
+  2) A short paragraph (2–3 sentences) explaining why this is a value bet AND whether season stats support it.
+  3) A "Key Statistical Context" section using a <ul> with 3–5 bullet points.
+  4) A final sentence starting with "Verdict:".
+
+- Do NOT output markdown (#, ##, *, |).
+- Do NOT output code fences (```).
+- Do NOT invent any extra text outside the required structure.
+
+TABLE RULES:
+- Table must use <table>, <thead>, <tbody>, <tr>, <th>, <td>.
+- ALL numeric fields must be filled using the actual values provided.
+- Percentages must include % sign.
+
+ANALYSIS RULES BY MARKET TYPE:
+
+1) OVER/UNDER GOALS MARKETS
+(over_1_goals, under_1_goals, over_2_goals, under_2_goals, over_3_goals, under_3_goals)
+Use ONLY goal-based stats:
+- Over line strike rates:
+    home: goals_over["oX"]["home_percentage"]
+    away: goals_over["oX"]["away_percentage"]
+- Also, include how many times the line has landed at HOME and AWAY, using:
+    goals_over["oX"]["home"] and goals_over["oX"]["away"]
+    plus home played["home"] and away played["away"] to form "X times from Y games".
+- goals_total.home_avg, goals_total.away_avg
+- goals_for.home_avg, goals_against.home_avg
+- goals_for.away_avg, goals_against.away_avg
+- You may also reference xG-style stats if present (e.g. expected_goals_for, expected_goals_against).
+Do NOT reference points per game or win percentages. Mention how often the line has landed home/away.
+
+2) BTTS (btts_yes)
+Use ONLY:
+- home_stats["btts"]["home_percentage"] and underlying count home_stats["btts"]["home"]
+- away_stats["btts"]["away_percentage"] and underlying count away_stats["btts"]["away"]
+- played["home"] and played["away"] so you can say "X times from Y home/away games".
+- goals_for.home_avg, goals_against.home_avg
+- goals_for.away_avg, goals_against.away_avg
+- You may also include xG-based stats if present (e.g. xG for / xG against).
+Do NOT mention PPG or win%.
+
+3) RESULT MARKETS
+(home_win, draw, away_win, double_chance_1x, double_chance_12, double_chance_x2)
+Use:
+- home_win_pct, home_loss_pct, home_ppg
+- away_win_pct, away_loss_pct, away_ppg
+- goals_for.home_avg, goals_against.home_avg
+- goals_for.away_avg, goals_against.away_avg
+- You may reference total xG for/against if present, but keep the focus on win/loss/PPG.
+Focus on home-at-home vs away-at-away performance.
+
+STRUCTURE YOU MUST FOLLOW:
+
+<table class="ai-table">
+  <thead>
+    <tr>
+      <th>Market</th>
+      <th>Model Probability</th>
+      <th>Fair Odds</th>
+      <th>Bookmaker Odds</th>
+      <th>Value/Edge</th>
+      <th>Confidence</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{nice}</td>
+      <td>{prob:.2f}%</td>
+      <td>{implied:.2f}</td>
+      <td>{book:.2f}</td>
+      <td>{edge:.2f}%</td>
+      <td>{confidence}</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>[Your explanation here]</p>
+
+<ul>
+  <li>[Bullet 1 based on correct market type, including strike rates AND counts]</li>
+  <li>[Bullet 2]</li>
+  <li>[Bullet 3]</li>
+  <li>[Optional bullet 4]</li>
+</ul>
+
+<p><strong>Verdict:</strong> [Short recommendation to Craig]</p>
+
+DATA FOR ANALYSIS:
+
+Fixture: {name}
+Competition: {comp_full}
+Market: {nice}
+
+Model probability: {prob:.2f}%
+Stats probability: {stats_prob if stats_prob is not None else "N/A"}
+Fair odds: {implied:.2f}
+Bookmaker odds: {book:.2f}
+Value edge: {edge:.2f}%
+Fallback mode: {is_fallback}
+
+Home team stats:
+{home_stats}
+
+Home goals profile:
+{home_goals_profile}
+
+Away team stats:
+{away_stats}
+
+Away goals profile:
+{away_goals_profile}
+"""
+
+        # Call Gemini once per bet
+        response = gemini_client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt
+        )
+
+        raw_html = (response.text or "").strip()
+        clean_html = (
+            raw_html
+            .replace("```html", "")
+            .replace("```", "")
+            .strip()
+        )
+
+        cards.append({
+            "fixture": name,
+            "competition": comp_full,
+            "kickoff": kickoff_str,
+            "market_key": mk,
+            "market_name": nice,
+            "model_prob": round(prob, 2),
+            "stats_prob": round(stats_prob, 2) if isinstance(stats_prob, (int, float)) else None,
+            "fair_odds": round(implied, 2),
+            "bookmaker_odds": round(book, 2),
+            "edge": round(edge, 2),
+            "confidence": confidence,
+            "html": clean_html,
+        })
+
+    # For backwards-compatibility with current frontend:
+    primary = cards[0]
+
+    # NEW: persist latest cards so the AI Bets page can reload them
+    save_ai_bets_cards(cards)
+
+    return jsonify({
+        "cards": cards,      # NEW: full list of up to 6 bets
+        **primary            # OLD fields so your existing JS still works for now
+    })
+
+@app.route("/api/ai-bets-latest")
+def api_ai_bets_latest():
+    """
+    Return the most recently generated AI bet cards (if any),
+    so the AI Bets page can show them on initial load / refresh.
+    """
+    data = load_ai_bets_cards()
+    cards = data.get("cards", [])
+    return jsonify({"cards": cards})
+
+
+def settle_market_from_score(market: str, home_goals: int, away_goals: int) -> str:
+    """
+    Given a market name and the final score, return:
+        'won'  -> bet wins
+        'lost' -> bet loses
+        'void' -> (placeholder for future use, e.g. postponed)
+    
+    This function assumes the match is finished and home_goals/away_goals are final.
+    """
+    hg = home_goals
+    ag = away_goals
+    total = hg + ag
+
+    m = market.strip().lower()
+
+    # 👉 NEW: normalise dashes and extra spaces
+    m = m.replace("–", " ").replace("-", " ")
+    m = " ".join(m.split())
+
+    # ---------- FULL-TIME RESULT ----------
+    if m in ("home win", "1"):
+        return "won" if hg > ag else "lost"
+
+    if m in ("draw", "x"):
+        return "won" if hg == ag else "lost"
+
+    if m in ("away win", "2"):
+        return "won" if ag > hg else "lost"
+
+    # ---------- DOUBLE CHANCE ----------
+    # 1X: home or draw  -> hg >= ag
+    if m in ("double chance 1x", "1x"):
+        return "won" if hg >= ag else "lost"
+
+    # X2: away or draw  -> ag >= hg
+    if m in ("double chance x2", "x2"):
+        return "won" if ag >= hg else "lost"
+
+    # 12: home or away (no draw) -> hg != ag
+    if m in ("double chance 12", "12"):
+        return "won" if hg != ag else "lost"
+
+    # ---------- BTTS ----------
+    # BTTS Yes: both teams score at least 1
+    if m in ("btts yes", "both teams to score yes", "btts"):
+        return "won" if (hg >= 1 and ag >= 1) else "lost"
+
+    # BTTS No: at least one team scores 0
+    if m in ("btts no", "both teams to score no"):
+        return "won" if (hg == 0 or ag == 0) else "lost"
+
+    # ---------- OVER GOALS ----------
+    if m in ("over 1.5 goals", "over 1.5"):
+        return "won" if total >= 2 else "lost"
+
+    if m in ("over 2.5 goals", "over 2.5"):
+        return "won" if total >= 3 else "lost"
+
+    if m in ("over 3.5 goals", "over 3.5"):
+        return "won" if total >= 4 else "lost"
+
+    # ---------- UNDER GOALS ----------
+    if m in ("under 1.5 goals", "under 1.5"):
+        return "won" if total < 2 else "lost"
+
+    if m in ("under 2.5 goals", "under 2.5"):
+        return "won" if total < 3 else "lost"
+
+    if m in ("under 3.5 goals", "under 3.5"):
+        return "won" if total < 4 else "lost"
+
+    # If we don't recognise the market, default to lost for now (can change later)
+    return "lost"
+
+def load_ai_bets_cache() -> dict:
+    """
+    Load the AI bets cache from disk.
+
+    Structure:
+    {
+        "DD-MM-YYYY": [
+            {
+                "fixture_id": int,
+                "fixture_name": str,
+                "kickoff_iso": str,
+                "competition_country": bet["competition_country"],  # e.g. "Scotland"
+                "competition_name": bet["competition_name"],        # e.g. "League One"
+                "market": str,
+                "probability": float,
+                "implied_odds": float,
+                "actual_odds": float,
+                "edge_percent": float,
+                "status": "pending" | "won" | "lost",
+                "profit_units": float | None,
+                "last_result_check": str | None,
+            },
+            ...
+        ],
+        ...
+    }
+    """
+    if not os.path.exists(AI_BETS_CACHE_FILE):
+        return {}
+
+    try:
+        with open(AI_BETS_CACHE_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            if isinstance(data, dict):
+                return data
+            # If file is corrupted or wrong type, start fresh
+            return {}
+    except Exception:
+        # If anything goes wrong reading/parsing, return empty and let future saves fix it
+        return {}
+
+
+def save_ai_bets_cache(cache: dict) -> None:
+    """
+    Save the AI bets cache back to disk.
+
+    Expects the same structure as returned by load_ai_bets_cache().
+    """
+    try:
+        with open(AI_BETS_CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump(cache, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        # For now we just print/log; you can hook this into your logger if you want.
+        print(f"Error saving AI bets cache: {e}")
+
+
+def get_today_date_str() -> str:
+    """
+    Return today's date in DD/MM/YYYY format (London time).
+    """
+    now_london = datetime.now(ZoneInfo("Europe/London"))
+    return now_london.strftime("%d/%m/%Y")
+
+def make_ai_bet_entry(
+    fixture_id: int,
+    fixture_name: str,
+    kickoff_iso: str,
+    market: str,
+    probability: float,
+    implied_odds: float,
+    actual_odds: float,
+    edge_percent: float,
+    competition_country: str | None = None,
+    competition_name: str | None = None,
+) -> dict:
+    """
+    Create a normalised AI bet entry dict for storage in the AI bets cache.
+
+    All monetary/odds logic (P/L etc.) will be based on a 1-unit stake.
+    """
+    return {
+        "fixture_id": fixture_id,
+        "fixture_name": fixture_name,
+        "kickoff_iso": kickoff_iso,      # ISO datetime string
+        "competition_country": competition_country,
+        "competition_name": competition_name,
+        "market": market,
+        "probability": float(probability) if probability is not None else None,
+        "implied_odds": float(implied_odds) if implied_odds is not None else None,
+        "actual_odds": float(actual_odds) if actual_odds is not None else None,
+        "edge_percent": float(edge_percent) if edge_percent is not None else None,
+        # Result-related fields (to be filled later when we check scores)
+        "status": "pending",             # "pending" | "won" | "lost"
+        "profit_units": None,            # e.g. 2.20 or -1.0 when settled
+        "last_result_check": None,       # ISO timestamp of last result check
+    }
+
+
+def get_ai_bets_for_date(date_str: str) -> list:
+    """
+    Return the list of AI bets for a given date string (DD/MM/YYYY)
+    from the cache. Returns an empty list if none exist.
+    """
+    cache = load_ai_bets_cache()
+    bets = cache.get(date_str)
+    if isinstance(bets, list):
+        return bets
+    return []
+
+def set_ai_bets_for_date(date_str: str, bets: list) -> None:
+    """
+    Store up to 6 AI bets for the given date string (DD/MM/YYYY).
+
+    This will REPLACE any existing bets for that date.
+    """
+    cache = load_ai_bets_cache()
+
+    # Ensure we only store a list and cap at 6 bets
+    if not isinstance(bets, list):
+        bets = []
+
+    cache[date_str] = bets[:6]
+
+    save_ai_bets_cache(cache)
+
+def _now_iso_london() -> str:
+    """
+    Return current time in ISO format in London time.
+    Used for last_result_check on AI bets.
+    """
+    return datetime.now(ZoneInfo("Europe/London")).isoformat()
+
+def settle_ai_bet_entry(bet: dict, home_goals: int, away_goals: int) -> dict:
+    """
+    Given a single AI bet entry dict (from the cache) and the final score,
+    update and return the bet with:
+        - status: "won" or "lost"
+        - profit_units: odds - 1 for win, -1 for loss
+        - last_result_check: ISO timestamp (London time)
+
+    If actual_odds is missing or invalid, profit_units will stay None.
+    """
+    market = bet.get("market", "")
+    status = settle_market_from_score(market, home_goals, away_goals)
+
+    bet["status"] = status
+    bet["last_result_check"] = _now_iso_london()
+
+    actual_odds = bet.get("actual_odds")
+
+    # Only compute profit if we have a valid numeric actual_odds
+    try:
+        if actual_odds is not None:
+            actual_odds = float(actual_odds)
+        else:
+            actual_odds = None
+    except (TypeError, ValueError):
+        actual_odds = None
+
+    if actual_odds is not None:
+        if status == "won":
+            # 1-unit stake → net profit = odds - 1
+            bet["profit_units"] = round(actual_odds - 1.0, 4)
+        elif status == "lost":
+            bet["profit_units"] = -1.0
+        else:
+            # If we ever add "void" etc., leave as None for now
+            bet["profit_units"] = None
+    else:
+        # No usable odds, leave profit_units as None
+        bet["profit_units"] = None
+
+    return bet
+
+def settle_ai_bets_with_results(results_by_fixture: dict) -> int:
+    """
+    Given a mapping of fixture_id -> (home_goals, away_goals),
+    settle all *pending* AI bets that match those fixture IDs.
+
+    Example of results_by_fixture:
+        {
+            365992470: (1, 1),
+            365992467: (4, 5),
+        }
+
+    Returns:
+        count of bets that were settled (status changed from pending to won/lost).
+    """
+    cache = load_ai_bets_cache()
+    if not isinstance(cache, dict):
+        return 0
+
+    settled_count = 0
+    changed = False
+
+    for date_str, bets in cache.items():
+        if not isinstance(bets, list):
+            continue
+
+        for bet in bets:
+            if not isinstance(bet, dict):
+                continue
+
+            # Skip if already settled
+            current_status = bet.get("status")
+            if current_status in ("won", "lost"):
+                continue
+
+            fixture_id = bet.get("fixture_id")
+            if fixture_id is None:
+                continue
+
+            # Normalise fixture_id to int if possible
+            try:
+                fixture_id_int = int(fixture_id)
+            except (TypeError, ValueError):
+                continue
+
+            result = results_by_fixture.get(fixture_id_int)
+            if not result:
+                # No result info for this fixture in this batch
+                continue
+
+            # Expecting result to be (home_goals, away_goals)
+            try:
+                home_goals, away_goals = result
+                home_goals = int(home_goals)
+                away_goals = int(away_goals)
+            except (TypeError, ValueError, ValueError):
+                continue
+
+            # Settle this bet using our existing logic
+            settle_ai_bet_entry(bet, home_goals, away_goals)
+            settled_count += 1
+            changed = True
+
+    if changed:
+        save_ai_bets_cache(cache)
+
+    return settled_count
+
+def store_ai_bets_for_today_from_selected_bets(bets: list) -> None:
+    """
+    Take the list returned by pick_six_random_value_bets() and
+    APPEND up to 6 of them into the AI bets cache for today's date
+    (DD/MM/YYYY), using the standard AI bet entry structure.
+
+    This does NOT remove or overwrite any existing bets for that date.
+    """
+    if not isinstance(bets, list):
+        return
+
+    date_key = get_today_date_str()  # e.g. "04/12/2025"
+
+    entries = []
+    for bet in bets[:6]:
+        if not isinstance(bet, dict):
+            continue
+
+        fixture_id = bet.get("fixture_id")
+        fixture_name = bet.get("fixture_name") or ""
+        unix_ts = bet.get("unix")
+        market_label = bet.get("market_nice") or ""
+        prob = bet.get("prob")
+        implied = bet.get("fair_odds")
+        actual = bet.get("book_odds")
+        edge = bet.get("edge")
+
+        # Country & league (if present on the bet dict)
+        competition_country = bet.get("competition_country") or None
+        competition_name = bet.get("competition_name") or None
+
+        # Convert kickoff unix → ISO string (UTC). Safe fallback to empty string.
+        kickoff_iso = ""
+        if unix_ts is not None:
+            try:
+                ts_int = int(unix_ts)
+                kickoff_iso = datetime.fromtimestamp(ts_int, timezone.utc).isoformat()
+            except Exception:
+                kickoff_iso = ""
+
+        try:
+            fixture_id_int = int(fixture_id)
+        except (TypeError, ValueError):
+            # Skip if fixture_id is unusable
+            continue
+
+        entry = make_ai_bet_entry(
+            fixture_id=fixture_id_int,
+            fixture_name=fixture_name,
+            kickoff_iso=kickoff_iso,
+            market=market_label,
+            probability=prob,
+            implied_odds=implied,
+            actual_odds=actual,
+            edge_percent=edge,
+            competition_country=competition_country,
+            competition_name=competition_name,
+        )
+        entries.append(entry)
+
+    if not entries:
+        return
+
+    # 🔹 Load existing cache and append, don't overwrite
+    cache = load_ai_bets_cache()
+    if not isinstance(cache, dict):
+        cache = {}
+
+    existing_for_day = cache.get(date_key)
+    if not isinstance(existing_for_day, list):
+        existing_for_day = []
+
+    # Append new entries at the end
+    existing_for_day.extend(entries)
+    cache[date_key] = existing_for_day
+
+    save_ai_bets_cache(cache)
+
+def generate_ai_bets_for_today_if_missing() -> bool:
+    """
+    If there are no AI bets stored for today's date (DD/MM/YYYY) in the
+    AI bets cache, pick up to 6 random value bets for TODAY, store them,
+    and also generate + save the AI cards so the AI Bets page can show
+    them immediately (even before any user clicks Generate).
+
+    Returns True if new bets were generated, False if today's bets
+    already existed or no suitable bets were found.
+    """
+    cache = load_ai_bets_cache()
+    if not isinstance(cache, dict):
+        cache = {}
+
+    today_key = get_today_date_str()  # "DD/MM/YYYY"
+
+    existing = cache.get(today_key)
+    if isinstance(existing, list) and len(existing) > 0:
+        # Today's bets already exist; do nothing
+        return False
+
+    # Pick up to 6 bets for TODAY
+    bets = pick_six_random_value_bets()
+    if not bets:
+        print("[AI BETS] No available value bets for today; nothing generated.")
+        return False
+
+    # Store them in the AI bets results cache
+    store_ai_bets_for_today_from_selected_bets(bets)
+    print(f"[AI BETS] Stored {len(bets)} AI bets for {today_key} in ai_bets_cache.json")
+
+    # Also generate AI cards (Gemini HTML) and save them so the AI Bets page
+    # can show them immediately on first load.
+    if GEMINI_API_KEY is None:
+        print("[AI BETS] GEMINI_API_KEY not configured; skipping card generation.")
+        return True
+
+    # Make sure season stats cache is loaded once
+    load_season_stats_cache_from_disk()
+
+    cards: list[dict] = []
+
+    for bet in bets:
+        name = bet["fixture_name"]
+        country = bet["competition_country"]
+        comp = bet["competition_name"]
+        comp_full = f"{country} - {comp}" if country and comp else (country or comp or "")
+        mk = bet["market_key"]
+        nice = bet["market_nice"]
+        market_type = bet["market_type"]
+        prob = bet["prob"]
+        implied = bet["fair_odds"]
+        book = bet["book_odds"]
+        edge = bet["edge"]
+        season_id = bet["season_id"]
+        home_id = bet["home_id"]
+        away_id = bet["away_id"]
+        unix_ts = bet["unix"]
+
+        # Confidence label (same rules as /api/generate)
+        if prob >= 70 and edge >= 5:
+            confidence = "HIGH"
+        elif prob >= 60 and edge >= 2:
+            confidence = "MEDIUM"
+        else:
+            confidence = "LOW"
+
+        kickoff_str = format_kickoff_filter(unix_ts) if unix_ts else "N/A"
+
+        # ---- Season stats for THIS fixture ----
+        home_stats = {}
+        away_stats = {}
+        home_goals_profile = {}
+        away_goals_profile = {}
+        stats_prob = None
+
+        if season_id and season_stats_cache:
+            bucket = season_stats_cache.get(str(season_id), {}).get("data", [])
+            for row in bucket:
+                if row.get("team_id") == home_id:
+                    home_stats = row
+                    home_goals_profile = row.get("goals_over", {})
+                elif row.get("team_id") == away_id:
+                    away_stats = row
+                    away_goals_profile = row.get("goals_over", {})
+
+            # derive a simple stats_prob depending on market type (optional)
+            try:
+                if market_type == "btts":
+                    h = float(home_stats.get("btts", {}).get("home_percentage", 0))
+                    a = float(away_stats.get("btts", {}).get("away_percentage", 0))
+                    stats_prob = round((h + a) / 2, 2)
+                elif market_type == "goals":
+                    if mk in ("over_1_goals", "under_1_goals"):
+                        key = "o1"
+                    elif mk in ("over_2_goals", "under_2_goals"):
+                        key = "o2"
+                    else:
+                        key = "o3"
+                    h = float(home_goals_profile.get(key, {}).get("total_percentage", 0))
+                    a = float(away_goals_profile.get(key, {}).get("total_percentage", 0))
+                    stats_prob = round((h + a) / 2, 2)
+            except Exception:
+                stats_prob = None
+
+        is_fallback = stats_prob is None
+
+        # ---------- PROMPT (same as /api/generate) ----------
+        prompt = f"""
+You are generating a professional HTML betting analysis for Craig.
+
+IMPORTANT OUTPUT RULES (MUST FOLLOW EXACTLY):
+- Output valid HTML only.
+- The HTML must include:
+  1) A professional HTML table (NOT markdown) with these columns:
+        Market | Model Probability | Fair Odds | Bookmaker Odds | Value/Edge | Confidence
+  2) A short paragraph (2–3 sentences) explaining why this is a value bet AND whether season stats support it.
+  3) A "Key Statistical Context" section using a <ul> with 3–5 bullet points.
+  4) A final sentence starting with "Verdict:".
+
+- Do NOT output markdown (#, ##, *, |).
+- Do NOT output code fences (```).
+- Do NOT invent any extra text outside the required structure.
+
+TABLE RULES:
+- Table must use <table>, <thead>, <tbody>, <tr>, <th>, <td>.
+- ALL numeric fields must be filled using the actual values provided.
+- Percentages must include % sign.
+
+ANALYSIS RULES BY MARKET TYPE:
+
+1) OVER/UNDER GOALS MARKETS
+(over_1_goals, under_1_goals, over_2_goals, under_2_goals, over_3_goals, under_3_goals)
+Use ONLY goal-based stats:
+- Over line strike rates:
+    home: goals_over["oX"]["home_percentage"]
+    away: goals_over["oX"]["away_percentage"]
+- Also, include how many times the line has landed at HOME and AWAY, using:
+    goals_over["oX"]["home"] and goals_over["oX"]["away"]
+    plus home played["home"] and away played["away"] to form "X times from Y games".
+- goals_total.home_avg, goals_total.away_avg
+- goals_for.home_avg, goals_against.home_avg
+- goals_for.away_avg, goals_against.away_avg
+- You may also reference xG-style stats if present (e.g. expected_goals_for, expected_goals_against).
+Do NOT reference points per game or win percentages. Mention how often the line has landed home/away.
+
+2) BTTS (btts_yes)
+Use ONLY:
+- home_stats["btts"]["home_percentage"] and underlying count home_stats["btts"]["home"]
+- away_stats["btts"]["away_percentage"] and underlying count away_stats["btts"]["away"]
+- played["home"] and played["away"] so you can say "X times from Y home/away games".
+- goals_for.home_avg, goals_against.home_avg
+- goals_for.away_avg, goals_against.away_avg
+- You may also include xG-based stats if present (e.g. xG for / xG against).
+Do NOT mention PPG or win%.
+
+3) RESULT MARKETS
+(home_win, draw, away_win, double_chance_1x, double_chance_12, double_chance_x2)
+Use:
+- home_win_pct, home_loss_pct, home_ppg
+- away_win_pct, away_loss_pct, away_ppg
+- goals_for.home_avg, goals_against.home_avg
+- goals_for.away_avg, goals_against.away_avg
+- You may reference total xG for/against if present, but keep the focus on win/loss/PPG.
+Focus on home-at-home vs away-at-away performance.
+
+STRUCTURE YOU MUST FOLLOW:
+
+<table class="ai-table">
+  <thead>
+    <tr>
+      <th>Market</th>
+      <th>Model Probability</th>
+      <th>Fair Odds</th>
+      <th>Bookmaker Odds</th>
+      <th>Value/Edge</th>
+      <th>Confidence</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{nice}</td>
+      <td>{prob:.2f}%</td>
+      <td>{implied:.2f}</td>
+      <td>{book:.2f}</td>
+      <td>{edge:.2f}%</td>
+      <td>{confidence}</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>[Your explanation here]</p>
+
+<ul>
+  <li>[Bullet 1 based on correct market type, including strike rates AND counts]</li>
+  <li>[Bullet 2]</li>
+  <li>[Bullet 3]</li>
+  <li>[Optional bullet 4]</li>
+</ul>
+
+<p><strong>Verdict:</strong> [Short recommendation to Craig]</p>
+
+DATA FOR ANALYSIS:
+
+Fixture: {name}
+Competition: {comp_full}
+Market: {nice}
+
+Model probability: {prob:.2f}%
+Stats probability: {stats_prob if stats_prob is not None else "N/A"}
+Fair odds: {implied:.2f}
+Bookmaker odds: {book:.2f}
+Value edge: {edge:.2f}%
+Fallback mode: {is_fallback}
+
+Home team stats:
+{home_stats}
+
+Home goals profile:
+{home_goals_profile}
+
+Away team stats:
+{away_stats}
+
+Away goals profile:
+{away_goals_profile}
+"""
+
+        response = gemini_client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt
+        )
+
+        raw_html = (response.text or "").strip()
+        clean_html = (
+            raw_html
+            .replace("```html", "")
+            .replace("```", "")
+            .strip()
+        )
+
+        cards.append({
+            "fixture": name,
+            "competition": comp_full,
+            "kickoff": kickoff_str,
+            "market_key": mk,
+            "market_name": nice,
+            "model_prob": round(prob, 2),
+            "stats_prob": round(stats_prob, 2) if isinstance(stats_prob, (int, float)) else None,
+            "fair_odds": round(implied, 2),
+            "bookmaker_odds": round(book, 2),
+            "edge": round(edge, 2),
+            "confidence": confidence,
+            "html": clean_html,
+        })
+
+    # Save the cards so /api/ai-bets-latest and the AI Bets page can use them
+    save_ai_bets_cards(cards)
+    print(f"[AI BETS] Generated and cached {len(cards)} AI bet cards for {today_key}")
+
+    return True
+
+def refresh_ai_bets_results_once(max_ids: int = 50) -> int:
+    """
+    1) Look at ai_bets_cache.json and collect up to `max_ids` fixture_ids
+       for bets that are still pending.
+    2) Call OddAlerts /fixtures/multiple for those IDs.
+    3) Build a mapping fixture_id -> (home_goals, away_goals) for finished games.
+    4) Pass that mapping into settle_ai_bets_with_results().
+    5) Return the number of bets that were settled.
+
+    This does NOT loop over multiple pages of 50; it just processes
+    the first batch of up to `max_ids` pending bets. Given you only
+    have up to 6 bets per day, this is sufficient for now.
+    """
+
+    # 1) Load cache and collect pending fixture IDs
+    cache = load_ai_bets_cache()
+    if not isinstance(cache, dict) or not cache:
+        return 0
+
+    pending_ids = []
+
+    for date_str, bets in cache.items():
+        if not isinstance(bets, list):
+            continue
+
+        for bet in bets:
+            if not isinstance(bet, dict):
+                continue
+
+            status = bet.get("status")
+            if status in ("won", "lost"):
+                continue
+
+            fixture_id = bet.get("fixture_id")
+            if fixture_id is None:
+                continue
+
+            try:
+                fid_int = int(fixture_id)
+            except (TypeError, ValueError):
+                continue
+
+            if fid_int not in pending_ids:
+                pending_ids.append(fid_int)
+
+            if len(pending_ids) >= max_ids:
+                break
+
+        if len(pending_ids) >= max_ids:
+            break
+
+    if not pending_ids:
+        # Nothing to do
+        return 0
+
+    ids_str = ",".join(str(fid) for fid in pending_ids)
+
+    # 2) Call OddAlerts multiple fixtures endpoint
+    params = {
+        "ids": ids_str,
+        "api_token": API_TOKEN,
+        "include": "stats",
+    }
+
+    try:
+        url = FIXTURES_MULTIPLE_URL
+    except NameError:
+        # Fallback in case the constant wasn't defined
+        url = "https://data.oddalerts.com/api/fixtures/multiple"
+
+    retries = 0
+    max_retries = 5
+    results_by_fixture = {}
+
+    while retries <= max_retries:
+        try:
+            resp = requests.get(url, headers=HEADERS, params=params, timeout=30)
+            if resp.status_code == 429:
+                # Rate limited – wait a bit and retry
+                time.sleep(15)
+                retries += 1
+                continue
+
+            resp.raise_for_status()
+            payload = resp.json()
+            data = payload.get("data", [])
+
+            # 3) Build fixture_id -> (home_goals, away_goals) for finished games
+            for item in data:
+                fid = item.get("id")
+                status = item.get("status")
+                hg = item.get("home_goals")
+                ag = item.get("away_goals")
+
+                # Only settle when the game is clearly finished
+                if status != "FT":
+                    continue
+
+                try:
+                    fid_int = int(fid)
+                    hg_int = int(hg) if hg is not None else None
+                    ag_int = int(ag) if ag is not None else None
+                except (TypeError, ValueError):
+                    continue
+
+                if hg_int is None or ag_int is None:
+                    continue
+
+                results_by_fixture[fid_int] = (hg_int, ag_int)
+
+            break  # Successful response, exit retry loop
+
+        except requests.RequestException as e:
+            print(f"[AI BETS] Error fetching fixture results: {e}")
+            retries += 1
+            if retries > max_retries:
+                return 0
+            time.sleep(5)
+
+    if not results_by_fixture:
+        return 0
+
+    # 4) Settle bets using our existing helper
+    settled_count = settle_ai_bets_with_results(results_by_fixture)
+    if settled_count:
+        print(f"[AI BETS] Settled {settled_count} AI bets from API results.")
+
+    return settled_count
+
+
+@app.route("/ai-bets-results")
+def ai_bets_results():
+    """
+    Read ai_bets_cache.json and prepare data for the AI Bets Results page.
+
+    - Group bets by date (DD/MM/YYYY)
+    - Compute daily P/L (sum of profit_units for settled bets)
+    - Sort dates descending (most recent first)
+    - Sort bets within each day by kickoff_iso (if available)
+    """
+    cache = load_ai_bets_cache()
+    if not isinstance(cache, dict):
+        cache = {}
+
+    days = []
+
+    for date_str, bets in cache.items():
+        if not isinstance(bets, list):
+            continue
+
+        # Daily P/L: sum of profit_units where it's numeric
+        daily_pl = 0.0
+        has_any_profit = False
+
+        for bet in bets:
+            if not isinstance(bet, dict):
+                continue
+            profit = bet.get("profit_units")
+            if isinstance(profit, (int, float)):
+                daily_pl += float(profit)
+                has_any_profit = True
+
+        # Sort bets by kickoff_iso if present, otherwise fixture_name
+        def bet_sort_key(b):
+            kickoff_iso = b.get("kickoff_iso") or ""
+            fixture_name = b.get("fixture_name") or ""
+            return (kickoff_iso, fixture_name)
+
+        sorted_bets = sorted(
+            [b for b in bets if isinstance(b, dict)],
+            key=bet_sort_key
+        )
+
+        # Try to convert date_str "DD/MM/YYYY" to a datetime for sorting
+        try:
+            sort_dt = datetime.strptime(date_str, "%d/%m/%Y")
+        except ValueError:
+            # If parsing fails, stick something neutral
+            sort_dt = datetime.min
+
+        days.append({
+            "date_str": date_str,
+            "sort_dt": sort_dt,
+            "daily_pl": daily_pl if has_any_profit else None,
+            "bets": sorted_bets,
+        })
+
+    # Sort days by date descending (most recent first)
+    days.sort(key=lambda d: d["sort_dt"], reverse=True)
+
+    return render_template("ai_bets_results.html", days=days)
+
+def save_ai_bets_cards(cards: list) -> None:
+    """
+    Save the most recently generated AI bet cards (including HTML)
+    so the AI Bets page can reload them after a refresh.
+    """
+    os.makedirs(DATA_DIR, exist_ok=True)
+    try:
+        with open(AI_BETS_CARDS_FILE, "w", encoding="utf-8") as f:
+            json.dump(
+                {
+                    "generated_at": datetime.now(timezone.utc).isoformat(),
+                    "cards": cards,
+                },
+                f,
+                ensure_ascii=False,
+                indent=2,
+            )
+    except Exception as e:
+        print(f"[AI BETS] Failed to save latest cards cache: {e}")
+
+
+def load_ai_bets_cards() -> dict:
+    """
+    Load the most recently generated AI bet cards.
+
+    Returns:
+    {
+        "generated_at": "...",
+        "cards": [ ... ]
+    }
+    or {} if none exist.
+    """
+    if not os.path.exists(AI_BETS_CARDS_FILE):
+        return {}
+    try:
+        with open(AI_BETS_CARDS_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[AI BETS] Failed to load latest cards cache: {e}")
+        return {}
+
+
+@app.template_filter("kickoff_time")
+def kickoff_time_filter(kickoff_iso: str):
+    """
+    Extract the time (HH:MM) from an ISO datetime string.
+    """
+    if not kickoff_iso:
+        return "-"
+    try:
+        dt = datetime.fromisoformat(kickoff_iso.replace("Z", "+00:00"))
+        # Convert to London time for display
+        dt_london = dt.astimezone(ZoneInfo("Europe/London"))
+        return dt_london.strftime("%H:%M")
+    except Exception:
+        return "-"
 
 @app.route('/betslip_generator')
 def betslip_generator():
@@ -2666,18 +4055,77 @@ def custom_date(value):
             return value  # Return original if both fail
     return date.strftime('%A %d %B %H:%M')
     
+# somewhere temporary, just for testing
+@app.route("/debug/settle-ai-bets-once")
+def debug_settle_ai_bets_once():
+    settled = refresh_ai_bets_results_once()
+    return jsonify({"settled": settled})
+
+
 # =========================
 # Scheduler Setup
 # =========================
 # Only run the scheduler if explicitly enabled via environment variable.
+# e.g. RUN_SCHEDULER=1 in your environment (Render / local).
 if os.environ.get("RUN_SCHEDULER") == "1":
     print("[SCHEDULER] RUN_SCHEDULER=1 → starting background jobs.")
     scheduler = BackgroundScheduler()
-    scheduler.add_job(refresh_fixtures_cache, 'interval', minutes=2)
-    scheduler.add_job(refresh_value_bets_cache, 'interval', minutes=10)
+
+    # 🔁 Refresh fixtures cache regularly
+    scheduler.add_job(
+        refresh_fixtures_cache,
+        "interval",
+        minutes=5
+    )
+
+    # 🔁 Refresh value bets cache regularly
+    scheduler.add_job(
+        refresh_value_bets_cache,
+        "interval",
+        minutes=10
+    )
+
+    # 🔁 Regularly refresh AI bet results (settle finished games)
+    # This will look at ai_bets_cache.json, find pending bets,
+    # call the OddAlerts fixtures/multiple API, and update statuses + profit.
+    scheduler.add_job(
+        refresh_ai_bets_results_once,
+        "interval",
+        minutes=5
+    )
+
+    # 🕖 Daily AI Bets generation at 07:00 London time
+    # This ensures a fresh set of up to 6 bets each morning.
+    scheduler.add_job(
+        generate_ai_bets_for_today_if_missing,
+        "cron",
+        hour=7,
+        minute=0,
+        timezone=pytz.timezone("Europe/London"),
+    )
+
     scheduler.start()
+
+    # 🔁 Fail-safe: also attempt once at startup
+    # If it's after 07:00 and today's date has no bets yet, generate them now.
+    try:
+        generated = generate_ai_bets_for_today_if_missing()
+        if generated:
+            print("[AI BETS] Generated today's AI bets at startup (fail-safe).")
+    except Exception as e:
+        print(f"[AI BETS] Error during startup fail-safe generate: {e}")
+
 else:
     print("[SCHEDULER] RUN_SCHEDULER!=1 → scheduler disabled in this process.")
+
+    # Even without the scheduler (e.g. local dev without RUN_SCHEDULER=1),
+    # we can still try once at startup to ensure today's bets exist after 07:00.
+    try:
+        generated = generate_ai_bets_for_today_if_missing()
+        if generated:
+            print("[AI BETS] Generated today's AI bets at startup (no scheduler).")
+    except Exception as e:
+        print(f"[AI BETS] Error during startup AI bets generate (no scheduler): {e}")
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)

@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}AI Bets{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='ai_bets.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="ai-page">
+
+    <!-- HEADER -->
+    <div class="ai-page-header">
+        <div>
+            <div class="ai-page-title">AI Bets</div>
+            <div class="ai-page-subtitle">
+                Generate multiple model-driven value bets and professional write-ups from your cached data. Please note that all bets are at your own risk and your own research should be undertaken. This is also in testing phase.
+            </div>
+        </div>
+
+        <div>
+            <button id="generate-btn" class="ai-generate-btn">Generate AI Bets</button>
+            <div id="ai-status"></div>
+        </div>
+    </div>
+
+    <!-- Placeholder before generating bets -->
+    <div id="ai-placeholder" class="ai-placeholder">
+        Click <strong>Generate AI Bets</strong> to fetch up to six AI-selected markets.
+    </div>
+
+    <!-- Grid where cards will be injected -->
+    <div id="ai-cards-grid" class="ai-cards-grid"></div>
+
+</div>
+
+<script>
+    const btn = document.getElementById('generate-btn');
+    const statusEl = document.getElementById('ai-status');
+    const placeholderEl = document.getElementById('ai-placeholder');
+    const gridEl = document.getElementById('ai-cards-grid');
+
+    function renderCards(cards) {
+        if (!cards || !cards.length) {
+            return;
+        }
+
+        placeholderEl.style.display = 'none';
+        gridEl.innerHTML = '';
+
+        cards.forEach((card) => {
+            const div = document.createElement('div');
+            div.className = 'ai-card';
+
+            const headerHtml = `
+                <div class="analysis-header">
+                    <div>
+                        <div class="analysis-title">AI Write-Up</div>
+                        <div class="fixture-row">
+                            <div><span class="label">Fixture:</span> ${card.fixture || ''}</div>
+                            <div><span class="label">Competition:</span> ${card.competition || ''}</div>
+                            <div><span class="label">Kick-Off:</span> ${card.kickoff || ''}</div>
+                        </div>
+                    </div>
+                    <span class="badge">Confidence: ${card.confidence || 'N/A'}</span>
+                </div>
+            `;
+
+            const bodyHtml = `
+                <div class="ai-card-body">
+                    ${card.html || ''}
+                </div>
+            `;
+
+            div.innerHTML = headerHtml + bodyHtml;
+            gridEl.appendChild(div);
+        });
+    }
+
+    // Load latest AI bets on initial page load so they persist across refreshes
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const res = await fetch('/api/ai-bets-latest');
+            if (!res.ok) {
+                return;
+            }
+            const data = await res.json();
+            const cards = data.cards || [];
+            if (cards.length) {
+                renderCards(cards);
+                statusEl.textContent = '';
+            }
+        } catch (err) {
+            console.error('Error loading latest AI bets:', err);
+        }
+    });
+
+    btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        statusEl.textContent = 'Generating AI bets...';
+
+        try {
+            const res = await fetch('/api/generate');
+            const data = await res.json();
+
+            if (!res.ok) {
+                statusEl.textContent = data.error || 'Error generating bets.';
+                btn.disabled = false;
+                return;
+            }
+
+            const cards = data.cards || [];
+            if (!cards.length) {
+                statusEl.textContent = 'No bets returned.';
+                btn.disabled = false;
+                return;
+            }
+
+            renderCards(cards);
+
+            statusEl.textContent = '';
+            btn.disabled = false;
+
+        } catch (err) {
+            console.error(err);
+            statusEl.textContent = 'Error calling API.';
+            btn.disabled = false;
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}AI Bets Results{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='ai_bets_results.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="ai-results-page">
+    <div class="ai-results-header">
+        <div class="ai-results-title">AI Bets Results</div>
+        <div class="ai-results-subtitle">
+            Track all AI-generated bets by day, with win/loss and profit in units (1 unit stake per bet). Please note that all bets are at your own risk and your own research should be undertaken. This is also in testing phase.
+        </div>
+    </div>
+
+    {% if not days %}
+        <div class="ai-no-bets">
+            No AI bets have been stored yet. Use the AI Bets page to generate some.
+        </div>
+    {% else %}
+        {% for day in days %}
+            <div class="ai-day-block" data-day="{{ day.date_str }}">
+                <div class="ai-day-summary">
+                    <button class="ai-day-toggle" type="button">
+                        <span class="ai-day-date">{{ day.date_str }}</span>
+                        <span class="ai-day-arrow">▶</span>
+                    </button>
+
+                    {% set pl = day.daily_pl %}
+                    {% if pl is not none %}
+                        {% if pl > 0 %}
+                            {% set pl_class = "positive" %}{% set pl_prefix = "+" %}
+                        {% elif pl < 0 %}
+                            {% set pl_class = "negative" %}{% set pl_prefix = "" %}
+                        {% else %}
+                            {% set pl_class = "neutral" %}{% set pl_prefix = "" %}
+                        {% endif %}
+                        <span class="ai-day-pl {{ pl_class }}">
+                            {{ pl_prefix }}{{ "%.2f"|format(pl) }} units
+                        </span>
+                    {% else %}
+                        <span class="ai-day-pl neutral">No settled bets yet</span>
+                    {% endif %}
+                </div>
+
+                <div class="ai-day-details" style="display: none;">
+                    {% if not day.bets %}
+                        <div class="ai-no-bets">No bets stored for this day.</div>
+                    {% else %}
+                        <table class="ai-bets-table">
+                            <thead>
+                                <tr>
+                                    <th>Fixture</th>
+                                    <th>Time</th>
+                                    <th>Country</th>
+                                    <th>League</th>
+                                    <th>Market</th>
+                                    <th>Probability (%)</th>
+                                    <th>Odds</th>
+                                    <th>Edge (%)</th>
+                                    <th>Status</th>
+                                    <th>Profit (units)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bet in day.bets %}
+                                    {% set status = bet.status %}
+                                    {% set profit = bet.profit_units %}
+
+                                    <tr>
+                                        <td>{{ bet.fixture_name }}</td>
+
+                                        <td>{{ bet.kickoff_iso | kickoff_time }}</td>
+
+                                        <td>{{ bet.competition_country or '-' }}</td>
+
+                                        <td>{{ bet.competition_name or '-' }}</td>
+
+                                        <td>{{ bet.market }}</td>
+
+                                        <td>
+                                            {% if bet.probability is not none %}
+                                                {{ "%.2f"|format(bet.probability) }}%
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+
+                                        <td>
+                                            {% if bet.actual_odds is not none %}
+                                                {{ "%.2f"|format(bet.actual_odds) }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+
+                                        <td>
+                                            {% if bet.edge_percent is not none %}
+                                                {{ "%.2f"|format(bet.edge_percent) }}%
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+
+                                        <td class="ai-bet-status
+                                            {% if status == 'won' %}won
+                                            {% elif status == 'lost' %}lost
+                                            {% else %}pending{% endif %}">
+                                            {% if status == 'won' %}
+                                                ✅
+                                            {% elif status == 'lost' %}
+                                                ❌
+                                            {% else %}
+                                                ⏳
+                                            {% endif %}
+                                        </td>
+
+                                        <td class="ai-bet-profit
+                                            {% if profit is not none and profit > 0 %}positive
+                                            {% elif profit is not none and profit < 0 %}negative
+                                            {% endif %}">
+                                            {% if profit is not none %}
+                                                {{ "%.2f"|format(profit) }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".ai-day-block").forEach(function (block) {
+        const summary = block.querySelector(".ai-day-summary");
+        const details = block.querySelector(".ai-day-details");
+
+        summary.addEventListener("click", function () {
+            const isOpen = details.style.display === "block";
+            details.style.display = isOpen ? "none" : "block";
+
+            if (isOpen) {
+                block.classList.remove("open");
+            } else {
+                block.classList.add("open");
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

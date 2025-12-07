@@ -1,0 +1,89 @@
+{
+  "generated_at": "2025-12-07T09:14:35.828710+00:00",
+  "cards": [
+    {
+      "fixture": "Aluminij W vs ŽN Maribor W",
+      "competition": "Slovenia - 1. Womens Liga",
+      "kickoff": "10:00",
+      "market_key": "over_3_goals",
+      "market_name": "Over 3.5 Goals",
+      "model_prob": 74.96,
+      "stats_prob": 80.95,
+      "fair_odds": 1.33,
+      "bookmaker_odds": 1.87,
+      "edge": 40.6,
+      "confidence": "HIGH",
+      "html": "<table class=\"ai-table\">\n  <thead>\n    <tr>\n      <th>Market</th>\n      <th>Model Probability</th>\n      <th>Fair Odds</th>\n      <th>Bookmaker Odds</th>\n      <th>Value/Edge</th>\n      <th>Confidence</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Over 3.5 Goals</td>\n      <td>74.96%</td>\n      <td>1.33</td>\n      <td>1.87</td>\n      <td>40.60%</td>\n      <td>HIGH</td>\n    </tr>\n  </tbody>\n</table>\n\n<p>The model identifies a strong value bet on Over 3.5 Goals, with a significant edge over the bookmaker's odds. Both teams' stats suggest a high likelihood of a high-scoring game. The model probability of 74.96% combined with the bookmaker odds gives us a strong value edge.</p>\n\n<ul>\n  <li>Aluminij W has seen Over 3.5 goals in 87.5% of their home games, landing 7 times from 8 home games.</li>\n  <li>ŽN Maribor W has seen Over 3.5 goals in 83.33% of their away games, landing 5 times from 6 away games.</li>\n  <li>Aluminij W averages 7.75 total goals per game at home, with 1.63 goals for and 6.13 goals against.</li>\n  <li>ŽN Maribor W averages 7 total goals per game away, with 1.17 goals for and 5.83 goals against.</li>\n</ul>\n\n<p><strong>Verdict:</strong> I recommend Craig bets on Over 3.5 goals in this match, given the strong statistical indicators and significant value edge.</p>"
+    },
+    {
+      "fixture": "PAS Giannina vs Niki Volos",
+      "competition": "Greece - Super League 2",
+      "kickoff": "13:00",
+      "market_key": "under_2_goals",
+      "market_name": "Under 2.5 Goals",
+      "model_prob": 60.62,
+      "stats_prob": 48.39,
+      "fair_odds": 1.65,
+      "bookmaker_odds": 1.95,
+      "edge": 18.18,
+      "confidence": "MEDIUM",
+      "html": "<table class=\"ai-table\">\n  <thead>\n    <tr>\n      <th>Market</th>\n      <th>Model Probability</th>\n      <th>Fair Odds</th>\n      <th>Bookmaker Odds</th>\n      <th>Value/Edge</th>\n      <th>Confidence</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Under 2.5 Goals</td>\n      <td>60.62%</td>\n      <td>1.65</td>\n      <td>1.95</td>\n      <td>18.18%</td>\n      <td>MEDIUM</td>\n    </tr>\n  </tbody>\n</table>\n\n<p>The model suggests a strong probability of under 2.5 goals, with a significant edge compared to the bookmaker's odds. PAS Giannina's home games have seen the under 2.5 line land 2 times from 6 games, while Niki Volos' away games have seen it land 4 times from 6 games, indicating a potential for a low-scoring match.</p>\n\n<ul>\n  <li>PAS Giannina's home games have a 33.33% strike rate for over 1.5 goals, with the line landing 2 times from 6 games.</li>\n  <li>Niki Volos' away games have a 66.67% strike rate for over 1.5 goals, with the line landing 4 times from 6 games.</li>\n  <li>PAS Giannina averages 1 goals for and 0.83 goals against at home.</li>\n  <li>Niki Volos averages 2.17 goals for and 0.83 goals against away from home.</li>\n</ul>\n\n<p><strong>Verdict:</strong> Given the model's edge and the teams' goal-scoring statistics, consider a bet on Under 2.5 Goals.</p>"
+    },
+    {
+      "fixture": "Eintracht Braunschweig vs Holstein Kiel",
+      "competition": "Germany - 2. Bundesliga",
+      "kickoff": "12:30",
+      "market_key": "over_3_goals",
+      "market_name": "Over 3.5 Goals",
+      "model_prob": 37.27,
+      "stats_prob": 14.29,
+      "fair_odds": 2.68,
+      "bookmaker_odds": 3.25,
+      "edge": 21.27,
+      "confidence": "LOW",
+      "html": "<table class=\"ai-table\">\n  <thead>\n    <tr>\n      <th>Market</th>\n      <th>Model Probability</th>\n      <th>Fair Odds</th>\n      <th>Bookmaker Odds</th>\n      <th>Value/Edge</th>\n      <th>Confidence</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Over 3.5 Goals</td>\n      <td>37.27%</td>\n      <td>2.68</td>\n      <td>3.25</td>\n      <td>21.27%</td>\n      <td>LOW</td>\n    </tr>\n  </tbody>\n</table>\n\n<p>The model suggests a value bet on Over 3.5 Goals, with a 21.27% edge. However, historical stats indicate a lower probability of this outcome. Braunschweig's home games have seen Over 3.5 goals only 2 times from 7 games, while Holstein Kiel's away games have seen it only 1 time from 7 games.</p>\n\n<ul>\n  <li>Eintracht Braunschweig's home games have a 28.57% Over 3.5 goals strike rate, landing 2 times from 7 home games.</li>\n  <li>Holstein Kiel's away games have a 14.29% Over 3.5 goals strike rate, landing 1 time from 7 away games.</li>\n  <li>Eintracht Braunschweig averages 3.14 total goals in home games, while Holstein Kiel averages 2.43 total goals in away games.</li>\n</ul>\n\n<p><strong>Verdict:</strong> Proceed with caution on this bet, considering the low historical strike rate for this line.</p>"
+    },
+    {
+      "fixture": "Estrela Amadora vs Arouca",
+      "competition": "Portugal - Liga Portugal",
+      "kickoff": "18:00",
+      "market_key": "btts_yes",
+      "market_name": "Both Teams To Score – Yes",
+      "model_prob": 58.58,
+      "stats_prob": 55.0,
+      "fair_odds": 1.71,
+      "bookmaker_odds": 1.95,
+      "edge": 14.04,
+      "confidence": "LOW",
+      "html": "<table class=\"ai-table\">\n  <thead>\n    <tr>\n      <th>Market</th>\n      <th>Model Probability</th>\n      <th>Fair Odds</th>\n      <th>Bookmaker Odds</th>\n      <th>Value/Edge</th>\n      <th>Confidence</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Both Teams To Score – Yes</td>\n      <td>58.58%</td>\n      <td>1.71</td>\n      <td>1.95</td>\n      <td>14.04%</td>\n      <td>LOW</td>\n    </tr>\n  </tbody>\n</table>\n\n<p>The model suggests a strong possibility of both teams scoring, with a 58.58% chance, offering a value edge of 14.04%. Estrela Amadora have seen BTTS in 50% of their home games, while Arouca have seen it in 60% of their away games, suggesting a reasonable chance of this outcome occurring.</p>\n\n<ul>\n  <li>Estrela Amadora have a BTTS home percentage of 50%, occurring in 3 out of 6 home games.</li>\n  <li>Arouca have a BTTS away percentage of 60%, occurring in 3 out of 5 away games.</li>\n  <li>Estrela Amadora average 1.17 goals for and 1.33 goals against at home.</li>\n  <li>Arouca average 1.2 goals for and 3.4 goals against away from home.</li>\n</ul>\n\n<p><strong>Verdict:</strong> Consider a small stake on BTTS Yes for this fixture.</p>"
+    },
+    {
+      "fixture": "Larissa vs Panathinaikos",
+      "competition": "Greece - Super League",
+      "kickoff": "15:30",
+      "market_key": "under_1_goals",
+      "market_name": "Under 1.5 Goals",
+      "model_prob": 28.63,
+      "stats_prob": 86.75,
+      "fair_odds": 3.49,
+      "bookmaker_odds": 4.0,
+      "edge": 14.61,
+      "confidence": "LOW",
+      "html": "<table class=\"ai-table\">\n  <thead>\n    <tr>\n      <th>Market</th>\n      <th>Model Probability</th>\n      <th>Fair Odds</th>\n      <th>Bookmaker Odds</th>\n      <th>Value/Edge</th>\n      <th>Confidence</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Under 1.5 Goals</td>\n      <td>28.63%</td>\n      <td>3.49</td>\n      <td>4.00</td>\n      <td>14.61%</td>\n      <td>LOW</td>\n    </tr>\n  </tbody>\n</table>\n\n<p>The model indicates a value bet for Under 1.5 Goals, with a 14.61% edge over the bookmaker's odds. Larissa's home games have seen the Under 1.5 goals line hit 100% of the time, while Panathinaikos' away games have landed under 1.5 goals 80% of the time, supporting this prediction.</p>\n\n<ul>\n  <li>Larissa's home games have landed Under 1.5 goals 6 times from 6 games, a 100% strike rate.</li>\n  <li>Panathinaikos' away games have landed Under 1.5 goals 4 times from 5 games, an 80% strike rate.</li>\n  <li>Larissa's average goals for at home is 0.83, and average goals against at home is 2.17.</li>\n  <li>Panathinaikos' average goals for away is 1.6, and average goals against away is 1.2.</li>\n</ul>\n\n<p><strong>Verdict:</strong> This is a value bet, but the confidence is low; consider a small stake.</p>"
+    },
+    {
+      "fixture": "Cosenza vs Picerno",
+      "competition": "Italy - Serie C: Girone C",
+      "kickoff": "16:30",
+      "market_key": "btts_yes",
+      "market_name": "Both Teams To Score – Yes",
+      "model_prob": 52.76,
+      "stats_prob": 74.1,
+      "fair_odds": 1.9,
+      "bookmaker_odds": 2.1,
+      "edge": 10.53,
+      "confidence": "LOW",
+      "html": "<table class=\"ai-table\">\n  <thead>\n    <tr>\n      <th>Market</th>\n      <th>Model Probability</th>\n      <th>Fair Odds</th>\n      <th>Bookmaker Odds</th>\n      <th>Value/Edge</th>\n      <th>Confidence</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Both Teams To Score – Yes</td>\n      <td>52.76%</td>\n      <td>1.90</td>\n      <td>2.10</td>\n      <td>10.53%</td>\n      <td>LOW</td>\n    </tr>\n  </tbody>\n</table>\n\n<p>The model suggests a decent edge on Both Teams To Score (BTTS) in this match between Cosenza and Picerno. This is a value bet due to the discrepancy between the model's calculated probability and the bookmaker's odds. The stats show strong support for this outcome based on recent matches.</p>\n\n<ul>\n  <li>Cosenza has a BTTS percentage of 85.71% at home, landing in 6 of their 7 home games.</li>\n  <li>Picerno has a BTTS percentage of 62.5% away, landing in 5 of their 8 away games.</li>\n  <li>Cosenza averages 2.71 goals for and 1.14 goals against at home.</li>\n  <li>Picerno averages 1.25 goals for and 2.38 goals against away.</li>\n</ul>\n\n<p><strong>Verdict:</strong> Consider a small stake on Both Teams To Score – Yes in this fixture.</p>"
+    }
+  ]
+}
