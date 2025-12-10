@@ -4,11 +4,20 @@ import json
 import os
 import pytz
 import random
+import csv
+import io
+import smtplib
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from datetime import datetime, timedelta, timezone
 from google import genai
 from zoneinfo import ZoneInfo
+from email.message import EmailMessage
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email import encoders
+
 
 print(f"Flask process PID: {os.getpid()}")
 
@@ -2544,6 +2553,479 @@ def ai_bets_page():
     """Render the AI Bets UI (ai_bets.html)."""
     return render_template("ai_bets.html")
 
+# ---------------------------------
+# Config – uses your Gmail + app password
+# ---------------------------------
+EMAIL_ADDRESS = os.environ.get("GMAIL_ADDRESS", "craigelliscorby@gmail.com")
+EMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD")  # app password you created
+RECIPIENT_ADDRESS = EMAIL_ADDRESS  # send to yourself
+
+# Labels for the three result markets
+RESULT_MARKET_LABELS = {
+    "home_win": "Home Win",
+    "draw": "Draw",
+    "away_win": "Away Win",
+}
+
+
+def _base_data_dir():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_dir, "data")
+
+
+def _load_game_details_cache():
+    """
+    Load game_details_cache.json from the same /data folder your app uses.
+    """
+    cache_path = os.path.join(_base_data_dir(), "game_details_cache.json")
+
+    try:
+        with open(cache_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[AI CSV] Could not load game_details_cache.json: {e}")
+        return {}
+
+
+def _load_season_stats_cache():
+    """
+    Load season_stats cache from data folder.
+
+    Assumes shape:
+        { "<season_id>": { "<team_id>": stats_dict } }
+    """
+    cache_path = os.path.join(_base_data_dir(), "season_stats_cache.json")
+    try:
+        with open(cache_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[AI CSV] Could not load season_stats_cache.json: {e}")
+        return {}
+
+
+def _safe_get(d, *keys):
+    cur = d
+    for k in keys:
+        if not isinstance(cur, dict):
+            return None
+        cur = cur.get(k)
+    return cur
+
+
+def _diff(a, b):
+    if a is None or b is None:
+        return ""
+    try:
+        return round(float(a) - float(b), 2)
+    except Exception:
+        return ""
+
+
+def _extract_team_features(stats):
+    """
+    Given one team's season stats dict, return all the per-game features we need.
+    If stats is missing, everything returns None so CSV will get empty strings.
+    """
+    if not isinstance(stats, dict):
+        stats = {}
+
+    points_pg = _safe_get(stats, "points", "total_avg")
+    gf_pg = _safe_get(stats, "goals_for", "total_avg")
+    ga_pg = _safe_get(stats, "goals_against", "total_avg")
+    shots_pg = _safe_get(stats, "shots_for", "total_avg")
+    sot_pg = _safe_get(stats, "shots_on_for", "total_avg")
+    xg_pg = _safe_get(stats, "xg_for", "total_avg")
+    da_pg = _safe_get(stats, "dangerous_attacks_for", "total_avg")
+    scored_first_pct = _safe_get(stats, "scored_first", "total_percentage")
+    clean_sheet_pct = _safe_get(stats, "clean_sheet", "total_percentage")
+    possession_pct = _safe_get(stats, "possession_for", "total_avg")
+
+    return {
+        "points_pg": points_pg,
+        "goals_for_pg": gf_pg,
+        "goals_against_pg": ga_pg,
+        "shots_pg": shots_pg,
+        "sot_pg": sot_pg,
+        "xg_pg": xg_pg,
+        "dangerous_attacks_pg": da_pg,
+        "scored_first_pct": scored_first_pct,
+        "clean_sheet_pct": clean_sheet_pct,
+        "possession_pct": possession_pct,
+    }
+
+
+def _build_result_rows_from_bets(bets):
+    """
+    Take today's 6 AI bets, work out which fixtures they are,
+    then for each fixture create up to 3 rows:
+      home_win, draw, away_win
+    using data from game_details_cache.json + season_stats_cache.json
+    """
+    game_details = _load_game_details_cache()
+
+    # use the existing season cache helper from app.py
+    season_cache = _load_season_cache("season")
+
+    london_tz = pytz.timezone("Europe/London")
+    rows = []
+    seen_fixtures = set()
+
+    def _safe_float(v):
+        try:
+            return float(v)
+        except Exception:
+            return None
+
+    def _safe_round(v, nd=2):
+        try:
+            return round(float(v), nd)
+        except Exception:
+            return ""
+
+    for bet in bets:
+        fixture_id = str(bet.get("fixture_id"))
+        if not fixture_id or fixture_id in seen_fixtures:
+            continue  # only once per fixture
+        seen_fixtures.add(fixture_id)
+
+        fixture_name = bet.get("fixture_name")
+        competition_name = bet.get("competition_name")
+        competition_country = bet.get("competition_country")
+        competition_predictability = bet.get("competition_predictability")
+        unix_ts = bet.get("unix")
+        season_id = bet.get("season_id")
+        home_id = bet.get("home_id")
+        away_id = bet.get("away_id")
+
+        # --- kickoff date / hour in London ---
+        kickoff_date = ""
+        kickoff_hour = ""
+        if unix_ts:
+            try:
+                dt = datetime.fromtimestamp(unix_ts, pytz.utc).astimezone(london_tz)
+                kickoff_date = dt.strftime("%Y-%m-%d")
+                kickoff_hour = dt.strftime("%H:%M")
+            except Exception:
+                pass
+
+        # --- season stats rows for this fixture's teams ---
+        home_stats = _find_team_row(season_cache, season_id, home_id) if season_id and home_id else None
+        away_stats = _find_team_row(season_cache, season_id, away_id) if season_id and away_id else None
+
+        # pull the per-game stats only once per fixture
+        if home_stats and away_stats:
+
+            # games played (home / away)
+            h_played_home = _safe_float(_get_nested(home_stats, "played.home"))
+            h_played_away = _safe_float(_get_nested(home_stats, "played.away"))
+            a_played_home = _safe_float(_get_nested(away_stats, "played.home"))
+            a_played_away = _safe_float(_get_nested(away_stats, "played.away"))
+
+            # percentage won,drew,lost
+            a_aw = _safe_float(_get_nested(away_stats, "won.away_percentage"))
+            a_ad = _safe_float(_get_nested(away_stats, "drawn.away_percentage"))
+            a_al = _safe_float(_get_nested(away_stats, "lost.away_percentage"))
+
+            # points per game (home at home, away away)
+            hp = _safe_float(_get_nested(home_stats, "points.home_avg"))
+            ap = _safe_float(_get_nested(away_stats, "points.away_avg"))
+
+            # goals for per game
+            hgf = _safe_float(_get_nested(home_stats, "goals_for.home_avg"))
+            agf = _safe_float(_get_nested(away_stats, "goals_for.away_avg"))
+
+            # goals against per game
+            hga = _safe_float(_get_nested(home_stats, "goals_against.home_avg"))
+            aga = _safe_float(_get_nested(away_stats, "goals_against.away_avg"))
+
+            # shots per game
+            hshots = _safe_float(_get_nested(home_stats, "shots_for.home_avg"))
+            ashots = _safe_float(_get_nested(away_stats, "shots_for.away_avg"))
+
+            # shots on target per game
+            hsot = _safe_float(_get_nested(home_stats, "shots_on_for.home_avg"))
+            asot = _safe_float(_get_nested(away_stats, "shots_on_for.away_avg"))
+
+            # xG per game
+            hxg = _safe_float(_get_nested(home_stats, "xg_for.home_avg"))
+            axg = _safe_float(_get_nested(away_stats, "xg_for.away_avg"))
+
+            # dangerous attacks per game
+            hda = _safe_float(_get_nested(home_stats, "dangerous_attacks_for.home_avg"))
+            ada = _safe_float(_get_nested(away_stats, "dangerous_attacks_for.away_avg"))
+
+            # scored first %
+            hsf = _safe_float(_get_nested(home_stats, "scored_first.home_percentage"))
+            asf = _safe_float(_get_nested(away_stats, "scored_first.away_percentage"))
+
+            # clean sheet %
+            hcs = _safe_float(_get_nested(home_stats, "clean_sheet.home_percentage"))
+            acs = _safe_float(_get_nested(away_stats, "clean_sheet.away_percentage"))
+
+            # possession %
+            hpos = _safe_float(_get_nested(home_stats, "possession_for.home_avg"))
+            apos = _safe_float(_get_nested(away_stats, "possession_for.away_avg"))
+
+            h_hw = _safe_float(_get_nested(home_stats, "won.home_percentage"))
+            h_hd = _safe_float(_get_nested(home_stats, "drawn.home_percentage"))
+            h_hl = _safe_float(_get_nested(home_stats, "lost.home_percentage"))
+
+            # diffs (home – away)
+            def _diff(a, b):
+                if a is None or b is None:
+                    return ""
+                return round(a - b, 2)
+
+            stats_block = {
+
+
+                # NEW: games played
+                "home_games_played_home": _safe_round(h_played_home, 0),
+                "home_games_played_away": _safe_round(h_played_away, 0),
+                "away_games_played_home": _safe_round(a_played_home, 0),
+                "away_games_played_away": _safe_round(a_played_away, 0),
+
+                # NEW: raw W/D/L percentages
+                "home_home_win_pct": _safe_round(h_hw),
+                "home_home_draw_pct": _safe_round(h_hd),
+                "home_home_lose_pct": _safe_round(h_hl),
+                "away_away_win_pct": _safe_round(a_aw),
+                "away_away_draw_pct": _safe_round(a_ad),
+                "away_away_lose_pct": _safe_round(a_al),
+
+                "home_points_pg": _safe_round(hp),
+                "away_points_pg": _safe_round(ap),
+                "points_pg_diff": _diff(hp, ap),
+
+                "home_goals_for_pg": _safe_round(hgf),
+                "away_goals_for_pg": _safe_round(agf),
+                "goals_for_pg_diff": _diff(hgf, agf),
+
+                "home_goals_against_pg": _safe_round(hga),
+                "away_goals_against_pg": _safe_round(aga),
+                "goals_against_pg_diff": _diff(hga, aga),
+
+                "home_shots_pg": _safe_round(hshots),
+                "away_shots_pg": _safe_round(ashots),
+                "shots_pg_diff": _diff(hshots, ashots),
+
+                "home_sot_pg": _safe_round(hsot),
+                "away_sot_pg": _safe_round(asot),
+                "sot_pg_diff": _diff(hsot, asot),
+
+                "home_xg_pg": _safe_round(hxg),
+                "away_xg_pg": _safe_round(axg),
+                "xg_pg_diff": _diff(hxg, axg),
+
+                "home_dangerous_attacks_pg": _safe_round(hda),
+                "away_dangerous_attacks_pg": _safe_round(ada),
+                "dangerous_attacks_diff": _diff(hda, ada),
+
+                "home_scored_first_pct": _safe_round(hsf),
+                "away_scored_first_pct": _safe_round(asf),
+                "scored_first_diff": _diff(hsf, asf),
+
+                "home_clean_sheet_pct": _safe_round(hcs),
+                "away_clean_sheet_pct": _safe_round(acs),
+                "clean_sheet_diff": _diff(hcs, acs),
+
+                "home_possession_pct": _safe_round(hpos),
+                "away_possession_pct": _safe_round(apos),
+                "possession_diff": _diff(hpos, apos),
+
+            }
+        else:
+            # no season stats – leave everything blank
+            stats_block = {k: "" for k in [
+                "home_games_played_home", "home_games_played_away",
+                "away_games_played_home", "away_games_played_away",
+                "home_home_win_pct", "home_home_draw_pct", "home_home_lose_pct",
+                "away_away_win_pct", "away_away_draw_pct", "away_away_lose_pct",
+                "home_points_pg", "away_points_pg", "points_pg_diff",
+                "home_goals_for_pg", "away_goals_for_pg", "goals_for_pg_diff",
+                "home_goals_against_pg", "away_goals_against_pg", "goals_against_pg_diff",
+                "home_shots_pg", "away_shots_pg", "shots_pg_diff",
+                "home_sot_pg", "away_sot_pg", "sot_pg_diff",
+                "home_xg_pg", "away_xg_pg", "xg_pg_diff",
+                "home_dangerous_attacks_pg", "away_dangerous_attacks_pg", "dangerous_attacks_diff",
+                "home_scored_first_pct", "away_scored_first_pct", "scored_first_diff",
+                "home_clean_sheet_pct", "away_clean_sheet_pct", "clean_sheet_diff",
+                "home_possession_pct", "away_possession_pct", "possession_diff",
+            ]}
+
+        markets_for_fixture = game_details.get(fixture_id, {})
+
+        for mk in ("home_win", "draw", "away_win"):
+            md = markets_for_fixture.get(mk)
+            if not isinstance(md, dict):
+                continue
+
+            prob = md.get("probability")
+            model_probability = _safe_round(prob)
+
+            # choose a bookmaker odds field
+            book_odds_raw = (
+                md.get("actual_odds")
+                or md.get("onexbet_odds")
+                or md.get("betfair_exchange_odds")
+                or md.get("pinnacle_odds")
+            )
+            book_odds = _safe_float(book_odds_raw)
+
+            implied_prob_book = ""
+            edge = ""
+            if model_probability != "" and book_odds and book_odds > 0:
+                implied_prob_book_f = 100.0 / book_odds
+                implied_prob_book = round(implied_prob_book_f, 2)
+                edge = round(float(model_probability) - implied_prob_book_f, 2)
+
+            row = {
+                "fixture_id": fixture_id,
+                "fixture_name": fixture_name,
+                "competition_country": competition_country,
+                "competition_name": competition_name,
+                "competition_predictability": competition_predictability,
+                "market_type": mk,  # keep simple for now
+                "model_probability": model_probability,
+                "actual_odds": book_odds,
+                "implied_prob_bookmaker": implied_prob_book,
+                "edge": edge,
+                "kickoff_date": kickoff_date,
+                "kickoff_hour": kickoff_hour,
+                "won": "",
+                "profit_units": "",
+            }
+
+            # merge in season stats columns
+            row.update(stats_block)
+
+            rows.append(row)
+
+    return rows
+
+
+def _build_csv_bytes(rows):
+    """
+    Turn a list of dict rows into CSV bytes in memory.
+    """
+    fieldnames = [
+        "fixture_id",
+        "fixture_name",
+        "competition_country",
+        "competition_name",
+        "competition_predictability",
+        "market_type",
+        "model_probability",
+        "actual_odds",
+        "implied_prob_bookmaker",
+        "edge",
+        "home_games_played_home",
+        "home_games_played_away",
+        "away_games_played_home",
+        "away_games_played_away",
+        "home_home_win_pct",
+        "home_home_draw_pct",
+        "home_home_lose_pct",
+        "away_away_win_pct",
+        "away_away_draw_pct",
+        "away_away_lose_pct",
+        "home_points_pg",
+        "away_points_pg",
+        "points_pg_diff",
+        "home_goals_for_pg",
+        "away_goals_for_pg",
+        "goals_for_pg_diff",
+        "home_goals_against_pg",
+        "away_goals_against_pg",
+        "goals_against_pg_diff",
+        "home_shots_pg",
+        "away_shots_pg",
+        "shots_pg_diff",
+        "home_sot_pg",
+        "away_sot_pg",
+        "sot_pg_diff",
+        "home_xg_pg",
+        "away_xg_pg",
+        "xg_pg_diff",
+        "home_dangerous_attacks_pg",
+        "away_dangerous_attacks_pg",
+        "dangerous_attacks_diff",
+        "home_scored_first_pct",
+        "away_scored_first_pct",
+        "scored_first_diff",
+        "home_clean_sheet_pct",
+        "away_clean_sheet_pct",
+        "clean_sheet_diff",
+        "home_possession_pct",
+        "away_possession_pct",
+        "possession_diff",
+        "kickoff_date",
+        "kickoff_hour",
+        "won",
+        "profit_units",
+    ]
+
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
+    writer.writeheader()
+    for row in rows:
+        writer.writerow(row)
+
+    csv_str = output.getvalue()
+    output.close()
+    return csv_str.encode("utf-8")
+
+def send_ai_bets_csv_email(bets):
+    """
+    Public function you call from Python / inside the AI Bets route.
+    """
+    if not EMAIL_APP_PASSWORD:
+        print("[AI CSV] EMAIL_APP_PASSWORD (GMAIL_APP_PASSWORD) is not set.")
+        return
+
+    # 1) Build Home/Draw/Away rows with season stats attached
+    rows = _build_result_rows_from_bets(bets)
+    if not rows:
+        print("[AI CSV] No rows generated – nothing to send.")
+        return
+
+    # 2) Build CSV in memory
+    csv_bytes = _build_csv_bytes(rows)
+
+    # 3) Build email
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    filename = f"{today_str}-ai-bets.csv"
+
+    msg = MIMEMultipart()
+    msg["From"] = EMAIL_ADDRESS
+    msg["To"] = RECIPIENT_ADDRESS
+    msg["Subject"] = f"AI Bets CSV – {today_str}"
+
+    body_text = (
+        f"Attached is today's AI Bets training CSV.\n\n"
+        f"- Fixtures: {len({r['fixture_id'] for r in rows})}\n"
+        f"- Rows: {len(rows)} (Home/Draw/Away per fixture where available)\n"
+        f"- Columns include model probability, odds, edge, and season stats.\n"
+        f"- 'won' and 'profit_units' are intentionally left blank.\n"
+    )
+    msg.attach(MIMEText(body_text, "plain"))
+
+    part = MIMEBase("application", "octet-stream")
+    part.set_payload(csv_bytes)
+    encoders.encode_base64(part)
+    part.add_header("Content-Disposition", f'attachment; filename="{filename}"')
+    msg.attach(part)
+
+    # 4) Send via Gmail SMTP
+    try:
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
+            server.login(EMAIL_ADDRESS, EMAIL_APP_PASSWORD)
+            server.send_message(msg)
+        print(f"[AI CSV] Sent {len(rows)} rows in {filename} to {RECIPIENT_ADDRESS}")
+    except Exception as e:
+        print(f"[AI CSV] Failed to send email: {e}")
+
 # ------------------------
 # AI Bets – helper to pick best value market
 # ------------------------
@@ -2598,9 +3080,9 @@ def pick_six_random_value_bets():
     - Only includes markets with:
         * bookmaker odds >= 1.70
         * value/edge >= 10%
-    - Random selection from those markets.
-    - Tries to include at least one HIGH, one MEDIUM, and one LOW
-      confidence bet if they exist in the candidate pool.
+    - Only uses result markets: home_win, draw, away_win.
+    - Tries to include at least one Home Win, one Draw, and one Away Win
+      if candidates for those markets exist.
     """
 
     global game_details_cache
@@ -2640,10 +3122,10 @@ def pick_six_random_value_bets():
             # Fixture is not today → skip it entirely
             continue
 
-        # 🔹 For this fixture (which IS today), scan markets
+        # 🔹 For this fixture (which IS today), scan ONLY the 1X2 result markets
         for mk, mdata in fd.items():
-            if mk not in AI_MARKET_LABELS:
-                continue
+            if mk not in ("home_win", "draw", "away_win"):
+                continue  # ignore all other markets for AI Bets
 
             prob = _safe_float(mdata.get("probability"))
             fair_odds = _safe_float(mdata.get("implied_odds"))
@@ -2656,7 +3138,7 @@ def pick_six_random_value_bets():
 
             edge = ((book_odds - fair_odds) / abs(fair_odds)) * 100.0
 
-            # ✅ New constraints:
+            # ✅ Constraints:
             # - Only keep bets with bookmaker odds >= 1.70
             # - Only keep bets with edge >= 10%
             if book_odds < 1.7:
@@ -2675,7 +3157,7 @@ def pick_six_random_value_bets():
                 "home_id": home_id,
                 "away_id": away_id,
                 "market_key": mk,
-                "market_nice": AI_MARKET_LABELS[mk],
+                "market_nice": AI_MARKET_LABELS.get(mk, mk),
                 "market_type": AI_MARKET_TYPE.get(mk, "result"),
                 "prob": prob,
                 "fair_odds": fair_odds,
@@ -2686,39 +3168,26 @@ def pick_six_random_value_bets():
     if not candidates:
         return []
 
-    # Group candidates by confidence
-    high = []
-    medium = []
-    low = []
-
-    for b in candidates:
-        prob = b["prob"]
-        edge = b["edge"]
-
-        if prob >= 70 and edge >= 5:
-            high.append(b)
-        elif prob >= 60 and edge >= 2:
-            medium.append(b)
-        else:
-            low.append(b)
+    # ------------ Ensure at least one of each market if possible ------------
+    home_candidates = [b for b in candidates if b["market_key"] == "home_win"]
+    draw_candidates = [b for b in candidates if b["market_key"] == "draw"]
+    away_candidates = [b for b in candidates if b["market_key"] == "away_win"]
 
     final = []
 
-    # Ensure at least one of each confidence level IF available
-    if high:
-        final.append(random.choice(high))
-    if medium:
-        final.append(random.choice(medium))
-    if low:
-        final.append(random.choice(low))
+    if home_candidates:
+        final.append(random.choice(home_candidates))
+    if draw_candidates:
+        final.append(random.choice(draw_candidates))
+    if away_candidates:
+        final.append(random.choice(away_candidates))
 
-    # Fill remaining slots up to 6 with random candidates
+    # Fill remaining slots up to 6 with other candidates
     remaining = [b for b in candidates if b not in final]
     random.shuffle(remaining)
     final.extend(remaining[: max(0, 6 - len(final))])
 
     return final[:6]
-
 
 # ------------------------
 # AI Bets – API endpoint for front-end
@@ -2742,6 +3211,12 @@ def api_generate_ai_bet():
     
     # 1b) Store these bets in the AI Bets cache for today's date (DD/MM/YYYY)
     store_ai_bets_for_today_from_selected_bets(bets)
+
+    # 1c) Email these bets to yourself as a CSV (best-effort; don't break the API if it fails)
+    try:
+        send_ai_bets_csv_email(bets)
+    except Exception as e:
+        print(f"[AI BETS EMAIL] Failed to send CSV: {e}")
 
     cards = []
 
@@ -3382,8 +3857,9 @@ def store_ai_bets_for_today_from_selected_bets(bets: list) -> None:
 def generate_ai_bets_for_today_if_missing() -> bool:
     """
     If there are no AI bets stored for today's date (DD/MM/YYYY) in the
-    AI bets cache, pick up to 6 random value bets for TODAY, store them,
-    and also generate + save the AI cards so the AI Bets page can show
+    AI bets cache, pick up to 6 random value bets for TODAY (limited to
+    Home Win / Draw / Away Win), store them, email them as a CSV, and
+    also generate + save the AI cards so the AI Bets page can show
     them immediately (even before any user clicks Generate).
 
     Returns True if new bets were generated, False if today's bets
@@ -3400,15 +3876,41 @@ def generate_ai_bets_for_today_if_missing() -> bool:
         # Today's bets already exist; do nothing
         return False
 
-    # Pick up to 6 bets for TODAY
+    # Pick up to 6 bets for TODAY from your value-bets cache
     bets = pick_six_random_value_bets()
     if not bets:
         print("[AI BETS] No available value bets for today; nothing generated.")
         return False
 
-    # Store them in the AI bets results cache
+    # 🔒 Limit to ONLY Home Win / Draw / Away Win markets
+    allowed_result_markets = {"home_win", "draw", "away_win"}
+    filtered_bets = []
+    for b in bets:
+        mk = str(b.get("market_key") or "").strip()
+        if mk in allowed_result_markets:
+            filtered_bets.append(b)
+
+    if not filtered_bets:
+        print("[AI BETS] Bets were found, but none were Home/Draw/Away result markets.")
+        return False
+
+    # If we filtered out anything, log it
+    if len(filtered_bets) != len(bets):
+        print(f"[AI BETS] Filtered bets from {len(bets)} to {len(filtered_bets)} result markets only.")
+
+    bets = filtered_bets
+
+    # Store them in the AI bets cache
     store_ai_bets_for_today_from_selected_bets(bets)
     print(f"[AI BETS] Stored {len(bets)} AI bets for {today_key} in ai_bets_cache.json")
+
+    # 📨 Also email the raw result-market CSV for training
+    try:
+        send_ai_bets_csv_email(bets)
+        print("[AI BETS] Sent daily AI bets CSV via email.")
+    except Exception as e:
+        print(f"[AI BETS] Failed to send AI bets CSV email: {e}")
+
 
     # Also generate AI cards (Gemini HTML) and save them so the AI Bets page
     # can show them immediately on first load.
@@ -3426,9 +3928,9 @@ def generate_ai_bets_for_today_if_missing() -> bool:
         country = bet["competition_country"]
         comp = bet["competition_name"]
         comp_full = f"{country} - {comp}" if country and comp else (country or comp or "")
-        mk = bet["market_key"]
-        nice = bet["market_nice"]
-        market_type = bet["market_type"]
+        mk = bet["market_key"]           # 'home_win', 'draw', 'away_win'
+        nice = bet["market_nice"]        # pretty label
+        market_type = bet["market_type"] # likely 'result'
         prob = bet["prob"]
         implied = bet["fair_odds"]
         book = bet["book_odds"]
@@ -3465,7 +3967,9 @@ def generate_ai_bets_for_today_if_missing() -> bool:
                     away_stats = row
                     away_goals_profile = row.get("goals_over", {})
 
-            # derive a simple stats_prob depending on market type (optional)
+            # NOTE: this block is mainly for BTTS / Goals markets.
+            # For result markets, stats_prob will usually stay as None,
+            # which is fine (we show 'N/A' in the prompt).
             try:
                 if market_type == "btts":
                     h = float(home_stats.get("btts", {}).get("home_percentage", 0))
@@ -3486,7 +3990,7 @@ def generate_ai_bets_for_today_if_missing() -> bool:
 
         is_fallback = stats_prob is None
 
-        # ---------- PROMPT (same as /api/generate) ----------
+        # ---------- PROMPT (same as before, but now effectively used for result markets) ----------
         prompt = f"""
 You are generating a professional HTML betting analysis for Craig.
 
