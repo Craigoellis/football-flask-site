@@ -334,13 +334,13 @@ def fetch_value_bets(force_refresh=False):
 
     cached_value_bets = all_value_bets
 
-        # --- ADD THIS LINE BELOW! ---
     print(f"Saving value bets to: {VALUE_BETS_CACHE_FILE}")
 
-    with open(VALUE_BETS_CACHE_FILE, 'w') as f:
+    with open(VALUE_BETS_CACHE_FILE, 'w', encoding="utf-8") as f:
         json.dump(all_value_bets, f)
 
     return all_value_bets
+
 
 def refresh_value_bets_cache():
     print("[CACHE] Refreshing Value Bets Cache...")
@@ -3074,7 +3074,7 @@ def _safe_float(x):
 
 def pick_six_random_value_bets():
     """
-    Returns up to 9 unique candidate value bets from the cache.
+    Returns up to 12 unique candidate value bets from the cache.
     - Only includes fixtures being played TODAY (London time).
     - No duplicates.
     - Only includes markets with:
@@ -3085,7 +3085,7 @@ def pick_six_random_value_bets():
       if candidates for those markets exist.
     """
 
-    max_bets = 9 # ⬅️ new limit
+    max_bets = 12  # ⬅️ new limit
 
     global game_details_cache
 
@@ -3456,12 +3456,16 @@ Away goals profile:
 
 @app.route("/api/ai-bets-latest")
 def api_ai_bets_latest():
-    """
-    Return the most recently generated AI bet cards (if any),
-    so the AI Bets page can show them on initial load / refresh.
-    """
     data = load_ai_bets_cards()
-    cards = data.get("cards", [])
+
+    # 🔒 Defensive handling
+    if isinstance(data, list):
+        cards = data
+    elif isinstance(data, dict):
+        cards = data.get("cards", [])
+    else:
+        cards = []
+
     return jsonify({"cards": cards})
 
 
@@ -3593,6 +3597,7 @@ def save_ai_bets_cache(cache: dict) -> None:
     except Exception as e:
         # For now we just print/log; you can hook this into your logger if you want.
         print(f"Error saving AI bets cache: {e}")
+
 
 
 def get_today_date_str() -> str:
@@ -3794,7 +3799,7 @@ def store_ai_bets_for_today_from_selected_bets(bets: list) -> None:
     date_key = get_today_date_str()  # e.g. "04/12/2025"
 
     entries = []
-    for bet in bets[:9]:
+    for bet in bets[:12]:
         if not isinstance(bet, dict):
             continue
 
