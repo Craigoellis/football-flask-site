@@ -3085,7 +3085,7 @@ def pick_six_random_value_bets():
       if candidates for those markets exist.
     """
 
-    max_bets = 12  # ⬅️ new limit
+    max_bets = 9  # ⬅️ new limit
 
     global game_details_cache
 
@@ -3663,7 +3663,7 @@ def set_ai_bets_for_date(date_str: str, bets: list) -> None:
     if not isinstance(bets, list):
         bets = []
 
-    cache[date_str] = bets[:6]
+    cache[date_str] = bets[:9]
 
     save_ai_bets_cache(cache)
 
