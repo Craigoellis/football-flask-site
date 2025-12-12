@@ -334,13 +334,13 @@ def fetch_value_bets(force_refresh=False):
 
     cached_value_bets = all_value_bets
 
+        # --- ADD THIS LINE BELOW! ---
     print(f"Saving value bets to: {VALUE_BETS_CACHE_FILE}")
 
-    with open(VALUE_BETS_CACHE_FILE, 'w', encoding="utf-8") as f:
+    with open(VALUE_BETS_CACHE_FILE, 'w') as f:
         json.dump(all_value_bets, f)
 
     return all_value_bets
-
 
 def refresh_value_bets_cache():
     print("[CACHE] Refreshing Value Bets Cache...")
@@ -3468,7 +3468,6 @@ def api_ai_bets_latest():
 
     return jsonify({"cards": cards})
 
-
 def settle_market_from_score(market: str, home_goals: int, away_goals: int) -> str:
     """
     Given a market name and the final score, return:
@@ -3597,7 +3596,6 @@ def save_ai_bets_cache(cache: dict) -> None:
     except Exception as e:
         # For now we just print/log; you can hook this into your logger if you want.
         print(f"Error saving AI bets cache: {e}")
-
 
 
 def get_today_date_str() -> str:
