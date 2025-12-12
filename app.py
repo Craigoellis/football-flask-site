@@ -3072,9 +3072,12 @@ def _safe_float(x):
     except (TypeError, ValueError):
         return None
 
+
 def pick_six_random_value_bets():
     """
-    Returns up to 12 unique candidate value bets from the cache.
+    Returns up to 6 unique candidate value bets from the cache.
+
+    Rules:
     - Only includes fixtures being played TODAY (London time).
     - No duplicates.
     - Only includes markets with:
@@ -3084,9 +3087,6 @@ def pick_six_random_value_bets():
     - Tries to include at least one Home Win, one Draw, and one Away Win
       if candidates for those markets exist.
     """
-
-    max_bets = 9  # ⬅️ new limit
-
     global game_details_cache
 
     if not game_details_cache:
@@ -3111,9 +3111,10 @@ def pick_six_random_value_bets():
         home_id = fd.get("home_id")
         away_id = fd.get("away_id")
 
-        # 🔹 Only keep fixtures whose KO date is TODAY (London)
+        # Only keep fixtures whose KO date is TODAY (London)
         if not unix_ts:
             continue
+
         try:
             ko_dt_utc = datetime.fromtimestamp(int(unix_ts), pytz.utc)
             ko_dt_london = ko_dt_utc.astimezone(london_tz)
@@ -3121,31 +3122,30 @@ def pick_six_random_value_bets():
             continue
 
         if ko_dt_london.date() != today_london:
-            # Fixture is not today → skip it entirely
             continue
 
-        # 🔹 For this fixture (which IS today), scan ONLY the 1X2 result markets
+        # For this fixture (which IS today), scan ONLY the 1X2 result markets
         for mk, mdata in fd.items():
             if mk not in ("home_win", "draw", "away_win"):
-                continue  # ignore all other markets for AI Bets
+                continue
+
+            if not isinstance(mdata, dict):
+                continue
 
             prob = _safe_float(mdata.get("probability"))
             fair_odds = _safe_float(mdata.get("implied_odds"))
             book_odds = _safe_float(mdata.get("actual_odds"))
+
             if not prob or not fair_odds or not book_odds:
                 continue
-
             if fair_odds <= 0:
                 continue
 
             edge = ((book_odds - fair_odds) / abs(fair_odds)) * 100.0
 
-            # ✅ Constraints:
-            # - Only keep bets with bookmaker odds >= 1.70
-            # - Only keep bets with edge >= 10%
-            if book_odds < 1.7:
+            # Constraints
+            if book_odds < 1.70:
                 continue
-
             if edge < 10.0:
                 continue
 
@@ -3164,19 +3164,18 @@ def pick_six_random_value_bets():
                 "prob": prob,
                 "fair_odds": fair_odds,
                 "book_odds": book_odds,
-                "edge": edge
+                "edge": edge,
             })
 
     if not candidates:
         return []
 
-    # ------------ Ensure at least one of each market if possible ------------
+    # Ensure at least one of each market if possible
     home_candidates = [b for b in candidates if b["market_key"] == "home_win"]
     draw_candidates = [b for b in candidates if b["market_key"] == "draw"]
     away_candidates = [b for b in candidates if b["market_key"] == "away_win"]
 
     final = []
-
     if home_candidates:
         final.append(random.choice(home_candidates))
     if draw_candidates:
@@ -3184,14 +3183,13 @@ def pick_six_random_value_bets():
     if away_candidates:
         final.append(random.choice(away_candidates))
 
-    # Fill remaining slots up to max_bets with other candidates
+    # Fill remaining slots up to 6 with other candidates remaining
     remaining = [b for b in candidates if b not in final]
     random.shuffle(remaining)
-    final.extend(remaining[: max(0, max_bets - len(final))])
+    final.extend(remaining[:max(0, 6 - len(final))])
 
-    # Just in case, shuffle final and cap to max_bets
-    random.shuffle(final)
-    return final[:max_bets]
+    # Return up to 6 items (not index 6)
+    return final[:6]
 
 # ------------------------
 # AI Bets – API endpoint for front-end
@@ -3797,7 +3795,7 @@ def store_ai_bets_for_today_from_selected_bets(bets: list) -> None:
     date_key = get_today_date_str()  # e.g. "04/12/2025"
 
     entries = []
-    for bet in bets[:12]:
+    for bet in bets[:6]:
         if not isinstance(bet, dict):
             continue
 
