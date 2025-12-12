@@ -3074,7 +3074,7 @@ def _safe_float(x):
 
 def pick_six_random_value_bets():
     """
-    Returns up to 12 unique candidate value bets from the cache.
+    Returns up to 9 unique candidate value bets from the cache.
     - Only includes fixtures being played TODAY (London time).
     - No duplicates.
     - Only includes markets with:
@@ -3085,7 +3085,7 @@ def pick_six_random_value_bets():
       if candidates for those markets exist.
     """
 
-    max_bets = 12  # ⬅️ new limit
+    max_bets = 9 # ⬅️ new limit
 
     global game_details_cache
 
@@ -3794,7 +3794,7 @@ def store_ai_bets_for_today_from_selected_bets(bets: list) -> None:
     date_key = get_today_date_str()  # e.g. "04/12/2025"
 
     entries = []
-    for bet in bets[:12]:
+    for bet in bets[:9]:
         if not isinstance(bet, dict):
             continue
 
