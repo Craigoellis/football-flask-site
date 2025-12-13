@@ -38,42 +38,53 @@ HEADERS = {"Authorization": f"Bearer {API_TOKEN}"}
 # Base directory for cached JSON/data files.
 # - Locally: defaults to a ./data folder in your project
 # - On Render: set DATA_DIR=/data in the environment
-DATA_DIR = os.getenv("DATA_DIR")
+# ----------------------------------------------------
+# Cache / Data directory (SINGLE SOURCE OF TRUTH)
+# ----------------------------------------------------
 
-if not DATA_DIR:
-    # Default for local development: a "data" folder next to app.py
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# If Render persistent disk exists, ALWAYS use it
+if os.path.exists("/data"):
+    DATA_DIR = "/data"
+else:
+    # Local development fallback
     DATA_DIR = os.path.join(BASE_DIR, "data")
 
-# Make sure the directory exists
+# Ensure directory exists
 os.makedirs(DATA_DIR, exist_ok=True)
+
+# ----------------------------------------------------
+# Cache file paths (ALL must use DATA_DIR)
+# ----------------------------------------------------
 
 AI_BETS_CACHE_FILE = os.path.join(DATA_DIR, "ai_bets_cache.json")
 AI_BETS_CARDS_FILE = os.path.join(DATA_DIR, "ai_bets_latest_cards.json")
 
-
-FIXTURES_MULTIPLE_URL = "https://data.oddalerts.com/api/fixtures/multiple"
-
-
-# Fixtures API
-FIXTURES_API_URL = "https://data.oddalerts.com/api/probability/ft_result"
 FIXTURES_CACHE_FILE = os.path.join(DATA_DIR, "fixtures_cache.json")
+GAME_DETAILS_CACHE_FILE = os.path.join(DATA_DIR, "game_details_cache.json")
+GAME_DETAILS_CACHE_TIME_FILE = os.path.join(DATA_DIR, "game_details_cache_time.txt")
 
-# Value Bets API
-VALUE_BETS_API_URL = "https://data.oddalerts.com/api/value/upcoming"
 VALUE_BETS_CACHE_FILE = os.path.join(DATA_DIR, "value_bets_cache.json")
 
-# Season Stats API Cache
 SEASON_STATS_CACHE_FILE = os.path.join(DATA_DIR, "season_stats_cache.json")
-
-# NEW: separate cache file + in-memory cache for "Last 25 Games"
 SEASON_STATS_CACHE_FILE_LAST25 = os.path.join(DATA_DIR, "season_stats_last25.json")
-season_stats_cache_last25 = {}
 
-# Timestamp files for caches
-GAME_DETAILS_CACHE_TIME_FILE = os.path.join(DATA_DIR, "game_details_cache_time.txt")
 SEASON_STATS_CACHE_TIME_FILE = os.path.join(DATA_DIR, "season_stats_cache_time.txt")
 SEASON_STATS_LAST25_CACHE_TIME_FILE = os.path.join(DATA_DIR, "season_stats_last25_time.txt")
+
+# ----------------------------------------------------
+# In-memory caches
+# ----------------------------------------------------
+season_stats_cache_last25 = {}
+
+# ----------------------------------------------------
+# API URLs (unchanged)
+# ----------------------------------------------------
+FIXTURES_MULTIPLE_URL = "https://data.oddalerts.com/api/fixtures/multiple"
+FIXTURES_API_URL = "https://data.oddalerts.com/api/probability/ft_result"
+VALUE_BETS_API_URL = "https://data.oddalerts.com/api/value/upcoming"
+
 
 # NEW: season stats sources (labels + URL templates)
 SEASON_STATS_SOURCES = {
