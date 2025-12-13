@@ -2580,8 +2580,11 @@ RESULT_MARKET_LABELS = {
 
 
 def _base_data_dir():
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(base_dir, "data")
+    """
+    Single source of truth for data directory.
+    Uses the same DATA_DIR everywhere (local + Render).
+    """
+    return DATA_DIR
 
 
 def _load_game_details_cache():
