@@ -1,16 +1,35 @@
-# Virtual environment
+# -----------------------------
+# Virtual environments
+# -----------------------------
 .venv/
 venv/
 
-# Python cache
+# -----------------------------
+# Python cache / compiled files
+# -----------------------------
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
-# Local data files used for training / labelling
+# -----------------------------
+# OS junk
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# Local AI training CSVs
+# (never upload these)
+# -----------------------------
 data/*-ai-bets.csv
 data/*-ai-bets-scored.csv
 data/*-ai-bets-labelled.csv
 data/ai_bets_training_master.csv
 
-# Local models (not needed on Render)
-models/
+# -----------------------------
+# Models
+# Ignore everything EXCEPT the trained model
+# -----------------------------
+models/*
+!models/ai_bets_logreg.pkl
