@@ -7,6 +7,9 @@ import random
 import csv
 import io
 import smtplib
+import joblib
+import numpy as np
+import pandas as pd
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from datetime import datetime, timedelta, timezone
@@ -18,38 +21,24 @@ from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email import encoders
 
-
 print(f"Flask process PID: {os.getpid()}")
 
-app = Flask(__name__)
-
-# Gemini client (for AI Bets page)
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    print("[WARNING] GEMINI_API_KEY not set – /api/generate will fail until you set it.")
-gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-
-# =========================
-# API Configuration
-# =========================
-API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"  # Replace with your actual token
-HEADERS = {"Authorization": f"Bearer {API_TOKEN}"}
-
-# Base directory for cached JSON/data files.
-# - Locally: defaults to a ./data folder in your project
-# - On Render: set DATA_DIR=/data in the environment
 # ----------------------------------------------------
-# Cache / Data directory (SINGLE SOURCE OF TRUTH)
+# Base directory + DATA_DIR (SINGLE SOURCE OF TRUTH)
 # ----------------------------------------------------
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# If Render persistent disk exists, ALWAYS use it
-if os.path.exists("/data"):
-    DATA_DIR = "/data"
-else:
-    # Local development fallback
-    DATA_DIR = os.path.join(BASE_DIR, "data")
+# 1) Explicit override always wins (optional, for Render or future use)
+DATA_DIR = os.environ.get("DATA_DIR")
+
+# 2) If no override:
+if not DATA_DIR:
+    # On Render / Linux, use the persistent disk
+    if os.name != "nt" and os.path.exists("/data"):
+        DATA_DIR = "/data"
+    else:
+        # Local development (Windows & others)
+        DATA_DIR = os.path.join(BASE_DIR, "data")
 
 # Ensure directory exists
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -57,7 +46,6 @@ os.makedirs(DATA_DIR, exist_ok=True)
 # ----------------------------------------------------
 # Cache file paths (ALL must use DATA_DIR)
 # ----------------------------------------------------
-
 AI_BETS_CACHE_FILE = os.path.join(DATA_DIR, "ai_bets_cache.json")
 AI_BETS_CARDS_FILE = os.path.join(DATA_DIR, "ai_bets_latest_cards.json")
 
@@ -69,24 +57,180 @@ VALUE_BETS_CACHE_FILE = os.path.join(DATA_DIR, "value_bets_cache.json")
 
 SEASON_STATS_CACHE_FILE = os.path.join(DATA_DIR, "season_stats_cache.json")
 SEASON_STATS_CACHE_FILE_LAST25 = os.path.join(DATA_DIR, "season_stats_last25.json")
-
 SEASON_STATS_CACHE_TIME_FILE = os.path.join(DATA_DIR, "season_stats_cache_time.txt")
 SEASON_STATS_LAST25_CACHE_TIME_FILE = os.path.join(DATA_DIR, "season_stats_last25_time.txt")
 
-# ----------------------------------------------------
-# In-memory caches
-# ----------------------------------------------------
-season_stats_cache_last25 = {}
+PREDICTABILITY_CACHE_FILE = os.path.join(DATA_DIR, "predictability_cache.json")
 
 # ----------------------------------------------------
-# API URLs (unchanged)
+# Debug paths (TEMP)
 # ----------------------------------------------------
+print("[PATH] CWD =", os.getcwd())
+print("[PATH] __file__ =", __file__)
+print("[PATH] BASE_DIR =", os.path.abspath(BASE_DIR))
+print("[PATH] DATA_DIR =", os.path.abspath(DATA_DIR))
+print("[PATH] AI_BETS_CARDS_FILE =", os.path.abspath(AI_BETS_CARDS_FILE))
+print("[PATH] AI_BETS_CACHE_FILE =", os.path.abspath(AI_BETS_CACHE_FILE))
+
+# ---------------------------------------------------------
+# FEATURE BUILDING – must mirror training logic
+# ---------------------------------------------------------
+NUMERIC_COLS = [
+    "model_probability",
+    "actual_odds",
+    "implied_prob_bookmaker",
+    "edge",
+    "home_points_pg",
+    "away_points_pg",
+    "points_pg_diff",
+    "home_goals_for_pg",
+    "away_goals_for_pg",
+    "goals_for_pg_diff",
+    "home_goals_against_pg",
+    "away_goals_against_pg",
+    "goals_against_pg_diff",
+    "home_shots_pg",
+    "away_shots_pg",
+    "shots_pg_diff",
+    "home_sot_pg",
+    "away_sot_pg",
+    "sot_pg_diff",
+    "home_xg_pg",
+    "away_xg_pg",
+    "xg_pg_diff",
+    "home_dangerous_attacks_pg",
+    "away_dangerous_attacks_pg",
+    "dangerous_attacks_diff",
+    "home_scored_first_pct",
+    "away_scored_first_pct",
+    "scored_first_diff",
+    "home_clean_sheet_pct",
+    "away_clean_sheet_pct",
+    "clean_sheet_diff",
+    "home_possession_pct",
+    "away_possession_pct",
+    "possession_diff",
+    "home_games_played_home",
+    "home_games_played_away",
+    "away_games_played_home",
+    "away_games_played_away",
+]
+
+def _parse_ko_hour_to_decimal(s):
+    """
+    Convert 'HH:MM' to decimal hour, e.g. '19:45' -> 19.75
+    """
+    try:
+        text = str(s)
+        if ":" not in text:
+            return np.nan
+        h_str, m_str = text.split(":", 1)
+        h = int(h_str)
+        m = int(m_str)
+        return h + (m / 60.0)
+    except Exception:
+        return np.nan
+
+def build_features_for_prediction(df_raw: pd.DataFrame) -> pd.DataFrame:
+    """
+    Build the SAME feature matrix used in training, but WITHOUT needing 'won'.
+    Returns a DataFrame ready for model.predict_proba.
+    """
+    df = df_raw.copy()
+
+    # Keep only result markets, same as training
+    df = df[df["market_type"].isin(["home_win", "draw", "away_win"])].copy()
+    df.reset_index(drop=True, inplace=True)
+
+    if df.empty:
+        print("[PRED] No result-market rows found (home/draw/away).")
+        return pd.DataFrame()
+
+    # Ensure numeric columns exist and coerce to numeric
+    for col in NUMERIC_COLS:
+        if col not in df.columns:
+            df[col] = np.nan
+
+    features = df[NUMERIC_COLS].apply(pd.to_numeric, errors="coerce")
+
+    # Market one-hot flags
+    features["is_home_win_market"] = (df["market_type"] == "home_win").astype(float)
+    features["is_draw_market"] = (df["market_type"] == "draw").astype(float)
+    features["is_away_win_market"] = (df["market_type"] == "away_win").astype(float)
+
+    # Predictability dummies (training ended up with pred_unknown only)
+    pred_series = df.get("competition_predictability").fillna("unknown").astype(str).str.lower()
+    pred_dummies = pd.get_dummies(pred_series, prefix="pred")
+    if "pred_unknown" not in pred_dummies.columns:
+        pred_dummies["pred_unknown"] = 0
+    features["pred_unknown"] = pred_dummies["pred_unknown"].astype(float)
+
+    # Date features
+    dt = pd.to_datetime(df.get("kickoff_date"), errors="coerce")
+    features["ko_year"] = dt.dt.year.astype(float)
+    features["ko_month"] = dt.dt.month.astype(float)
+    features["ko_weekday"] = dt.dt.weekday.astype(float)
+
+    # Kickoff hour as decimal
+    features["ko_hour"] = df.get("kickoff_hour", "").apply(_parse_ko_hour_to_decimal).astype(float)
+
+    # Fill NaNs
+    features = features.astype(float)
+    features = features.fillna(features.mean())
+    features = features.fillna(0.0)
+
+    print(f"[PRED] Built feature matrix for prediction: {features.shape[0]} rows, {features.shape[1]} columns")
+    return features
+
+# ---------------------------------------------------------
+# Model loading (uses your repo-relative models folder by default)
+# ---------------------------------------------------------
+def load_ai_bets_model():
+    explicit = os.environ.get("AI_BETS_MODEL_PATH")
+    if explicit:
+        model_path = explicit
+    else:
+        model_path = os.path.join(BASE_DIR, "models", "ai_bets_logreg.pkl")
+
+    print(f"[AI_MODEL] Looking for model at: {model_path}")
+    print(f"[AI_MODEL] Exists? {os.path.exists(model_path)}")
+
+    if not os.path.exists(model_path):
+        return None
+
+    try:
+        model = joblib.load(model_path)
+        print("[AI_MODEL] Loaded successfully.")
+        return model
+    except Exception as e:
+        print("[AI_MODEL] Failed to load model:", e)
+        return None
+
+app = Flask(__name__)
+
+_ai_bets_model = load_ai_bets_model()
+print("[AI_MODEL] Startup model object is None?", _ai_bets_model is None)
+
+# ---------------------------------------------------------
+# Gemini client (for AI Bets page)
+# ---------------------------------------------------------
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    print("[WARNING] GEMINI_API_KEY not set – /api/generate will fail until you set it.")
+gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+
+# =========================
+# API Configuration
+# =========================
+API_TOKEN = "jraOCcvLm50fZyB0atU8rS1WBSPClsKvUw34374i1jySpRUM9Y41I34LwPub"
+HEADERS = {"Authorization": f"Bearer {API_TOKEN}"}
+
 FIXTURES_MULTIPLE_URL = "https://data.oddalerts.com/api/fixtures/multiple"
 FIXTURES_API_URL = "https://data.oddalerts.com/api/probability/ft_result"
 VALUE_BETS_API_URL = "https://data.oddalerts.com/api/value/upcoming"
 
+BETSLIP_GENERATOR_URL = f"https://data.oddalerts.com/api/betslips?api_token={API_TOKEN}"
 
-# NEW: season stats sources (labels + URL templates)
 SEASON_STATS_SOURCES = {
     "season": {
         "label": "Season Stats",
@@ -97,10 +241,6 @@ SEASON_STATS_SOURCES = {
         "url": "https://data.oddalerts.com/api/stats/season/{season_id}?api_token={api_token}&last_x=25_overall",
     },
 }
-
-# Betslip Generator API and Cache
-BETSLIP_GENERATOR_URL = f"https://data.oddalerts.com/api/betslips?api_token={API_TOKEN}"
-PREDICTABILITY_CACHE_FILE = os.path.join(DATA_DIR, "predictability_cache.json")
 
 # Set the secret key (needed for session management and flash messages)
 app.secret_key = 'dev_secret_key'  # Replace 'dev_secret_key' with any string you like for local development
@@ -3205,6 +3345,110 @@ def pick_six_random_value_bets():
     # Return up to 6 items (not index 6)
     return final[:6]
 
+def build_ai_bets_candidate_pool():
+    """
+    Returns ALL candidate value bets from the cache that pass your existing rules.
+
+    Rules (same as pick_six_random_value_bets):
+    - Only includes fixtures being played TODAY (London time)
+    - Only includes result markets: home_win, draw, away_win
+    - bookmaker odds >= 1.70
+    - value/edge >= 10%
+    """
+
+    global game_details_cache
+
+    if not game_details_cache:
+        load_game_details_cache_from_disk()
+
+    london_tz = pytz.timezone("Europe/London")
+    today_london = datetime.now(london_tz).date()
+
+    candidates = []
+
+    # DEBUG counters
+    today_fixtures = 0
+    result_market_dicts = 0
+
+    for fixture_id, fd in game_details_cache.items():
+        if not isinstance(fd, dict):
+            continue
+
+        unix_ts = fd.get("unix")
+        if not unix_ts:
+            continue
+
+        try:
+            ko_dt_utc = datetime.fromtimestamp(int(unix_ts), pytz.utc)
+            ko_dt_london = ko_dt_utc.astimezone(london_tz)
+        except Exception:
+            continue
+
+        # ONLY today (London)
+        if ko_dt_london.date() != today_london:
+            continue
+
+        today_fixtures += 1
+
+        fixture_name = fd.get("fixture_name")
+        comp_name = fd.get("competition_name")
+        comp_country = fd.get("competition_country")
+        season_id = fd.get("season_id")
+        home_id = fd.get("home_id")
+        away_id = fd.get("away_id")
+
+        # Scan ONLY result markets
+        for mk in ("home_win", "draw", "away_win"):
+            mdata = fd.get(mk)
+            if not isinstance(mdata, dict):
+                continue
+
+            result_market_dicts += 1
+
+            prob = _safe_float(mdata.get("probability"))
+            fair_odds = _safe_float(mdata.get("implied_odds"))
+            book_odds = _safe_float(mdata.get("actual_odds"))
+
+            if not prob or not fair_odds or not book_odds:
+                continue
+
+            if fair_odds <= 0:
+                continue
+
+            edge = ((book_odds - fair_odds) / abs(fair_odds)) * 100.0
+
+            # Constraints
+            if book_odds < 1.70:
+                continue
+            if edge < 10.0:
+                continue
+
+            candidates.append({
+                "fixture_id": fixture_id,
+                "fixture_name": fixture_name,
+                "competition_name": comp_name,
+                "competition_country": comp_country,
+                "unix": unix_ts,
+                "season_id": season_id,
+                "home_id": home_id,
+                "away_id": away_id,
+                "market_key": mk,
+                "market_nice": AI_MARKET_LABELS.get(mk, mk),
+                "market_type": AI_MARKET_TYPE.get(mk, "result"),
+                "prob": prob,
+                "fair_odds": fair_odds,
+                "book_odds": book_odds,
+                "edge": edge,
+            })
+
+    print(
+        "[AI_POOL] today_fixtures =", today_fixtures,
+        "| result_market_dicts =", result_market_dicts,
+        "| candidates =", len(candidates)
+    )
+
+    return candidates
+
 # ------------------------
 # AI Bets – API endpoint for front-end
 # ------------------------
@@ -3212,19 +3456,65 @@ def pick_six_random_value_bets():
 @app.route("/api/generate")
 def api_generate_ai_bet():
     """
-    Picks up to six random value bets from game_details_cache, pulls season stats,
-    sends a structured prompt to Gemini for EACH, and returns HTML + summary JSON.
-    For now the first card is also returned at top level for backwards-compatibility
-    with the existing frontend.
+    Generates AI Bets cards + CSV email.
+    Now uses Case B:
+      - build full candidate pool (existing rules)
+      - score pool with trained model
+      - take top bucket
+      - random sample 6 from bucket
     """
     if GEMINI_API_KEY is None:
         return jsonify({"error": "GEMINI_API_KEY is not configured."}), 500
 
-    # 1) Pick up to six random value bets
-    bets = pick_six_random_value_bets()
-    if not bets:
+    # 1) Build the FULL candidate pool using existing rules
+    pool = build_ai_bets_candidate_pool()
+    print("[AI_POOL] Candidates in pool:", len(pool))
+
+    if not pool:
         return jsonify({"error": "No Available Bets"}), 404
-    
+
+    # 2) Case B selection: score pool -> top bucket -> sample 6
+    if _ai_bets_model:
+        try:
+            df_rows = []
+            for b in pool:
+                unix_ts = int(b.get("unix", 0) or 0)
+                dt_utc = datetime.fromtimestamp(unix_ts, tz=timezone.utc) if unix_ts else None
+
+                df_rows.append({
+                    "market_type": b.get("market_key"),
+                    "competition_predictability": b.get("competition_predictability", "unknown"),
+                    "kickoff_date": dt_utc.strftime("%Y-%m-%d") if dt_utc else None,
+                    "kickoff_hour": dt_utc.strftime("%H:%M") if dt_utc else None,
+                    "model_probability": float(b.get("prob", 0.0)),
+                    "actual_odds": float(b.get("book_odds", 0.0)),
+                    "edge": float(b.get("edge", 0.0)),
+                    "implied_prob_bookmaker": np.nan,
+                })
+
+            df_raw = pd.DataFrame(df_rows)
+            X = build_features_for_prediction(df_raw)
+
+            probs = _ai_bets_model.predict_proba(X)[:, 1]
+            for b, p in zip(pool, probs):
+                b["ai_score"] = float(p)
+
+            pool_sorted = sorted(pool, key=lambda x: x.get("ai_score", 0.0), reverse=True)
+
+            # Pool is tiny today (7). Keep bucket = all for now.
+            top_k = min(max(10, 3 * 6), len(pool_sorted))  # bucket is at least 10, otherwise 18, capped by pool
+            bucket = pool_sorted[:top_k]
+
+            bets = bucket if len(bucket) <= 6 else random.sample(bucket, 6)
+
+            print("[AI_MODEL] Case B selection complete. Using bets:", len(bets), "from pool:", len(pool))
+        except Exception as e:
+            print("[AI_MODEL] Case B failed, fallback to first 6:", e)
+            bets = pool[:6]
+    else:
+        # No model loaded: fallback
+        bets = pool[:6]
+
     # 1b) Store these bets in the AI Bets cache for today's date (DD/MM/YYYY)
     store_ai_bets_for_today_from_selected_bets(bets)
 
@@ -3255,6 +3545,9 @@ def api_generate_ai_bet():
         home_id = bet["home_id"]
         away_id = bet["away_id"]
         unix_ts = bet["unix"]
+        ai_score = bet.get("ai_score")
+        ai_prob_pct = round(ai_score * 100, 2) if ai_score is not None else None
+
 
         # Confidence label
         if prob >= 70 and edge >= 5:
@@ -3452,6 +3745,7 @@ Away goals profile:
             "bookmaker_odds": round(book, 2),
             "edge": round(edge, 2),
             "confidence": confidence,
+            "ai_prob_pct": ai_prob_pct,
             "html": clean_html,
         })
 
@@ -3895,11 +4189,54 @@ def generate_ai_bets_for_today_if_missing() -> bool:
         # Today's bets already exist; do nothing
         return False
 
-    # Pick up to 6 bets for TODAY from your value-bets cache
-    bets = pick_six_random_value_bets()
-    if not bets:
+    # Build pool using existing rules
+    pool = build_ai_bets_candidate_pool()
+    print("[AI_POOL] Auto-gen candidates in pool:", len(pool))
+
+    if not pool:
         print("[AI BETS] No available value bets for today; nothing generated.")
         return False
+
+    # Case B selection (same as /api/generate)
+    if _ai_bets_model:
+        try:
+            df_rows = []
+            for b in pool:
+                unix_ts = int(b.get("unix", 0) or 0)
+                dt_utc = datetime.fromtimestamp(unix_ts, tz=timezone.utc) if unix_ts else None
+
+                df_rows.append({
+                    "market_type": b.get("market_key"),
+                    "competition_predictability": b.get("competition_predictability", "unknown"),
+                    "kickoff_date": dt_utc.strftime("%Y-%m-%d") if dt_utc else None,
+                    "kickoff_hour": dt_utc.strftime("%H:%M") if dt_utc else None,
+                    "model_probability": float(b.get("prob", 0.0)),
+                    "actual_odds": float(b.get("book_odds", 0.0)),
+                    "edge": float(b.get("edge", 0.0)),
+                    "implied_prob_bookmaker": np.nan,
+                })
+
+            df_raw = pd.DataFrame(df_rows)
+            X = build_features_for_prediction(df_raw)
+
+            probs = _ai_bets_model.predict_proba(X)[:, 1]
+            for b, p in zip(pool, probs):
+                b["ai_score"] = float(p)
+
+            pool_sorted = sorted(pool, key=lambda x: x.get("ai_score", 0.0), reverse=True)
+
+            top_k = min(max(10, 18), len(pool_sorted))
+            bucket = pool_sorted[:top_k]
+
+            bets = bucket if len(bucket) <= 6 else random.sample(bucket, 6)
+
+            print("[AI_MODEL] Auto-gen Case B selection complete. Using bets:", len(bets), "from pool:", len(pool))
+        except Exception as e:
+            print("[AI_MODEL] Auto-gen Case B failed, fallback to first 6:", e)
+            bets = pool[:6]
+    else:
+        bets = pool[:6]
+
 
     # 🔒 Limit to ONLY Home Win / Draw / Away Win markets
     allowed_result_markets = {"home_win", "draw", "away_win"}
@@ -4598,7 +4935,7 @@ if os.environ.get("RUN_SCHEDULER") == "1":
     scheduler.add_job(
         refresh_fixtures_cache,
         "interval",
-        minutes=5
+        minutes=10
     )
 
     # 🔁 Refresh value bets cache regularly

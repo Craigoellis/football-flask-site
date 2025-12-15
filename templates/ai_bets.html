@@ -63,7 +63,7 @@
                             <div><span class="label">Kick-Off:</span> ${card.kickoff || ''}</div>
                         </div>
                     </div>
-                    <span class="badge">Confidence: ${card.confidence || 'N/A'}</span>
+                    <span class="badge">${(card.ai_prob_pct !== undefined && card.ai_prob_pct !== null) ? `AI: ${Number(card.ai_prob_pct).toFixed(2)}%` : `Confidence: ${card.confidence || 'N/A'}`}</span>
                 </div>
             `;
 
