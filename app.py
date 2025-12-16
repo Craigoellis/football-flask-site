@@ -4479,6 +4479,8 @@ Away goals profile:
             .replace("```", "")
             .strip()
         )
+        
+        ai_prob_pct = round(float(bet.get("ai_score", 0.0)) * 100.0, 2) if bet.get("ai_score") is not None else None
 
         cards.append({
             "fixture": name,
@@ -4492,6 +4494,7 @@ Away goals profile:
             "bookmaker_odds": round(book, 2),
             "edge": round(edge, 2),
             "confidence": confidence,
+            "ai_prob_pct": ai_prob_pct,
             "html": clean_html,
         })
 
