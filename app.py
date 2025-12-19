@@ -402,10 +402,10 @@ def refresh_fixtures_cache():
     print("[CACHE] Season Stats Cache Updated and Reloaded in Memory.")
 
     # Step 2.5: Fetch "Last 25 Games" Season Stats
-    # print("[CACHE] Fetching Last 25 Games Season Stats...")
-    # fetch_season_stats_last25(unique_season_ids, API_TOKEN)
-    # load_season_stats_cache_last25_from_disk()
-    # print("[CACHE] Last 25 Games Season Stats Cache Updated and Reloaded in Memory.")
+    print("[CACHE] Fetching Last 25 Games Season Stats...")
+    fetch_season_stats_last25(unique_season_ids, API_TOKEN)
+    load_season_stats_cache_last25_from_disk()
+    print("[CACHE] Last 25 Games Season Stats Cache Updated and Reloaded in Memory.")
 
     # Step 3: Fetch Game Details
     print("[CACHE] Fetching Game Details...")
