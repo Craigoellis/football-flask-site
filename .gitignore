@@ -33,3 +33,7 @@ data/ai_bets_training_master.csv
 # -----------------------------
 models/*
 !models/ai_bets_logreg.pkl
+
+# Runtime cache files
+data/*_cache.json
+data/*_cache_time.txt
