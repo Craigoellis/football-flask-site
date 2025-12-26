@@ -285,6 +285,33 @@ else:
 cached_fixtures = {}
 
 # ---- Fetch & Cache Functions ----
+POST_KICKOFF_KEEP_SECONDS = 2 * 60 * 60  # 2 hours
+
+def _now_utc_ts() -> int:
+    return int(datetime.utcnow().timestamp())
+
+def prune_fixtures_cache(fixtures_by_date: dict) -> dict:
+    """
+    Remove fixtures only after kickoff + 2 hours.
+    """
+    now_ts = _now_utc_ts()
+    pruned = {}
+
+    for date_key, countries in (fixtures_by_date or {}).items():
+        for country, leagues in (countries or {}).items():
+            for league, games in (leagues or {}).items():
+                kept = []
+                for g in (games or []):
+                    unix_time = g.get("unix")
+                    if not unix_time:
+                        continue
+                    if now_ts < int(unix_time) + POST_KICKOFF_KEEP_SECONDS:
+                        kept.append(g)
+
+                if kept:
+                    pruned.setdefault(date_key, {}).setdefault(country, {}).setdefault(league, []).extend(kept)
+
+    return pruned
 
 def fetch_fixtures_grouped_by_structure(force_refresh=False):
     global cached_fixtures
@@ -301,6 +328,7 @@ def fetch_fixtures_grouped_by_structure(force_refresh=False):
         try:
             params = {"outcome": "home", "include": "odds", "bookmaker": 2}
             response = requests.get(url, headers=HEADERS, params=params)
+
             if response.status_code == 429:
                 time.sleep(15)
                 retries += 1
@@ -339,11 +367,45 @@ def fetch_fixtures_grouped_by_structure(force_refresh=False):
         except requests.RequestException:
             break
 
-    cached_fixtures = fixtures_by_date
-    save_fixtures_cache_to_disk()  # Always save updated cache to disk
+    # ✅ MERGE + PRUNE ONCE (after pagination)
+    existing = load_fixtures_cache_from_disk() or {}
 
-    unique_season_ids = set()
+    existing_lookup = {}
+    for date_data in existing.values():
+        for country_data in date_data.values():
+            for league_games in country_data.values():
+                for g in league_games:
+                    fid = g.get("fixture_id")
+                    if fid is not None:
+                        existing_lookup[str(fid)] = g
+
     for date_data in fixtures_by_date.values():
+        for country_data in date_data.values():
+            for league_games in country_data.values():
+                for g in league_games:
+                    fid = g.get("fixture_id")
+                    if fid is not None:
+                        existing_lookup[str(fid)] = g
+
+    merged = {}
+    for fid, g in existing_lookup.items():
+        unix_time = g.get("unix")
+        if not unix_time:
+            continue
+
+        fixture_date = datetime.fromtimestamp(int(unix_time), pytz.utc).astimezone(london_tz).strftime('%Y-%m-%d')
+        country = g.get("competition_country", "Unknown")
+        league = g.get("competition_name", "Unknown League")
+        merged.setdefault(fixture_date, {}).setdefault(country, {}).setdefault(league, []).append(g)
+
+    merged = prune_fixtures_cache(merged)
+
+    cached_fixtures = merged
+    save_fixtures_cache_to_disk()
+
+    # ✅ Build season ids from what you're actually caching/serving
+    unique_season_ids = set()
+    for date_data in merged.values():
         for country_data in date_data.values():
             for league_fixtures in country_data.values():
                 for fixture in league_fixtures:
@@ -353,8 +415,7 @@ def fetch_fixtures_grouped_by_structure(force_refresh=False):
 
     print(f"[CACHE] Fetched {len(unique_season_ids)} unique season IDs.")
 
-    # ✅ Ensure a valid empty structure is always returned
-    return fixtures_by_date or {}, unique_season_ids
+    return merged or {}, unique_season_ids
 
 def save_fixtures_cache_to_disk():
     os.makedirs(os.path.dirname(FIXTURES_CACHE_FILE), exist_ok=True)
@@ -386,9 +447,9 @@ def refresh_fixtures_cache():
     fixtures_data, unique_season_ids = fetch_fixtures_grouped_by_structure(force_refresh=True)
     print("[CACHE] Fixtures Cache Updated.")
 
-    # Step 1.5: Update in-memory and disk cache
+    # Step 1.5: Update in-memory cache only
+    # Disk is already saved inside fetch_fixtures_grouped_by_structure()
     cached_fixtures = fixtures_data
-    save_fixtures_cache_to_disk()
 
     # Step 1.6: Update Predictability Cache
     update_predictability_cache_from_fixtures(cached_fixtures)
@@ -899,6 +960,29 @@ def load_game_details_cache_from_disk():
     else:
         game_details_cache = {}
 
+def prune_game_details_cache_after_2h(combined_data: dict) -> dict:
+    """
+    Keep game details until kickoff + 2 hours.
+    Uses 'unix' stored on each game_details entry.
+    """
+    now_ts = int(datetime.utcnow().timestamp())
+    pruned = {}
+
+    for fixture_id, payload in (combined_data or {}).items():
+        kickoff_unix = None
+        if isinstance(payload, dict):
+            kickoff_unix = payload.get("unix")  # ✅ you already store this per fixture
+
+        # If no kickoff time stored, keep it (failsafe)
+        if kickoff_unix is None:
+            pruned[fixture_id] = payload
+            continue
+
+        if now_ts < int(kickoff_unix) + POST_KICKOFF_KEEP_SECONDS:
+            pruned[fixture_id] = payload
+
+    return pruned
+
 # --- Main Function ---
 def fetch_and_cache_all_game_details():
     print(f"[CACHE] Refreshing Game Details Cache at {datetime.now().strftime('%H:%M:%S')}...")
@@ -927,9 +1011,6 @@ def fetch_and_cache_all_game_details():
                 combined_data = {}
     else:
         combined_data = {}
-
-    # Reset stale cache before fetching fresh data
-    combined_data = {}
 
     def fetch_bookmaker_odds(bookmaker_id):
         url = (
@@ -1216,8 +1297,11 @@ def fetch_and_cache_all_game_details():
             print(f"[ERROR] Failed to fetch game details: {e}")
             break
 
+    combined_data = prune_game_details_cache_after_2h(combined_data)
+
     game_details_cache = combined_data
     save_game_details_cache_to_disk()
+
 
     duration = round((time.time() - start_time) / 60, 2)
     print(f"[CACHE COMPLETE] Game details updated in {duration} minutes ✅")
@@ -4938,7 +5022,7 @@ if os.environ.get("RUN_SCHEDULER") == "1":
     scheduler.add_job(
         refresh_fixtures_cache,
         "interval",
-        minutes=10
+        minutes=1
     )
 
     # 🔁 Refresh value bets cache regularly
