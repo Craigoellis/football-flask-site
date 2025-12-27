@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='fixtures.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='pinnacle.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='best_bets.css') }}">
-    
+
     {% block extra_styles %}{% endblock %}
 
     <style>
@@ -19,7 +19,8 @@
             background-color: #007BFF;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            padding: 0 20px;
             position: fixed;
             top: 0;
             left: 0;
@@ -27,12 +28,33 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.15);
         }
 
+        /* Left spacer to help center nav links */
+        .nav-spacer {
+            width: 260px; /* updated to push nav links more centered */
+            flex-shrink: 0;
+        }
+
+        /* Scroll container */
         .nav-links {
-            list-style: none;
-            margin: 0;
-            padding: 0;
+            flex: 1;
+            min-width: 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Inner flex row */
+        .nav-links-inner {
             display: flex;
+            align-items: center;
             gap: 30px;
+            white-space: nowrap;
+            justify-content: center;
+        }
+
+        /* Optional: scrollbar sizing */
+        .nav-links::-webkit-scrollbar {
+            height: 6px;
         }
 
         .nav-links a {
@@ -41,10 +63,99 @@
             font-size: 18px;
             font-weight: bold;
             transition: color 0.3s ease;
+            white-space: nowrap;
         }
 
         .nav-links a:hover {
             color: #ddd;
+        }
+
+        /* Search container */
+        .nav-search {
+            position: relative;
+            flex-shrink: 0;
+            margin-right: 60px; /* pulls search in slightly from far right */
+        }
+
+        /* Search input */
+        #fixture-search-input {
+            height: 32px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            width: 220px;
+        }
+
+        /* Dropdown results container - updated to match site color scheme */
+        #fixture-search-results {
+            position: absolute;
+            top: 42px;
+            right: 0;
+            width: 420px;
+            background: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 1000;
+            overflow: hidden;
+            border: 1px solid #d0e4ff;
+        }
+
+        /* Search result items */
+        .search-result-item {
+            padding: 10px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid #e6eef9;
+        }
+
+        .search-result-item:hover {
+            background: #eaf3ff;
+        }
+
+        .search-result-top {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .search-result-time {
+            white-space: nowrap;
+        }
+
+        .search-result-comp {
+            flex: 1;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 0 10px;
+            color: #007BFF;
+            font-weight: 600;
+        }
+
+        .search-result-arrow {
+            white-space: nowrap;
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        .search-result-fixture {
+            margin-top: 4px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #007BFF;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #fixture-search-results .search-result-item:last-child {
+            border-bottom: none;
         }
 
         /* Body + Page Content */
@@ -70,27 +181,155 @@
         }
     </style>
 </head>
+
 <body>
 
 <!-- Navigation Bar -->
-<div class="navbar nav-links">
-    <a href="{{ url_for('home') }}">Home</a>
-    <a href="{{ url_for('fixtures_page') }}">Fixtures</a>
-    <a href="{{ url_for('value_bets') }}">Value Bets</a>
-    <a href="{{ url_for('betslip_generator') }}">Betslip Generator</a>
-    <a href="{{ url_for('probability_rankings') }}?date={{ now.strftime('%Y-%m-%d') }}">Probability Rankings</a>
-    <a href="{{ url_for('pinnacle_comparisons') }}">Pinnacle Comparison</a>
-    <a href="{{ url_for('best_bets') }}">Best Bets</a>
-    <a href="{{ url_for('ai_bets_page') }}">AI Bets</a>
-    <a href="{{ url_for('ai_bets_results') }}">AI Bets Results</a>
+<div class="navbar">
+    <!-- Left spacer -->
+    <div class="nav-spacer"></div>
 
+    <!-- Centered navigation links -->
+    <div class="nav-links">
+        <div class="nav-links-inner">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('fixtures_page') }}">Fixtures</a>
+            <a href="{{ url_for('value_bets') }}">Value Bets</a>
+            <a href="{{ url_for('betslip_generator') }}">Betslip Generator</a>
+            <a href="{{ url_for('probability_rankings') }}?date={{ now.strftime('%Y-%m-%d') }}">Probability Rankings</a>
+            <a href="{{ url_for('pinnacle_comparisons') }}">Pinnacle Comparison</a>
+            <a href="{{ url_for('best_bets') }}">Best Bets</a>
+            <a href="{{ url_for('ai_bets_page') }}">AI Bets</a>
+            <a href="{{ url_for('ai_bets_results') }}">AI Bets Results</a>
+        </div>
+    </div>
 
+    <!-- Right: Search -->
+    <div class="nav-search">
+        <input
+            type="text"
+            id="fixture-search-input"
+            placeholder="Search games..."
+            autocomplete="off"
+        >
+        <div id="fixture-search-results"></div>
+    </div>
 </div>
 
 <!-- Main Content -->
 <div class="main-content">
     {% block content %}{% endblock %}
 </div>
+
+<script>
+(function () {
+    const input = document.getElementById("fixture-search-input");
+    const resultsBox = document.getElementById("fixture-search-results");
+
+    if (!input || !resultsBox) return;
+
+    let debounceTimer = null;
+
+    function hideResults() {
+        resultsBox.style.display = "none";
+        resultsBox.innerHTML = "";
+    }
+
+    function showResults() {
+        resultsBox.style.display = "block";
+    }
+
+    function formatUnixToLondon(unix) {
+        if (!unix) return "";
+        const d = new Date(unix * 1000);
+        return d.toLocaleString("en-GB", {
+            timeZone: "Europe/London",
+            weekday: "short",
+            day: "2-digit",
+            month: "short",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    }
+
+    function renderResults(items) {
+        if (!items || items.length === 0) {
+            hideResults();
+            return;
+        }
+
+        const html = items.map(item => {
+            const timeText = formatUnixToLondon(item.unix);
+            const compText = `${item.competition_country || ""} - ${item.competition_name || ""}`.trim();
+            const fixtureText = item.fixture_name || "";
+            const url = item.details_url || "#";
+
+            return `
+                <div class="search-result-item" data-url="${url}">
+                    <div class="search-result-top">
+                        <span class="search-result-time">${timeText}</span>
+                        <span class="search-result-comp">${compText}</span>
+                        <span class="search-result-arrow">→</span>
+                    </div>
+                    <div class="search-result-fixture">${fixtureText}</div>
+                </div>
+            `;
+        }).join("");
+
+        resultsBox.innerHTML = html;
+        showResults();
+    }
+
+    async function runSearch(q) {
+        const url = `/api/fixture-search?q=${encodeURIComponent(q)}`;
+        try {
+            const res = await fetch(url);
+            if (!res.ok) {
+                hideResults();
+                return;
+            }
+            const data = await res.json();
+            renderResults(data);
+        } catch (e) {
+            hideResults();
+        }
+    }
+
+    input.addEventListener("input", () => {
+        const q = input.value.trim();
+
+        if (q.length < 2) {
+            hideResults();
+            return;
+        }
+
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => runSearch(q), 200);
+    });
+
+    // Click a result -> go to game details
+    resultsBox.addEventListener("click", (e) => {
+        const item = e.target.closest(".search-result-item");
+        if (!item) return;
+
+        const url = item.getAttribute("data-url");
+        if (url && url !== "#") {
+            window.location.href = url;
+        }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+        const clickedInside = e.target.closest(".nav-search");
+        if (!clickedInside) hideResults();
+    });
+
+    // Escape key closes dropdown
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") hideResults();
+    });
+})();
+</script>
 
 </body>
 </html>

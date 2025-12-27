@@ -633,6 +633,46 @@ def _cleanup_h2h_cache() -> None:
             except OSError:
                 pass
 
+@app.route("/api/fixture-search")
+def api_fixture_search():
+    q = (request.args.get("q") or "").strip().lower()
+
+    # Don’t return anything for empty/very short queries
+    if len(q) < 2:
+        return jsonify([])
+
+    # Load cached fixtures (same structure you already use)
+    fixtures_by_date = load_fixtures_cache_from_disk()
+    if not fixtures_by_date:
+        return jsonify([])
+
+    results = []
+
+    # cached_fixtures structure: date -> country -> league -> [fixtures...]
+    for date_key, countries in fixtures_by_date.items():
+        for country_name, leagues in countries.items():
+            for league_name, fixtures in leagues.items():
+                for fx in fixtures:
+                    fixture_name = (fx.get("fixture_name") or "")
+                    if q in fixture_name.lower():
+                        fixture_id = fx.get("fixture_id")
+                        if fixture_id is None:
+                            continue
+
+                        results.append({
+                            "fixture_id": fixture_id,
+                            "fixture_name": fixture_name,
+                            "unix": fx.get("unix"),
+                            "competition_country": country_name,
+                            "competition_name": league_name,
+                            "details_url": url_for("game_details", fixture_id=fixture_id),
+                        })
+
+    # Sort by kickoff time (soonest first), then limit results
+    results.sort(key=lambda x: (x["unix"] is None, x["unix"]))
+    return jsonify(results[:15])
+
+
 @app.route("/api/h2h/<int:fixture_id>")
 def api_h2h(fixture_id: int):
     """
@@ -5007,6 +5047,7 @@ def custom_date(value):
 def debug_settle_ai_bets_once():
     settled = refresh_ai_bets_results_once()
     return jsonify({"settled": settled})
+
 
 
 # =========================
