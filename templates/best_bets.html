@@ -22,6 +22,7 @@
     "over_1_goals": "Over 1.5 Goals",
     "over_2_goals": "Over 2.5 Goals",
     "over_3_goals": "Over 3.5 Goals",
+    "over_0_5_half_goals": "Over 0.5 First Half Goals",
     "home_win": "Home Win"
   } %}
 
@@ -73,7 +74,11 @@
             <td>{{ s.away_away_pct }}</td>
             <td>{{ s.home_total_pct }}</td>
             <td>{{ s.away_total_pct }}</td>
-            <td><a href="/game/{{ r.fixture_id }}">Open</a></td>
+            <td>
+              <a href="/game/{{ r.fixture_id }}" target="_blank" rel="noopener noreferrer">
+                Open
+              </a>
+            </td>
           </tr>
         {% endfor %}
       {% else %}
@@ -135,7 +140,12 @@
             <td>{{ s.away_away_pct }}</td>
             <td>{{ s.home_total_pct }}</td>
             <td>{{ s.away_total_pct }}</td>
-            <td><a href="/game/{{ r.fixture_id }}">Open</a></td>
+            <td>
+              <a href="/game/{{ r.fixture_id }}" target="_blank" rel="noopener noreferrer">
+                Open
+              </a>
+            </td>
+
           </tr>
         {% endfor %}
       {% else %}
@@ -197,7 +207,12 @@
             <td>{{ s.away_away_pct }}</td>
             <td>{{ s.home_total_pct }}</td>
             <td>{{ s.away_total_pct }}</td>
-            <td><a href="/game/{{ r.fixture_id }}">Open</a></td>
+            <td>
+              <a href="/game/{{ r.fixture_id }}" target="_blank" rel="noopener noreferrer">
+                Open
+              </a>
+            </td>
+
           </tr>
         {% endfor %}
       {% else %}
@@ -205,6 +220,74 @@
       {% endif %}
     </tbody>
   </table>
+
+  {# ---------- Over 0.5 First Half Goals ---------- #}
+  <h3>{{ titles["over_0_5_half_goals"] }}</h3>
+  {% set rows = rows_by_market.get("over_0_5_half_goals", []) %}
+  <table class="bb-table">
+    <thead>
+      <tr>
+        <th>Kick Off</th>
+        <th>Country</th>
+        <th>League</th>
+        <th>Fixture</th>
+        <th>Probability</th>
+        <th>Implied Odds</th>
+        <th>Latest Odds</th>
+        <th>Predictability</th>
+        <th>Home Games Played</th>
+        <th>Away Games Played</th>
+        <th>Home %</th>
+        <th>Away %</th>
+        <th>Home Overall %</th>
+        <th>Away Overall %</th>
+        <th>Game</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if rows %}
+        {% for r in rows %}
+          {% set s = r.season_stats or {} %}
+          <tr>
+            <td>{{ r.kickoff_unix | format_kickoff }}</td>
+            <td>{{ r.competition_country }}</td>
+            <td>{{ r.competition_name }}</td>
+            <td>{{ r.fixture_name }}</td>
+            <td>
+              <span class="bb-badge prob-cell"
+                    data-fixture="{{ r.fixture_name }}"
+                    data-market="{{ titles['over_0_5_half_goals'] }}"
+                    data-prob="{{ r.probability }}"
+                    data-odds="{{ r.actual_odds }}"
+                    data-country="{{ r.competition_country }}"
+                    data-league="{{ r.competition_name }}"
+                    data-ko="{{ r.kickoff_unix | format_kickoff }}">
+                {{ r.probability }}%
+              </span>
+            </td>
+            <td>{{ r.implied_odds }}</td>
+            <td>{{ r.actual_odds }}</td>
+            <td>{{ r.predictability|capitalize }}</td>
+            <td>{{ s.home_played_home }}</td>
+            <td>{{ s.away_played_away }}</td>
+            <td>{{ s.home_home_pct }}</td>
+            <td>{{ s.away_away_pct }}</td>
+            <td>{{ s.home_total_pct }}</td>
+            <td>{{ s.away_total_pct }}</td>
+            <td>
+              <a href="/game/{{ r.fixture_id }}" target="_blank" rel="noopener noreferrer">
+                Open
+              </a>
+            </td>
+
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="15">No matches for this market in the current window.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+
 
   {# ---------- Home Win ---------- #}
   <h3>{{ titles["home_win"] }}</h3>
@@ -255,7 +338,12 @@
             <td>{{ s.away_played_away }}</td>
             <td>{{ s.home_win_home_pct }}</td>
             <td>{{ s.away_loss_away_pct }}</td>
-            <td><a href="/game/{{ r.fixture_id }}">Open</a></td>
+            <td>
+              <a href="/game/{{ r.fixture_id }}" target="_blank" rel="noopener noreferrer">
+                Open
+              </a>
+            </td>
+
           </tr>
         {% endfor %}
       {% else %}

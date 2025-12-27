@@ -2453,7 +2453,7 @@ def filter_value_bets():
 @app.route('/best-bets')
 def best_bets():
     # markets to check (now includes Over 1.5 Goals)
-    markets = request.args.getlist('market') or ['over_1_goals', 'over_2_goals', 'over_3_goals', 'home_win']
+    markets = request.args.getlist('market') or ['over_1_goals', 'over_2_goals', 'over_3_goals', 'home_win', 'over_0_5_half_goals']
 
     # value-only toggle (?value_only=1)
     def _as_bool(v):
@@ -2520,21 +2520,7 @@ def best_bets():
             hrow = _find_team_row(season_cache, season_id, home_id)
             arow = _find_team_row(season_cache, season_id, away_id)
 
-            # ✅ Market-specific stat gates
-            if m == 'over_1_goals':
-                passes_stats = _passes_over15_gate(hrow, arow, prob)
-            elif m == 'over_2_goals':
-                passes_stats = _passes_over25_gate(hrow, arow, prob)
-            elif m == 'over_3_goals':
-                passes_stats = _passes_over35_gate(hrow, arow, prob)
-            elif m == 'home_win':
-                passes_stats = _passes_homewin_gate(hrow, arow, prob)
-            else:
-                passes_stats = False
-            if not passes_stats:
-                continue
-
-            # convert odds safely
+            # convert odds safely (needs to happen before the 1H gate)
             def _to_float(v):
                 if v in (None, "", "N/A", "NA", "NaN", "-", "—"):
                     return None
@@ -2548,9 +2534,27 @@ def best_bets():
             if actual_val is None:
                 continue
 
+            # ✅ Market-specific stat gates
+            if m == 'over_1_goals':
+                passes_stats = _passes_over15_gate(hrow, arow, prob)
+            elif m == 'over_2_goals':
+                passes_stats = _passes_over25_gate(hrow, arow, prob)
+            elif m == 'over_3_goals':
+                passes_stats = _passes_over35_gate(hrow, arow, prob)
+            elif m == 'home_win':
+                passes_stats = _passes_homewin_gate(hrow, arow, prob)
+            elif m == "over_0_5_half_goals":
+                passes_stats = _passes_1h_over05_gate(hrow, arow, prob, actual_val)
+            else:
+                passes_stats = False
+
+            if not passes_stats:
+                continue
+
             if value_only:
                 if implied_val is None or not (actual_val > implied_val):
                     continue
+
 
             row = {
                 "fixture_id": int(fid),
@@ -2574,6 +2578,8 @@ def best_bets():
                 row["season_stats"] = _extract_over_stats(hrow, arow, over_key="o3")
             elif m == "home_win":
                 row["season_stats"] = _extract_homewin_stats(hrow, arow)
+            elif m == "over_0_5_half_goals":
+                row["season_stats"] = _extract_1h_over_stats(hrow, arow)
 
             results.append(row)
 
@@ -2586,6 +2592,7 @@ def best_bets():
         "over_2_goals": [],
         "over_3_goals": [],
         "home_win": [],
+        "over_0_5_half_goals": [],
     }
 
     for r in results:
@@ -2602,6 +2609,7 @@ def best_bets():
         "over_2_goals": "Over 2.5 Goals",
         "over_3_goals": "Over 3.5 Goals",
         "home_win": "Home Win",
+        "over_0_5_half_goals": "First Half Goals (Over 0.5)",
     }
 
     return render_template(
@@ -2645,6 +2653,55 @@ def _get_nested(d, path, default=None):
 
 
 # ---------------- Gates (probability + stats inside each) ---------------- #
+
+def _passes_1h_over05_gate(home_row, away_row, prob, actual_odds):
+    """
+    First Half Goals (Over 0.5) gate.
+    Requirements you specified:
+      - prob >= 70%
+      - home team (home split) >= 70% with >= 5 home games
+      - away team (away split) >= 70% with >= 5 away games
+      - BOTH teams overall >= 70%
+      - actual odds >= 1.25
+    Season stats source:
+      home_row["goals_1h_over"]["o0"] and away_row["goals_1h_over"]["o0"]
+    """
+    prob_threshold = 70.0
+    home_home_threshold = 70.0
+    away_away_threshold = 70.0
+    overall_threshold = 70.0
+    min_home_games = 5
+    min_away_games = 5
+    min_odds = 1.25
+
+    # probability + odds checks
+    if prob is None or prob < prob_threshold:
+        return False
+    if actual_odds is None or actual_odds < min_odds:
+        return False
+
+    if not home_row or not away_row:
+        return False
+
+    # sample sizes (from goals_1h_over.o0 counts)
+    h_home_played = _get_nested(home_row, "goals_1h_over.o0.home", 0)
+    a_away_played = _get_nested(away_row, "goals_1h_over.o0.away", 0)
+    if h_home_played < min_home_games or a_away_played < min_away_games:
+        return False
+
+    # % splits + overall
+    h_home_pct = float(_get_nested(home_row, "goals_1h_over.o0.home_percentage", 0) or 0)
+    a_away_pct = float(_get_nested(away_row, "goals_1h_over.o0.away_percentage", 0) or 0)
+    h_total_pct = float(_get_nested(home_row, "goals_1h_over.o0.total_percentage", 0) or 0)
+    a_total_pct = float(_get_nested(away_row, "goals_1h_over.o0.total_percentage", 0) or 0)
+
+    return (
+        h_home_pct >= home_home_threshold and
+        a_away_pct >= away_away_threshold and
+        h_total_pct >= overall_threshold and
+        a_total_pct >= overall_threshold
+    )
+
 
 def _passes_over15_gate(home_row, away_row, prob):
     """Over 1.5 Goals gate: internal thresholds."""
@@ -2784,6 +2841,39 @@ def _passes_homewin_gate(home_row, away_row, prob):
 
 
 # -------- Optional: season stats extractors (handy for rendering the columns) --------
+
+def _extract_1h_over_stats(home_row, away_row):
+    """
+    First Half Goals (Over 0.5) season stats extractor.
+    Returns the SAME keys your tables already use:
+      home_played_home, away_played_away, home_home_pct, away_away_pct,
+      home_total_pct, away_total_pct
+    But sourced from goals_1h_over.o0.*
+    """
+    if not home_row or not away_row:
+        return {}
+
+    stats = {
+        # sample sizes from the goals_1h_over.o0 bucket
+        "home_played_home": _get_nested(home_row, "goals_1h_over.o0.home", 0),
+        "away_played_away": _get_nested(away_row, "goals_1h_over.o0.away", 0),
+        "home_played_total": _get_nested(home_row, "goals_1h_over.o0.total", 0),
+        "away_played_total": _get_nested(away_row, "goals_1h_over.o0.total", 0),
+
+        # percentages
+        "home_home_pct": _get_nested(home_row, "goals_1h_over.o0.home_percentage", 0) or 0,
+        "away_away_pct": _get_nested(away_row, "goals_1h_over.o0.away_percentage", 0) or 0,
+        "home_total_pct": _get_nested(home_row, "goals_1h_over.o0.total_percentage", 0) or 0,
+        "away_total_pct": _get_nested(away_row, "goals_1h_over.o0.total_percentage", 0) or 0,
+    }
+
+    for k in ("home_home_pct", "away_away_pct", "home_total_pct", "away_total_pct"):
+        try:
+            stats[k] = round(float(stats[k]), 2)
+        except Exception:
+            stats[k] = 0.0
+
+    return stats
 
 def _extract_over_stats(home_row, away_row, over_key="o2"):
     """
