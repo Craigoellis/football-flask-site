@@ -1361,6 +1361,16 @@
     <tbody>
         <!-- 1st Half Averages -->
         <tr>
+            <td>1H Corners Total (Avg)</td>
+            <td>{{ home_stats.get('corners_1h_total', {}).get('home_avg', 'N/A') }}</td>
+            <td>{{ home_stats.get('corners_1h_total', {}).get('away_avg', 'N/A') }}</td>
+            <td>{{ home_stats.get('corners_1h_total', {}).get('total_avg', 'N/A') }}</td>
+
+            <td>{{ away_stats.get('corners_1h_total', {}).get('home_avg', 'N/A') }}</td>
+            <td>{{ away_stats.get('corners_1h_total', {}).get('away_avg', 'N/A') }}</td>
+            <td>{{ away_stats.get('corners_1h_total', {}).get('total_avg', 'N/A') }}</td>
+        </tr>
+        <tr>
             <td>1H Corners For (Avg)</td>
             <td>{{ home_stats.get('corners_1h_for', {}).get('home_avg', 'N/A') }}</td>
             <td>{{ home_stats.get('corners_1h_for', {}).get('away_avg', 'N/A') }}</td>
