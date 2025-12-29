@@ -243,6 +243,67 @@
     </tbody>
 </table>  <!-- Closing the Full Time Result Table -->
 
+<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
+    <thead>
+        <!-- Main Title Row -->
+        <tr style="background-color: #007bff; color: white;">
+            <th colspan="7" style="font-size: 18px;">Half Time Results</th>
+        </tr>
+
+        <!-- Team Names Row -->
+        <tr style="background-color: #007bff; color: white;">
+            <th rowspan="2">Statistic</th>
+            <th colspan="3">{{ home_team }}</th>
+            <th colspan="3">{{ away_team }}</th>
+        </tr>
+
+        <!-- Home | Away | Overall -->
+        <tr style="background-color: #007bff; color: white;">
+            <th>Home</th>
+            <th>Away</th>
+            <th>Overall</th>
+            <th>Home</th>
+            <th>Away</th>
+            <th>Overall</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>Won at HT</td>
+            <td>{{ home_stats.get('won_at_ht', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('won_at_ht', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('won_at_ht', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('won_at_ht', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('won_at_ht', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('won_at_ht', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>Drawn at HT</td>
+            <td>{{ home_stats.get('drawn_at_ht', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('drawn_at_ht', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('drawn_at_ht', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('drawn_at_ht', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('drawn_at_ht', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('drawn_at_ht', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>Lost at HT</td>
+            <td>{{ home_stats.get('lost_at_ht', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('lost_at_ht', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('lost_at_ht', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('lost_at_ht', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('lost_at_ht', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('lost_at_ht', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+    </tbody>
+</table>
+
 <br>  <!-- Add this to drop the next table below -->
 
 <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
@@ -341,6 +402,26 @@
     <td>{{ away_stats.get('btts', {}).get('home_percentage', 'N/A') }}%</td>
     <td>{{ away_stats.get('btts', {}).get('away_percentage', 'N/A') }}%</td>
     <td>{{ away_stats.get('btts', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+<tr>
+    <td>BTTS & Over 2.5</td>
+    <td>{{ home_stats.get('btts_and_o25', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('btts_and_o25', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('btts_and_o25', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('btts_and_o25', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('btts_and_o25', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('btts_and_o25', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+<tr>
+    <td>BTTS or Over 2.5</td>
+    <td>{{ home_stats.get('btts_or_o25', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('btts_or_o25', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('btts_or_o25', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('btts_or_o25', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('btts_or_o25', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('btts_or_o25', {}).get('total_percentage', 'N/A') }}%</td>
 </tr>
 <tr>
     <td>Scored Over 0.5 Goals</td>
@@ -442,6 +523,28 @@
     <td>{{ away_stats.get('xg_against', {}).get('away_avg', 'N/A') }}</td>
     <td>{{ away_stats.get('xg_against', {}).get('total_avg', 'N/A') }}</td>
 </tr>
+<tr>
+    <td>Failed To Score</td>
+    <td>{{ home_stats.get('failed_to_score', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('failed_to_score', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('failed_to_score', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('failed_to_score', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('failed_to_score', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('failed_to_score', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>Clean Sheet</td>
+    <td>{{ home_stats.get('clean_sheet', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('clean_sheet', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('clean_sheet', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('clean_sheet', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('clean_sheet', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('clean_sheet', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
 
 </tr>
     </tbody>
@@ -788,6 +891,39 @@
         <td>{{ away_stats.get('goals_against_2h', {}).get('away_avg', 'N/A') }}</td>
         <td>{{ away_stats.get('goals_against_2h', {}).get('total_avg', 'N/A') }}</td>
       </tr>
+      <tr>
+        <td>Scored After 70 Minutes</td>
+        <td>{{ home_stats.get('scored_after_70', {}).get('home_percentage', 'N/A') }}%</td>
+        <td>{{ home_stats.get('scored_after_70', {}).get('away_percentage', 'N/A') }}%</td>
+        <td>{{ home_stats.get('scored_after_70', {}).get('total_percentage', 'N/A') }}%</td>
+
+        <td>{{ away_stats.get('scored_after_70', {}).get('home_percentage', 'N/A') }}%</td>
+        <td>{{ away_stats.get('scored_after_70', {}).get('away_percentage', 'N/A') }}%</td>
+        <td>{{ away_stats.get('scored_after_70', {}).get('total_percentage', 'N/A') }}%</td>
+    </tr>
+
+    <tr>
+        <td>Conceded After 70 Minutes</td>
+        <td>{{ home_stats.get('conceded_after_70', {}).get('home_percentage', 'N/A') }}%</td>
+        <td>{{ home_stats.get('conceded_after_70', {}).get('away_percentage', 'N/A') }}%</td>
+        <td>{{ home_stats.get('conceded_after_70', {}).get('total_percentage', 'N/A') }}%</td>
+
+        <td>{{ away_stats.get('conceded_after_70', {}).get('home_percentage', 'N/A') }}%</td>
+        <td>{{ away_stats.get('conceded_after_70', {}).get('away_percentage', 'N/A') }}%</td>
+        <td>{{ away_stats.get('conceded_after_70', {}).get('total_percentage', 'N/A') }}%</td>
+    </tr>
+
+    <tr>
+        <td>Goals After 70 Minutes</td>
+        <td>{{ home_stats.get('goals_after_70', {}).get('home_percentage', 'N/A') }}%</td>
+        <td>{{ home_stats.get('goals_after_70', {}).get('away_percentage', 'N/A') }}%</td>
+        <td>{{ home_stats.get('goals_after_70', {}).get('total_percentage', 'N/A') }}%</td>
+
+        <td>{{ away_stats.get('goals_after_70', {}).get('home_percentage', 'N/A') }}%</td>
+        <td>{{ away_stats.get('goals_after_70', {}).get('away_percentage', 'N/A') }}%</td>
+        <td>{{ away_stats.get('goals_after_70', {}).get('total_percentage', 'N/A') }}%</td>
+    </tr>
+
     </tbody>
   </table>
 </section>
@@ -1157,6 +1293,432 @@
 
 <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
     <thead>
+        <!-- Main Title Row -->
+        <tr style="background-color: #007bff; color: white;">
+            <th colspan="7" style="font-size: 18px;">Corner Timings</th>
+        </tr>
+
+        <!-- Team Names Row -->
+        <tr style="background-color: #007bff; color: white;">
+            <th rowspan="2">Statistic</th>
+            <th colspan="3">{{ home_team }}</th>
+            <th colspan="3">{{ away_team }}</th>
+        </tr>
+
+        <!-- Home | Away | Overall Labels Row -->
+        <tr style="background-color: #007bff; color: white;">
+            <th>Home</th>
+            <th>Away</th>
+            <th>Overall</th>
+            <th>Home</th>
+            <th>Away</th>
+            <th>Overall</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <!-- 1st Half Averages -->
+        <tr>
+            <td>1H Corners For (Avg)</td>
+            <td>{{ home_stats.get('corners_1h_for', {}).get('home_avg', 'N/A') }}</td>
+            <td>{{ home_stats.get('corners_1h_for', {}).get('away_avg', 'N/A') }}</td>
+            <td>{{ home_stats.get('corners_1h_for', {}).get('total_avg', 'N/A') }}</td>
+
+            <td>{{ away_stats.get('corners_1h_for', {}).get('home_avg', 'N/A') }}</td>
+            <td>{{ away_stats.get('corners_1h_for', {}).get('away_avg', 'N/A') }}</td>
+            <td>{{ away_stats.get('corners_1h_for', {}).get('total_avg', 'N/A') }}</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners Against (Avg)</td>
+            <td>{{ home_stats.get('corners_1h_against', {}).get('home_avg', 'N/A') }}</td>
+            <td>{{ home_stats.get('corners_1h_against', {}).get('away_avg', 'N/A') }}</td>
+            <td>{{ home_stats.get('corners_1h_against', {}).get('total_avg', 'N/A') }}</td>
+
+            <td>{{ away_stats.get('corners_1h_against', {}).get('home_avg', 'N/A') }}</td>
+            <td>{{ away_stats.get('corners_1h_against', {}).get('away_avg', 'N/A') }}</td>
+            <td>{{ away_stats.get('corners_1h_against', {}).get('total_avg', 'N/A') }}</td>
+        </tr>
+
+        <!-- 1st Half Corners Over (o2 - o6) -->
+        <tr>
+            <td>1H Corners Over 2</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners Over 3</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners Over 4</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o4', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o4', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o4', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o4', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o4', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o4', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners Over 5</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o5', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o5', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o5', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o5', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o5', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o5', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners Over 6</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o6', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o6', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_over', {}).get('o6', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o6', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o6', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_over', {}).get('o6', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <!-- 1st Half Corners For Over (o0 - o4) -->
+        <tr>
+            <td>1H Corners For Over 0</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners For Over 1</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners For Over 2</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners For Over 3</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners For Over 4</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o4', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o4', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_for_over', {}).get('o4', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o4', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o4', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_for_over', {}).get('o4', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <!-- 1st Half Corners Against Over (o0 - o4) -->
+        <tr>
+            <td>1H Corners Against Over 0</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners Against Over 1</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners Against Over 2</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners Against Over 3</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>1H Corners Against Over 4</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o4', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o4', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_1h_against_over', {}).get('o4', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o4', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o4', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_1h_against_over', {}).get('o4', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <!-- 2nd Half Averages -->
+        <tr>
+            <td>2H Corners Total (Avg)</td>
+            <td>{{ home_stats.get('corners_2h_total', {}).get('home_avg', 'N/A') }}</td>
+            <td>{{ home_stats.get('corners_2h_total', {}).get('away_avg', 'N/A') }}</td>
+            <td>{{ home_stats.get('corners_2h_total', {}).get('total_avg', 'N/A') }}</td>
+
+            <td>{{ away_stats.get('corners_2h_total', {}).get('home_avg', 'N/A') }}</td>
+            <td>{{ away_stats.get('corners_2h_total', {}).get('away_avg', 'N/A') }}</td>
+            <td>{{ away_stats.get('corners_2h_total', {}).get('total_avg', 'N/A') }}</td>
+        </tr>
+
+        <tr>
+            <td>2H Corners For (Avg)</td>
+            <td>{{ home_stats.get('corners_2h_for', {}).get('home_avg', 'N/A') }}</td>
+            <td>{{ home_stats.get('corners_2h_for', {}).get('away_avg', 'N/A') }}</td>
+            <td>{{ home_stats.get('corners_2h_for', {}).get('total_avg', 'N/A') }}</td>
+
+            <td>{{ away_stats.get('corners_2h_for', {}).get('home_avg', 'N/A') }}</td>
+            <td>{{ away_stats.get('corners_2h_for', {}).get('away_avg', 'N/A') }}</td>
+            <td>{{ away_stats.get('corners_2h_for', {}).get('total_avg', 'N/A') }}</td>
+        </tr>
+
+        <tr>
+            <td>2H Corners Against (Avg)</td>
+            <td>{{ home_stats.get('corners_2h_against', {}).get('home_avg', 'N/A') }}</td>
+            <td>{{ home_stats.get('corners_2h_against', {}).get('away_avg', 'N/A') }}</td>
+            <td>{{ home_stats.get('corners_2h_against', {}).get('total_avg', 'N/A') }}</td>
+
+            <td>{{ away_stats.get('corners_2h_against', {}).get('home_avg', 'N/A') }}</td>
+            <td>{{ away_stats.get('corners_2h_against', {}).get('away_avg', 'N/A') }}</td>
+            <td>{{ away_stats.get('corners_2h_against', {}).get('total_avg', 'N/A') }}</td>
+        </tr>
+
+        <!-- 2nd Half Corners Over (o2 - o6) -->
+        <tr>
+            <td>2H Corners Over 2</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <!-- Repeat for o3 - o6 -->
+        <tr>
+            <td>2H Corners Over 3</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>2H Corners Over 4</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o4', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o4', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o4', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o4', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o4', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o4', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>2H Corners Over 5</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o5', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o5', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o5', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o5', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o5', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o5', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>2H Corners Over 6</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o6', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o6', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_over', {}).get('o6', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o6', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o6', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_over', {}).get('o6', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <!-- 2nd Half Corners For Over (o0 - o4) -->
+        <tr>
+            <td>2H Corners For Over 0</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+        <!-- 2nd Half Corners For Over (o1 - o4) -->
+        <tr>
+            <td>2H Corners For Over 1</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>2H Corners For Over 2</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>2H Corners For Over 3</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>2H Corners For Over 4</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o4', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o4', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_for_over', {}).get('o4', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o4', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o4', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_for_over', {}).get('o4', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <!-- 2nd Half Corners Against Over (o0 - o4) -->
+        <tr>
+            <td>2H Corners Against Over 0</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>2H Corners Against Over 1</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>2H Corners Against Over 2</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>2H Corners Against Over 3</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+        <tr>
+            <td>2H Corners Against Over 4</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o4', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o4', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ home_stats.get('corners_2h_against_over', {}).get('o4', {}).get('total_percentage', 'N/A') }}%</td>
+
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o4', {}).get('home_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o4', {}).get('away_percentage', 'N/A') }}%</td>
+            <td>{{ away_stats.get('corners_2h_against_over', {}).get('o4', {}).get('total_percentage', 'N/A') }}%</td>
+        </tr>
+
+
+        <!-- Continue similarly: o1-o4 for corners_2h_for_over and o0-o4 for corners_2h_against_over -->
+    </tbody>
+</table>
+
+
+<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
+    <thead>
         <tr style="background-color: #007bff; color: white;">
             <th colspan="7" style="font-size: 18px;">Cards Statistics</th>
         </tr>
@@ -1232,6 +1794,359 @@
     <td>{{ away_stats.get('red_cards_opponent', {}).get('away_avg', 'N/A') }}</td>
     <td>{{ away_stats.get('red_cards_opponent', {}).get('total_avg', 'N/A') }}</td>
 </tr>
+<tr>
+    <td>Cards For Over 0</td>
+    <td>{{ home_stats.get('cards_for_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_for_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_for_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_for_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_for_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_for_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>Cards For Over 1</td>
+    <td>{{ home_stats.get('cards_for_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_for_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_for_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_for_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_for_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_for_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>Cards For Over 2</td>
+    <td>{{ home_stats.get('cards_for_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_for_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_for_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_for_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_for_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_for_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>Cards For Over 3</td>
+    <td>{{ home_stats.get('cards_for_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_for_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_for_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_for_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_for_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_for_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+<tr>
+    <td>Cards Against Over 0</td>
+    <td>{{ home_stats.get('cards_against_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_against_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_against_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_against_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_against_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_against_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>Cards Against Over 1</td>
+    <td>{{ home_stats.get('cards_against_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_against_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_against_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_against_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_against_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_against_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>Cards Against Over 2</td>
+    <td>{{ home_stats.get('cards_against_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_against_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_against_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_against_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_against_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_against_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>Cards Against Over 3</td>
+    <td>{{ home_stats.get('cards_against_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_against_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_against_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_against_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_against_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_against_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+<tr>
+    <td>1H Cards For (Avg)</td>
+    <td>{{ home_stats.get('cards_1h_for', {}).get('home_avg', 'N/A') }}</td>
+    <td>{{ home_stats.get('cards_1h_for', {}).get('away_avg', 'N/A') }}</td>
+    <td>{{ home_stats.get('cards_1h_for', {}).get('total_avg', 'N/A') }}</td>
+
+    <td>{{ away_stats.get('cards_1h_for', {}).get('home_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('cards_1h_for', {}).get('away_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('cards_1h_for', {}).get('total_avg', 'N/A') }}</td>
+</tr>
+<tr>
+    <td>1H Cards Against (Avg)</td>
+    <td>{{ home_stats.get('cards_1h_against', {}).get('home_avg', 'N/A') }}</td>
+    <td>{{ home_stats.get('cards_1h_against', {}).get('away_avg', 'N/A') }}</td>
+    <td>{{ home_stats.get('cards_1h_against', {}).get('total_avg', 'N/A') }}</td>
+
+    <td>{{ away_stats.get('cards_1h_against', {}).get('home_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('cards_1h_against', {}).get('away_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('cards_1h_against', {}).get('total_avg', 'N/A') }}</td>
+</tr>
+<tr>
+    <td>1H Cards Over 0</td>
+    <td>{{ home_stats.get('cards_1h_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_1h_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>1H Cards Over 1</td>
+    <td>{{ home_stats.get('cards_1h_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_1h_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>1H Cards Over 2</td>
+    <td>{{ home_stats.get('cards_1h_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_1h_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>1H Cards Over 3</td>
+    <td>{{ home_stats.get('cards_1h_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_1h_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+<tr>
+    <td>1H Cards For Over 0</td>
+    <td>{{ home_stats.get('cards_1h_for_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_for_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_for_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_1h_for_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_for_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_for_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>1H Cards For Over 1</td>
+    <td>{{ home_stats.get('cards_1h_for_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_for_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_for_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_1h_for_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_for_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_for_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>1H Cards For Over 2</td>
+    <td>{{ home_stats.get('cards_1h_for_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_for_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_for_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_1h_for_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_for_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_for_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+<tr>
+    <td>1H Cards Against Over 0</td>
+    <td>{{ home_stats.get('cards_1h_against_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_against_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_against_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_1h_against_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_against_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_against_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>1H Cards Against Over 1</td>
+    <td>{{ home_stats.get('cards_1h_against_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_against_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_against_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_1h_against_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_against_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_against_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>1H Cards Against Over 2</td>
+    <td>{{ home_stats.get('cards_1h_against_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_against_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_1h_against_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_1h_against_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_against_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_1h_against_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+<tr>
+    <td>2H Cards Total (Avg)</td>
+    <td>{{ home_stats.get('cards_2h_total', {}).get('home_avg', 'N/A') }}</td>
+    <td>{{ home_stats.get('cards_2h_total', {}).get('away_avg', 'N/A') }}</td>
+    <td>{{ home_stats.get('cards_2h_total', {}).get('total_avg', 'N/A') }}</td>
+
+    <td>{{ away_stats.get('cards_2h_total', {}).get('home_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('cards_2h_total', {}).get('away_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('cards_2h_total', {}).get('total_avg', 'N/A') }}</td>
+</tr>
+
+<tr>
+    <td>2H Cards For (Avg)</td>
+    <td>{{ home_stats.get('cards_2h_for', {}).get('home_avg', 'N/A') }}</td>
+    <td>{{ home_stats.get('cards_2h_for', {}).get('away_avg', 'N/A') }}</td>
+    <td>{{ home_stats.get('cards_2h_for', {}).get('total_avg', 'N/A') }}</td>
+
+    <td>{{ away_stats.get('cards_2h_for', {}).get('home_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('cards_2h_for', {}).get('away_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('cards_2h_for', {}).get('total_avg', 'N/A') }}</td>
+</tr>
+
+<tr>
+    <td>2H Cards Against (Avg)</td>
+    <td>{{ home_stats.get('cards_2h_against', {}).get('home_avg', 'N/A') }}</td>
+    <td>{{ home_stats.get('cards_2h_against', {}).get('away_avg', 'N/A') }}</td>
+    <td>{{ home_stats.get('cards_2h_against', {}).get('total_avg', 'N/A') }}</td>
+
+    <td>{{ away_stats.get('cards_2h_against', {}).get('home_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('cards_2h_against', {}).get('away_avg', 'N/A') }}</td>
+    <td>{{ away_stats.get('cards_2h_against', {}).get('total_avg', 'N/A') }}</td>
+</tr>
+<tr>
+    <td>2H Cards Over 0</td>
+    <td>{{ home_stats.get('cards_2h_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_2h_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>2H Cards Over 1</td>
+    <td>{{ home_stats.get('cards_2h_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_2h_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>2H Cards Over 2</td>
+    <td>{{ home_stats.get('cards_2h_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_2h_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>2H Cards Over 3</td>
+    <td>{{ home_stats.get('cards_2h_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_2h_over', {}).get('o3', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_over', {}).get('o3', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_over', {}).get('o3', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+<tr>
+    <td>2H Cards For Over 0</td>
+    <td>{{ home_stats.get('cards_2h_for_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_for_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_for_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_2h_for_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_for_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_for_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>2H Cards For Over 1</td>
+    <td>{{ home_stats.get('cards_2h_for_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_for_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_for_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_2h_for_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_for_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_for_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>2H Cards For Over 2</td>
+    <td>{{ home_stats.get('cards_2h_for_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_for_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_for_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_2h_for_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_for_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_for_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+<tr>
+    <td>2H Cards Against Over 0</td>
+    <td>{{ home_stats.get('cards_2h_against_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_against_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_against_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_2h_against_over', {}).get('o0', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_against_over', {}).get('o0', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_against_over', {}).get('o0', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>2H Cards Against Over 1</td>
+    <td>{{ home_stats.get('cards_2h_against_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_against_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_against_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_2h_against_over', {}).get('o1', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_against_over', {}).get('o1', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_against_over', {}).get('o1', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
+<tr>
+    <td>2H Cards Against Over 2</td>
+    <td>{{ home_stats.get('cards_2h_against_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_against_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ home_stats.get('cards_2h_against_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+
+    <td>{{ away_stats.get('cards_2h_against_over', {}).get('o2', {}).get('home_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_against_over', {}).get('o2', {}).get('away_percentage', 'N/A') }}%</td>
+    <td>{{ away_stats.get('cards_2h_against_over', {}).get('o2', {}).get('total_percentage', 'N/A') }}%</td>
+</tr>
+
 
 <!-- Over X Cards Section -->
 {% for i in range(0, 7) %}
