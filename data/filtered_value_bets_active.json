@@ -1,0 +1,46 @@
+{
+  "generated_at": "2025-12-29T18:10:55.315309Z",
+  "count": 2,
+  "rows": [
+    {
+      "bet_key": "None:home_win_probability:Home Win V2:Pinnacle",
+      "matched_strategy": "Home Win V2",
+      "fixture_id": null,
+      "fixture_name": "Tivoli Gardens vs Chapelton",
+      "ko_human": "22:00",
+      "competition_country": "Jamaica",
+      "competition_name": "Premier League",
+      "predictability": "high",
+      "is_cup": false,
+      "is_friendly": false,
+      "progress": 51,
+      "market": "home_win_probability",
+      "probability": 52.8,
+      "implied_odds": 1.89,
+      "bookmaker": "Pinnacle",
+      "latest_odds": 2.05,
+      "opening_odds": 1.86,
+      "value_percentage": 8.47
+    },
+    {
+      "bet_key": "None:home_win_probability:Home Win V1:Betfair Exchange",
+      "matched_strategy": "Home Win V1",
+      "fixture_id": null,
+      "fixture_name": "Rangers vs St. Mirren",
+      "ko_human": "Tue 30th, 19:45",
+      "competition_country": "Scotland",
+      "competition_name": "Premiership",
+      "predictability": "high",
+      "is_cup": false,
+      "is_friendly": false,
+      "progress": 58,
+      "market": "home_win_probability",
+      "probability": 57.0,
+      "implied_odds": 1.75,
+      "bookmaker": "Betfair Exchange",
+      "latest_odds": 4.2,
+      "opening_odds": 1.04,
+      "value_percentage": 140.0
+    }
+  ]
+}

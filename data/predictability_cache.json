@@ -1,203 +1,57 @@
 {
-    "timestamp": "2025-12-07T20:55:34.807787",
+    "timestamp": "2025-12-29T18:13:46.318276",
     "data": {
-        "Bolivia": {
-            "758": {
-                "name": "Liga De Futbol Prof",
-                "predictability": "high"
-            }
-        },
-        "Bulgaria": {
-            "161": {
-                "name": "First League",
+        "Portugal": {
+            "475": {
+                "name": "Liga Portugal",
                 "predictability": "high"
             },
-            "19": {
-                "name": "Second League",
-                "predictability": "good"
-            }
-        },
-        "Nigeria": {
-            "771": {
-                "name": "Npfl",
-                "predictability": "poor"
-            }
-        },
-        "Poland": {
-            "158": {
-                "name": "1. Liga",
-                "predictability": "medium"
-            },
-            "165": {
-                "name": "Ekstraklasa",
-                "predictability": "poor"
-            }
-        },
-        "Northern Ireland": {
-            "640": {
-                "name": "Premiership Development League",
+            "397": {
+                "name": "Liga Portugal 2",
                 "predictability": "poor"
             },
-            "644": {
-                "name": "Premiership",
-                "predictability": "medium"
-            }
-        },
-        "Albania": {
-            "713": {
-                "name": "1st Division",
-                "predictability": "poor"
-            },
-            "425": {
-                "name": "Superliga",
-                "predictability": "medium"
-            }
-        },
-        "Bosnia and Herzegovina": {
-            "275": {
-                "name": "Premier Liga",
-                "predictability": "high"
-            }
-        },
-        "Serbia": {
-            "155": {
-                "name": "Super Liga",
-                "predictability": "poor"
-            },
-            "156": {
-                "name": "Prva Liga",
+            "1013": {
+                "name": "Liga 3",
                 "predictability": "poor"
             }
         },
         "Algeria": {
             "751": {
                 "name": "Ligue 1",
-                "predictability": "good"
-            }
-        },
-        "Israel": {
-            "126": {
-                "name": "Liga Leumit",
-                "predictability": "medium"
-            }
-        },
-        "Italy": {
-            "554": {
-                "name": "Serie C: Girone A",
-                "predictability": "good"
-            },
-            "545": {
-                "name": "Serie B",
-                "predictability": "poor"
-            },
-            "552": {
-                "name": "Serie C: Girone B",
-                "predictability": "medium"
-            },
-            "499": {
-                "name": "Serie A",
                 "predictability": "high"
-            },
-            "291": {
-                "name": "Serie A Women",
-                "predictability": "poor"
-            }
-        },
-        "Turkey": {
-            "414": {
-                "name": "Super Lig",
-                "predictability": "good"
-            },
-            "410": {
-                "name": "1. Lig",
-                "predictability": "high"
-            }
-        },
-        "Spain": {
-            "420": {
-                "name": "La Liga 2",
-                "predictability": "poor"
-            },
-            "1033": {
-                "name": "Primera Division RFEF: Group 1",
-                "predictability": "poor"
-            },
-            "419": {
-                "name": "La Liga",
-                "predictability": "high"
-            },
-            "1046": {
-                "name": "Segunda Division RFEF: Group 4",
-                "predictability": "poor"
-            }
-        },
-        "France": {
-            "256": {
-                "name": "Ligue 2",
-                "predictability": "poor"
-            },
-            "200": {
-                "name": "Ligue 1",
-                "predictability": "high"
-            },
-            "192": {
-                "name": "National",
-                "predictability": "medium"
-            }
-        },
-        "Azerbaijan": {
-            "405": {
-                "name": "Premier League",
-                "predictability": "good"
-            }
-        },
-        "Portugal": {
-            "475": {
-                "name": "Liga Portugal",
-                "predictability": "high"
-            },
-            "427": {
-                "name": "Liga Revelacao U23",
-                "predictability": "medium"
-            },
-            "397": {
-                "name": "Liga Portugal 2",
-                "predictability": "poor"
-            }
-        },
-        "Romania": {
-            "159": {
-                "name": "Superliga",
-                "predictability": "medium"
             }
         },
         "England": {
-            "327": {
-                "name": "FA Cup",
+            "431": {
+                "name": "League One",
                 "predictability": "poor"
             },
-            "423": {
-                "name": "Premier League",
+            "418": {
+                "name": "Championship",
+                "predictability": "poor"
+            },
+            "432": {
+                "name": "League Two",
+                "predictability": "medium"
+            },
+            "1018": {
+                "name": "Non League Div One: Northern East",
+                "predictability": "poor"
+            },
+            "593": {
+                "name": "Enterprise National League South",
                 "predictability": "medium"
             },
             "581": {
                 "name": "Enterprise National League",
                 "predictability": "high"
             },
-            "418": {
-                "name": "Championship",
-                "predictability": "good"
+            "423": {
+                "name": "Premier League",
+                "predictability": "high"
             },
-            "432": {
-                "name": "League Two",
-                "predictability": "poor"
-            },
-            "431": {
-                "name": "League One",
-                "predictability": "poor"
-            },
-            "489": {
-                "name": "Non League Premier: Southern South",
+            "1527": {
+                "name": "Alan Turvey Trophy",
                 "predictability": "good"
             },
             "586": {
@@ -207,171 +61,69 @@
             "492": {
                 "name": "Non League Premier: Northern",
                 "predictability": "poor"
-            },
-            "490": {
-                "name": "Non League Premier: Isthmian",
-                "predictability": "medium"
-            },
-            "330": {
-                "name": "EFL Trophy",
-                "predictability": "poor"
-            },
-            "488": {
-                "name": "Non League Premier: Southern Central",
-                "predictability": "medium"
-            },
-            "593": {
-                "name": "Enterprise National League South",
-                "predictability": "good"
-            },
-            "1016": {
-                "name": "Non League Div One: Northern West",
-                "predictability": "poor"
-            },
-            "367": {
-                "name": "Women's Super League",
-                "predictability": "high"
             }
         },
-        "Ukraine": {
-            "409": {
-                "name": "Premier League",
+        "Italy": {
+            "499": {
+                "name": "Serie A",
                 "predictability": "good"
             }
         },
-        "Argentina": {
-            "699": {
-                "name": "Liga Profesional de F\u00fatbol",
+        "Qatar": {
+            "339": {
+                "name": "Stars League",
+                "predictability": "poor"
+            },
+            "691": {
+                "name": "Q League",
                 "predictability": "poor"
             }
         },
-        "Denmark": {
-            "413": {
-                "name": "Superliga",
-                "predictability": "good"
+        "World": {
+            "1131": {
+                "name": "Africa Cup of Nations",
+                "predictability": "poor"
+            }
+        },
+        "Saudi Arabia": {
+            "27": {
+                "name": "Pro League",
+                "predictability": "high"
             },
-            "328": {
-                "name": "Landspokal Cup",
+            "100": {
+                "name": "Division 1",
+                "predictability": "high"
+            },
+            "1190": {
+                "name": "Division 2",
+                "predictability": "poor"
+            }
+        },
+        "Israel": {
+            "795": {
+                "name": "Ligat Al Women",
+                "predictability": "poor"
+            },
+            "126": {
+                "name": "Liga Leumit",
+                "predictability": "poor"
+            },
+            "1127": {
+                "name": "Liga Bet - South A",
                 "predictability": "high"
             }
         },
-        "Greece": {
-            "406": {
-                "name": "Super League",
-                "predictability": "high"
-            }
-        },
-        "Europe": {
-            "50": {
-                "name": "UEFA Women's Champions League",
-                "predictability": "high"
-            },
-            "51": {
-                "name": "Champions League",
+        "Northern Ireland": {
+            "640": {
+                "name": "Premiership Development League",
                 "predictability": "poor"
             },
-            "32": {
-                "name": "Europa League",
-                "predictability": "medium"
-            },
-            "976": {
-                "name": "Europa Conference League",
-                "predictability": "poor"
-            }
-        },
-        "Ecuador": {
-            "40": {
-                "name": "Liga Pro",
-                "predictability": "medium"
-            }
-        },
-        "Asia": {
-            "456": {
-                "name": "AFC Champions League Elite",
-                "predictability": "medium"
-            }
-        },
-        "Switzerland": {
-            "472": {
-                "name": "Challenge League",
-                "predictability": "good"
-            },
-            "500": {
-                "name": "Super League",
-                "predictability": "medium"
-            }
-        },
-        "Germany": {
-            "24": {
-                "name": "Regionalliga: Nordost",
-                "predictability": "poor"
-            },
-            "477": {
-                "name": "Bundesliga",
-                "predictability": "high"
-            },
-            "471": {
-                "name": "2. Bundesliga",
-                "predictability": "medium"
-            },
-            "351": {
-                "name": "Regionalliga: Nord",
-                "predictability": "poor"
-            }
-        },
-        "Australia": {
-            "797": {
-                "name": "A-League Women",
-                "predictability": "poor"
-            },
-            "72": {
-                "name": "A-League Men",
-                "predictability": "poor"
-            }
-        },
-        "Netherlands": {
-            "437": {
-                "name": "Eredivisie",
-                "predictability": "good"
-            }
-        },
-        "Scotland": {
-            "259": {
+            "644": {
                 "name": "Premiership",
                 "predictability": "high"
             },
-            "642": {
-                "name": "League One",
-                "predictability": "high"
-            },
-            "643": {
-                "name": "League Two",
-                "predictability": "poor"
-            },
-            "637": {
+            "754": {
                 "name": "Championship",
-                "predictability": "poor"
-            }
-        },
-        "Austria": {
-            "411": {
-                "name": "Admiral Bundesliga",
-                "predictability": "poor"
-            }
-        },
-        "Indonesia": {
-            "10": {
-                "name": "Liga 1",
-                "predictability": "high"
-            }
-        },
-        "Wales": {
-            "995": {
-                "name": "FAW Championship - North",
-                "predictability": "high"
-            },
-            "430": {
-                "name": "Premier League",
                 "predictability": "good"
             }
         },
@@ -381,50 +133,156 @@
                 "predictability": "high"
             }
         },
-        "Belgium": {
-            "194": {
-                "name": "Challenger Pro League",
-                "predictability": "medium"
-            }
-        },
-        "Malawi": {
-            "753": {
-                "name": "Super League",
+        "Spain": {
+            "1148": {
+                "name": "Divisi\u00f3n De Honor Juvenil - Group 6",
+                "predictability": "high"
+            },
+            "419": {
+                "name": "La Liga",
+                "predictability": "high"
+            },
+            "420": {
+                "name": "La Liga 2",
                 "predictability": "poor"
             }
         },
-        "Brazil": {
-            "58": {
-                "name": "Copa do Brasil",
+        "Sierra Leone": {
+            "913": {
+                "name": "Premier League",
                 "predictability": "high"
             }
         },
-        "Dominican Republic": {
-            "612": {
-                "name": "Liga Mayor",
+        "Senegal": {
+            "802": {
+                "name": "Ligue 1",
+                "predictability": "poor"
+            }
+        },
+        "Australia": {
+            "72": {
+                "name": "A-League Men",
+                "predictability": "high"
+            },
+            "797": {
+                "name": "A-League Women",
+                "predictability": "poor"
+            }
+        },
+        "Wales": {
+            "430": {
+                "name": "Premier League",
                 "predictability": "high"
             }
         },
-        "Chile": {
-            "293": {
-                "name": "Primera B",
+        "Indonesia": {
+            "10": {
+                "name": "Liga 1",
+                "predictability": "high"
+            },
+            "2155": {
+                "name": "Liga Nusantara",
+                "predictability": "poor"
+            }
+        },
+        "Lebanon": {
+            "579": {
+                "name": "Premier League",
+                "predictability": "high"
+            }
+        },
+        "Iraq": {
+            "684": {
+                "name": "Iraqi League",
+                "predictability": "good"
+            }
+        },
+        "United Arab Emirates": {
+            "404": {
+                "name": "Arabian Gulf Reserve League",
                 "predictability": "poor"
             },
-            "306": {
-                "name": "Primera Division",
+            "733": {
+                "name": "Division 1",
+                "predictability": "poor"
+            },
+            "388": {
+                "name": "UAE Pro League",
+                "predictability": "high"
+            }
+        },
+        "Scotland": {
+            "259": {
+                "name": "Premiership",
+                "predictability": "high"
+            },
+            "642": {
+                "name": "League One",
+                "predictability": "good"
+            },
+            "637": {
+                "name": "Championship",
+                "predictability": "poor"
+            },
+            "643": {
+                "name": "League Two",
                 "predictability": "poor"
             }
         },
-        "Costa Rica": {
-            "309": {
-                "name": "Primera Division",
+        "India": {
+            "1823": {
+                "name": "Indian Women's League",
                 "predictability": "high"
             }
         },
-        "Macedonia": {
-            "274": {
-                "name": "Second League",
+        "Myanmar": {
+            "73": {
+                "name": "National League",
                 "predictability": "high"
+            }
+        },
+        "Mauritania": {
+            "348": {
+                "name": "Super D1",
+                "predictability": "good"
+            }
+        },
+        "Ethiopia": {
+            "761": {
+                "name": "Premier League",
+                "predictability": "poor"
+            }
+        },
+        "Egypt": {
+            "1133": {
+                "name": "League Cup",
+                "predictability": "poor"
+            },
+            "1975": {
+                "name": "Second Division A",
+                "predictability": "good"
+            }
+        },
+        "Cyprus": {
+            "106": {
+                "name": "1. Division",
+                "predictability": "high"
+            }
+        },
+        "France": {
+            "200": {
+                "name": "Ligue 1",
+                "predictability": "high"
+            },
+            "256": {
+                "name": "Ligue 2",
+                "predictability": "poor"
+            }
+        },
+        "Thailand": {
+            "79": {
+                "name": "Thai Premier League",
+                "predictability": "good"
             }
         }
     }

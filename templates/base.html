@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='fixtures.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='pinnacle.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='best_bets.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='filtered_value_bets.css') }}">
+
 
     {% block extra_styles %}{% endblock %}
 
@@ -201,6 +203,7 @@
             <a href="{{ url_for('best_bets') }}">Best Bets</a>
             <a href="{{ url_for('ai_bets_page') }}">AI Bets</a>
             <a href="{{ url_for('ai_bets_results') }}">AI Bets Results</a>
+            <a href="{{ url_for('filtered_value_bets') }}">Filtered Value Bets</a>
         </div>
     </div>
 

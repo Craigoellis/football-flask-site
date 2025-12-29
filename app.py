@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from filters.value_bets_strategies import VALUE_BET_STRATEGIES
 from datetime import datetime, timedelta, timezone
 from google import genai
 from zoneinfo import ZoneInfo
@@ -54,6 +55,8 @@ GAME_DETAILS_CACHE_FILE = os.path.join(DATA_DIR, "game_details_cache.json")
 GAME_DETAILS_CACHE_TIME_FILE = os.path.join(DATA_DIR, "game_details_cache_time.txt")
 
 VALUE_BETS_CACHE_FILE = os.path.join(DATA_DIR, "value_bets_cache.json")
+FILTERED_VALUE_BETS_ACTIVE_FILE = os.path.join(DATA_DIR, "filtered_value_bets_active.json")
+FILTERED_VALUE_BETS_RESULTS_FILE = os.path.join(DATA_DIR, "filtered_value_bets_results.json")  # for later
 
 SEASON_STATS_CACHE_FILE = os.path.join(DATA_DIR, "season_stats_cache.json")
 SEASON_STATS_CACHE_FILE_LAST25 = os.path.join(DATA_DIR, "season_stats_last25.json")
@@ -1829,6 +1832,208 @@ def value_bets():
 
     return render_template('value_bets.html', value_bets=table_data, market_name_mapping=MARKET_NAME_MAPPING)
 
+@app.route("/filtered-value-bets")
+def filtered_value_bets():
+    # ========= helpers =========
+    def _to_float(x):
+        try:
+            return float(x)
+        except Exception:
+            return None
+
+    def _in_range(val, r):
+        if r is None:
+            return True
+        if val is None:
+            return False
+        mn = r.get("min", None)
+        mx = r.get("max", None)
+        if mn is not None and val < mn:
+            return False
+        if mx is not None and val > mx:
+            return False
+        return True
+
+    def _build_fixture_name(bet: dict) -> str:
+        home = bet.get("home_name") or bet.get("home_team") or bet.get("home") or ""
+        away = bet.get("away_name") or bet.get("away_team") or bet.get("away") or ""
+        home = str(home).strip()
+        away = str(away).strip()
+        if home and away:
+            return f"{home} vs {away}"
+
+        fx = bet.get("fixture_name") or bet.get("fixture") or bet.get("name") or bet.get("fixture_label")
+        if fx:
+            return str(fx)
+        return "Unknown Fixture"
+
+    def _match_strategy(bet, best_odds_row, strategy):
+        comp = bet.get("competition") or {}
+
+        market = bet.get("market")
+        if strategy.get("markets") and market not in strategy["markets"]:
+            return False
+
+        allowed_preds = [p.lower() for p in (strategy.get("predictability") or [])]
+        bet_pred = (comp.get("predictability") or "").lower()
+        if allowed_preds and bet_pred not in allowed_preds:
+            return False
+
+        s_is_cup = strategy.get("is_cup", None)
+        s_is_friendly = strategy.get("is_friendly", None)
+        b_is_cup = comp.get("is_cup", None)
+        b_is_friendly = comp.get("is_friendly", None)
+
+        if s_is_cup is not None and b_is_cup is not None and b_is_cup != s_is_cup:
+            return False
+        if s_is_friendly is not None and b_is_friendly is not None and b_is_friendly != s_is_friendly:
+            return False
+
+        progress = _to_float(comp.get("progress"))
+        if not _in_range(progress, strategy.get("progress")):
+            return False
+
+        prob = _to_float(bet.get("probability"))
+        if not _in_range(prob, strategy.get("probability")):
+            return False
+
+        latest_odds = _to_float(best_odds_row.get("latest"))
+        if not _in_range(latest_odds, strategy.get("odds")):
+            return False
+
+        value_pct = _to_float(best_odds_row.get("value"))
+        if not _in_range(value_pct, strategy.get("value")):
+            return False
+
+        return True
+
+    def save_json_atomic(filepath, data):
+        tmp_path = filepath + ".tmp"
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        os.replace(tmp_path, filepath)
+
+    # ========= load cache (disk only) =========
+    try:
+        with open(VALUE_BETS_CACHE_FILE, "r", encoding="utf-8") as f:
+            all_bets = json.load(f) or []
+    except Exception:
+        all_bets = []
+
+    # ========= apply strategies =========
+    results = []
+    seen = set()  # dedupe key: (fixture_id, market, strategy_name)
+
+    for bet in all_bets:
+        odds_list = bet.get("odds") or []
+        if not odds_list:
+            continue
+
+        for strat in VALUE_BET_STRATEGIES:
+            strat_name = strat.get("name", "Unnamed Strategy")
+
+            strat_books = strat.get("bookmakers") or []
+            strat_books = [b.lower() for b in strat_books if b]
+
+            opening_guard = strat.get("opening_guard", False)
+
+            best = None
+            best_latest = None
+
+            for o in odds_list:
+                book_name = (o.get("bookmaker_name") or "").lower()
+                if strat_books and book_name not in strat_books:
+                    continue
+
+                latest = _to_float(o.get("latest"))
+                if latest is None:
+                    continue
+
+                if opening_guard:
+                    opening = _to_float(o.get("opening"))
+                    if opening is None:
+                        continue
+                    if latest < opening:
+                        continue
+
+                if best_latest is None or latest > best_latest:
+                    best_latest = latest
+                    best = o
+
+            if best is None:
+                continue
+
+            if _match_strategy(bet, best, strat):
+                fixture_id = bet.get("fixture_id")
+                market = bet.get("market")
+
+                key = (fixture_id, market, strat_name)
+                if key in seen:
+                    continue
+                seen.add(key)
+
+                prob = _to_float(bet.get("probability"))
+                implied_odds = round(100.0 / prob, 2) if prob and prob > 0 else None
+
+                comp = bet.get("competition") or {}
+
+                bookmaker_name = best.get("bookmaker_name")
+                latest_odds = _to_float(best.get("latest"))
+                opening_odds = _to_float(best.get("opening"))
+                value_pct = _to_float(best.get("value"))
+
+                # Stable key for joining to results later
+                bet_key = f"{fixture_id}:{market}:{strat_name}:{bookmaker_name}"
+
+                results.append({
+                    "bet_key": bet_key,
+                    "matched_strategy": strat_name,
+                    "fixture_id": fixture_id,
+                    "fixture_name": _build_fixture_name(bet),
+                    "ko_human": bet.get("ko_human"),
+
+                    "competition_country": comp.get("country"),
+                    "competition_name": comp.get("name"),
+                    "predictability": comp.get("predictability"),
+                    "is_cup": comp.get("is_cup"),
+                    "is_friendly": comp.get("is_friendly"),
+                    "progress": comp.get("progress"),
+
+                    "market": market,
+                    "probability": round(prob, 2) if prob is not None else None,
+                    "implied_odds": implied_odds,
+
+                    "bookmaker": bookmaker_name,
+                    "latest_odds": latest_odds,
+                    "opening_odds": opening_odds,
+                    "value_percentage": value_pct,
+                })
+
+    # ========= write ACTIVE filtered results to JSON (overwrite safely) =========
+    active_payload = {
+        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "count": len(results),
+        "rows": results,
+    }
+    save_json_atomic(FILTERED_VALUE_BETS_ACTIVE_FILE, active_payload)
+
+    # ========= group for display =========
+    grouped_results = {}
+    for r in results:
+        grouped_results.setdefault(r["matched_strategy"], []).append(r)
+
+    for strat_name, rows in grouped_results.items():
+        rows.sort(key=lambda x: (x["value_percentage"] is not None, x["value_percentage"]), reverse=True)
+
+    sorted_strategies = sorted(grouped_results.items(), key=lambda x: x[0].lower())
+
+    return render_template(
+        "filtered_value_bets.html",
+        grouped_results=sorted_strategies,
+        market_name_mapping=MARKET_NAME_MAPPING
+    )
+
+
 @app.template_filter("format_kickoff")
 def format_kickoff_filter(value):
     if not value:
@@ -2650,6 +2855,12 @@ def _get_nested(d, path, default=None):
             return default
         cur = cur[key]
     return cur
+
+def save_json_atomic(filepath, data):
+    tmp_path = filepath + ".tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+    os.replace(tmp_path, filepath)
 
 
 # ---------------- Gates (probability + stats inside each) ---------------- #

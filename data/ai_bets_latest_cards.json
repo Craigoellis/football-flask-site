@@ -1,1 +1,95 @@
-[]
+{
+  "generated_at": "2025-12-29T13:41:54.671871+00:00",
+  "cards": [
+    {
+      "fixture": "Chesterfield vs Cambridge United",
+      "competition": "England - League Two",
+      "kickoff": "19:45",
+      "market_key": "home_win",
+      "market_name": "Home Win",
+      "model_prob": 45.29,
+      "stats_prob": null,
+      "fair_odds": 2.21,
+      "bookmaker_odds": 2.55,
+      "edge": 15.38,
+      "confidence": "LOW",
+      "ai_prob_pct": 20.21,
+      "html": "<table class=\"ai-table\">\n  <thead>\n    <tr>\n      <th>Market</th>\n      <th>Model Probability</th>\n      <th>Fair Odds</th>\n      <th>Bookmaker Odds</th>\n      <th>Value/Edge</th>\n      <th>Confidence</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Home Win</td>\n      <td>45.29%</td>\n      <td>2.21</td>\n      <td>2.55</td>\n      <td>15.38%</td>\n      <td>LOW</td>\n    </tr>\n  </tbody>\n</table>\n\n<p>The model suggests a strong probability of a home win for Chesterfield, presenting a value bet given the bookmaker's odds. Chesterfield has a solid home record, winning 6 of their 11 home games. This suggests they perform well in familiar territory, making the home win a potentially worthwhile wager.</p>\n\n<ul>\n  <li>Chesterfield boasts a home win percentage of 54.55%, winning 6 out of 11 home matches.</li>\n  <li>Chesterfield averages 2.09 goals for and 1.09 goals against at home.</li>\n  <li>Cambridge United has a lower away win percentage of 18.18%, only winning 2 of their 11 away matches.</li>\n  <li>Cambridge United averages 0.82 goals for and 1.09 goals against when playing away.</li>\n</ul>\n\n<p><strong>Verdict:</strong> Consider a small stake on Chesterfield to win, given the value identified by the model.</p>"
+    },
+    {
+      "fixture": "Bristol Rovers vs Barnet",
+      "competition": "England - League Two",
+      "kickoff": "19:45",
+      "market_key": "away_win",
+      "market_name": "Away Win",
+      "model_prob": 56.41,
+      "stats_prob": null,
+      "fair_odds": 1.77,
+      "bookmaker_odds": 2.0,
+      "edge": 12.99,
+      "confidence": "LOW",
+      "ai_prob_pct": 24.14,
+      "html": "<table class=\"ai-table\">\n  <thead>\n    <tr>\n      <th>Market</th>\n      <th>Model Probability</th>\n      <th>Fair Odds</th>\n      <th>Bookmaker Odds</th>\n      <th>Value/Edge</th>\n      <th>Confidence</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Away Win</td>\n      <td>56.41%</td>\n      <td>1.77</td>\n      <td>2.00</td>\n      <td>12.99%</td>\n      <td>LOW</td>\n    </tr>\n  </tbody>\n</table>\n\n<p>The model suggests an away win for Barnet represents a value bet given the discrepancy between the model's calculated probability (56.41%) and the bookmaker's odds (2.00). Barnet has won 36.36% of their away games this season, while Bristol Rovers have lost 63.64% of their home games.</p>\n\n<ul>\n  <li>Bristol Rovers have a home PPG of 0.91, while Barnet has an away PPG of 1.55.</li>\n  <li>Bristol Rovers have a home win percentage of 27.27%, while Barnet has an away win percentage of 36.36%.</li>\n  <li>Bristol Rovers' average goals against at home is 1.73, while Barnet's average goals for away is 1.09.</li>\n  <li>Barnet have conceded first in 36.36% of away games, whilst Bristol Rovers have conceded first in 63.64% of home games.</li>\n</ul>\n\n<p><strong>Verdict:</strong> Consider a small stake on Barnet to win, given the identified value, but be aware that confidence is low.</p>"
+    },
+    {
+      "fixture": "PSIM Yogyakarta vs PSBS Biak Numfor",
+      "competition": "Indonesia - Liga 1",
+      "kickoff": "08:30",
+      "market_key": "draw",
+      "market_name": "Draw",
+      "model_prob": 21.07,
+      "stats_prob": null,
+      "fair_odds": 4.75,
+      "bookmaker_odds": 6.0,
+      "edge": 26.32,
+      "confidence": "LOW",
+      "ai_prob_pct": 10.91,
+      "html": "<table class=\"ai-table\">\n  <thead>\n    <tr>\n      <th>Market</th>\n      <th>Model Probability</th>\n      <th>Fair Odds</th>\n      <th>Bookmaker Odds</th>\n      <th>Value/Edge</th>\n      <th>Confidence</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Draw</td>\n      <td>21.07%</td>\n      <td>4.75</td>\n      <td>6.00</td>\n      <td>26.32%</td>\n      <td>LOW</td>\n    </tr>\n  </tbody>\n</table>\n\n<p>The model suggests a draw is more likely than the bookmakers' odds imply, presenting a value bet. PSIM Yogyakarta have drawn 2 times from 6 home games, while PSBS Biak Numfor have drawn 0 times from 5 away games, indicating differing tendencies.</p>\n\n<ul>\n  <li>PSIM Yogyakarta have a draw percentage of 33.33% at home, drawing 2 out of 6 home games.</li>\n  <li>PSBS Biak Numfor have a draw percentage of 0% away, drawing 0 out of 5 away games.</li>\n  <li>PSIM Yogyakarta averages 1.33 goals for and 1 goal against at home.</li>\n  <li>PSBS Biak Numfor averages 1 goal for and 3.2 goals against away.</li>\n</ul>\n\n<p><strong>Verdict:</strong> A small bet on the draw could be worthwhile given the value edge, but the away team's low draw rate is a concern.</p>"
+    },
+    {
+      "fixture": "Stockport County vs Doncaster Rovers",
+      "competition": "England - League One",
+      "kickoff": "19:45",
+      "market_key": "away_win",
+      "market_name": "Away Win",
+      "model_prob": 34.6,
+      "stats_prob": null,
+      "fair_odds": 2.89,
+      "bookmaker_odds": 3.9,
+      "edge": 34.95,
+      "confidence": "LOW",
+      "ai_prob_pct": 9.64,
+      "html": "<table class=\"ai-table\">\n  <thead>\n    <tr>\n      <th>Market</th>\n      <th>Model Probability</th>\n      <th>Fair Odds</th>\n      <th>Bookmaker Odds</th>\n      <th>Value/Edge</th>\n      <th>Confidence</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Away Win</td>\n      <td>34.60%</td>\n      <td>2.89</td>\n      <td>3.90</td>\n      <td>34.95%</td>\n      <td>LOW</td>\n    </tr>\n  </tbody>\n</table>\n\n<p>The model suggests an away win for Doncaster Rovers represents a value bet, with a significant edge. While Doncaster's away win percentage is only 18.18%, Stockport County's home win percentage is 36.36%, which makes the higher bookmaker odds attractive. </p>\n\n<ul>\n  <li>Stockport County have a home win percentage of 36.36% from 11 home games, winning 4 times.</li>\n  <li>Doncaster Rovers have an away win percentage of 18.18%, winning 2 times from 11 away games.</li>\n  <li>Stockport County average 1.09 goals for at home and 1.27 goals against.</li>\n  <li>Doncaster Rovers average 0.73 goals for away and 1.73 goals against.</li>\n</ul>\n\n<p><strong>Verdict:</strong> A small stake on Doncaster Rovers to win might be worthwhile, given the identified value, but treat with caution given their away form.</p>"
+    },
+    {
+      "fixture": "Birmingham City vs Southampton",
+      "competition": "England - Championship",
+      "kickoff": "20:15",
+      "market_key": "home_win",
+      "market_name": "Home Win",
+      "model_prob": 57.56,
+      "stats_prob": null,
+      "fair_odds": 1.74,
+      "bookmaker_odds": 2.35,
+      "edge": 35.06,
+      "confidence": "LOW",
+      "ai_prob_pct": 21.04,
+      "html": "<table class=\"ai-table\">\n  <thead>\n    <tr>\n      <th>Market</th>\n      <th>Model Probability</th>\n      <th>Fair Odds</th>\n      <th>Bookmaker Odds</th>\n      <th>Value/Edge</th>\n      <th>Confidence</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Home Win</td>\n      <td>57.56%</td>\n      <td>1.74</td>\n      <td>2.35</td>\n      <td>35.06%</td>\n      <td>LOW</td>\n    </tr>\n  </tbody>\n</table>\n\n<p>The model suggests a strong probability of Birmingham City winning at home, presenting a value bet due to the discrepancy between the model's fair odds and the bookmaker's odds. Birmingham City has a strong home record, winning 6 of 11 home games. Southampton have struggled away, only winning 3 of 12 away games.</p>\n\n<ul>\n  <li>Birmingham City have a home win percentage of 54.55% with 6 wins from 11 home games.</li>\n  <li>Birmingham City averages 2.09 goals for and 0.91 goals against at home.</li>\n  <li>Southampton have an away loss percentage of 50% with 6 losses from 12 away games.</li>\n  <li>Birmingham City has a home PPG of 2, while Southampton has an away PPG of 1.</li>\n</ul>\n\n<p><strong>Verdict:</strong> Consider a small stake on Birmingham City to win given the value edge, but be aware of the low confidence.</p>"
+    },
+    {
+      "fixture": "Stoke City vs Sheffield United",
+      "competition": "England - Championship",
+      "kickoff": "19:45",
+      "market_key": "home_win",
+      "market_name": "Home Win",
+      "model_prob": 41.53,
+      "stats_prob": null,
+      "fair_odds": 2.41,
+      "bookmaker_odds": 2.87,
+      "edge": 19.09,
+      "confidence": "LOW",
+      "ai_prob_pct": 17.36,
+      "html": "<table class=\"ai-table\">\n  <thead>\n    <tr>\n      <th>Market</th>\n      <th>Model Probability</th>\n      <th>Fair Odds</th>\n      <th>Bookmaker Odds</th>\n      <th>Value/Edge</th>\n      <th>Confidence</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Home Win</td>\n      <td>41.53%</td>\n      <td>2.41</td>\n      <td>2.87</td>\n      <td>19.09%</td>\n      <td>LOW</td>\n    </tr>\n  </tbody>\n</table>\n\n<p>The model suggests a home win for Stoke City presents a value opportunity, given the disparity between the model's probability and the bookmaker's odds. Stoke City has won 6 of their 11 home games this season, indicating reasonable home form, while Sheffield United has lost 7 of their 11 away games.</p>\n\n<ul>\n  <li>Stoke City has a home win percentage of 54.55% (6 wins from 11 home games).</li>\n  <li>Sheffield United has an away loss percentage of 63.64% (7 losses from 11 away games).</li>\n  <li>Stoke City averages 1.82 points per game at home, while Sheffield United averages 1.09 points per game away.</li>\n  <li>Stoke City averages 1.55 goals for and 0.73 goals against at home. Sheffield United averages 1.18 goals for and 1.73 goals against away.</li>\n</ul>\n\n<p><strong>Verdict:</strong> Consider a small bet on Stoke City to win, acknowledging the low confidence but attractive value.</p>"
+    }
+  ]
+}

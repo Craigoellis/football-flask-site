@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Filtered Value Bets{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/filtered_value_bets.css') }}">
+
+<div class="fv-main">
+
+  <div class="fv-header">
+    <h1>Filtered Value Bets</h1>
+
+    {% set ns = namespace(total=0) %}
+    {% for strat_name, rows in grouped_results %}
+      {% set ns.total = ns.total + (rows|length) %}
+    {% endfor %}
+
+    <div class="fv-total">
+      Total Matches: <strong>{{ ns.total }}</strong>
+    </div>
+  </div>
+
+  {% if grouped_results|length == 0 %}
+    <div class="fv-strategy">
+      <div style="text-align:center; padding:18px; opacity:0.8;">
+        No matches found for current strategies.
+      </div>
+    </div>
+  {% endif %}
+
+  {% for strat_name, rows in grouped_results %}
+    <div class="fv-strategy">
+
+      <div class="fv-strategy-head">
+        <h2 class="fv-strategy-title">{{ strat_name }}</h2>
+        <div class="fv-strategy-count">
+          Matches: <strong>{{ rows|length }}</strong>
+        </div>
+      </div>
+
+      <div class="fv-table-wrap">
+        <table class="fv-table">
+          <thead>
+            <tr>
+              <th>Competition</th>
+              <th>Predictability</th>
+              <th>Fixture</th>
+              <th>Kickoff</th>
+              <th>Market</th>
+              <th class="fv-right">Probability %</th>
+              <th class="fv-right">Implied Odds</th>
+              <th>Bookmaker</th>
+              <th class="fv-right">Latest Odds</th>
+              <th class="fv-right">Value</th>
+              <th class="fv-center">Progress</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for r in rows %}
+              <tr>
+                <td>{{ r.competition_country }} - {{ r.competition_name }}</td>
+
+                <td>
+                  <span class="fv-badge">{{ r.predictability }}</span>
+                </td>
+
+                <td>
+                  {% if r.fixture_id %}
+                    <a class="fv-link"
+                       href="{{ url_for('game_details', fixture_id=r.fixture_id) }}"
+                       target="_blank">
+                      {{ r.fixture_name }}
+                    </a>
+                  {% else %}
+                    {{ r.fixture_name }}
+                  {% endif %}
+                </td>
+
+                <td>{{ r.ko_human }}</td>
+                <td>{{ market_name_mapping.get(r.market, r.market) }}</td>
+
+                <td class="fv-right">{{ r.probability }}</td>
+                <td class="fv-right">{{ r.implied_odds }}</td>
+
+                <td>{{ r.bookmaker }}</td>
+                <td class="fv-right">{{ r.latest_odds }}</td>
+
+                <td class="fv-right">
+                  {% if r.value_percentage is not none %}
+                    {{ "%.2f"|format(r.value_percentage) }}%
+                  {% endif %}
+                </td>
+
+                <td class="fv-center">
+                  {% if r.progress is not none %}
+                    {{ r.progress }}%
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="fv-strategy-count" style="margin-top:8px;">
+        Cups:
+        {{ "Included" if (rows|selectattr("is_cup")|list|length > 0) else "None" }},
+        Friendlies:
+        {{ "Included" if (rows|selectattr("is_friendly")|list|length > 0) else "None" }}
+      </div>
+
+    </div>
+  {% endfor %}
+
+</div>
+
+{% endblock %}
