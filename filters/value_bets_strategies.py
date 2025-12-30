@@ -14,7 +14,8 @@ VALUE_BET_STRATEGIES = [
         "is_friendly": False,
         # Season progress 0-100 (None = don't care)
         "progress": {"min": 0, "max": 100},
-        "bookmakers": ["Bet365", "Betfair Exchange"],
+        # Bookmakers are Bet365, WilliamHill, Betfair Exchange, Pinnacle, Kambi Group, 1xBet
+        "bookmakers": ["Bet365", "Betfair Exchange", "WilliamHill"],
         "opening_guard": True
     },
 ]
