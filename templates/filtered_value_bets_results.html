@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Filtered Value Bets Results{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='filtered_value_bets_results.css') }}">
+
+
+<div class="fvr-main">
+
+  <div class="fvr-header">
+    <h1>Filtered Value Bets Results</h1>
+
+    <div class="fvr-total">
+      Total Bets: <strong>{{ total_bets or 0 }}</strong>
+    </div>
+  </div>
+
+  {% if not grouped or grouped|length == 0 %}
+    <div style="text-align:left; padding:10px; font-size:13px;">
+      <div><strong>Total Bets:</strong> 0</div>
+      <div>No results found.</div>
+    </div>
+  {% endif %}
+
+  {% for strat_name, block in grouped %}
+    {# ---- Strategy totals (safe) ---- #}
+    {% set strat_totals = block.get("totals", {}) %}
+    {% set strat_bets = strat_totals.get("bet_count", 0) %}
+    {% set strat_1u_pl = strat_totals.get("total_1u_pl", 0) %}
+    {% set strat_kelly_pl = strat_totals.get("total_kelly_pl", 0) %}
+
+    <details class="fvr-strategy">
+      <summary class="fvr-strategy-head">
+        <div class="fvr-left">
+          <span class="fvr-strategy-title">{{ strat_name }}</span>
+          <span class="fvr-meta">Bets: {{ strat_bets }}</span>
+        </div>
+
+        <div class="fvr-right">
+          <span class="fvr-pl">1u P/L: {{ "%.2f"|format(strat_1u_pl) }}</span>
+          <span class="fvr-pl">|</span>
+          <span class="fvr-pl">Kelly P/L: {{ "%.2f"|format(strat_kelly_pl) }}</span>
+        </div>
+      </summary>
+
+      <div class="fvr-strategy-body">
+
+        {% set months = block.get("months", []) %}
+        {% if not months or months|length == 0 %}
+          <div style="padding:10px; font-size:13px; opacity:0.8;">
+            No bets found for this strategy.
+          </div>
+        {% endif %}
+
+        {% for month_label, month_block in months %}
+          {% set month_rows = month_block.get("rows", []) %}
+          {% set month_1u_pl = month_block.get("total_1u_pl", 0) %}
+          {% set month_kelly_pl = month_block.get("total_kelly_pl", 0) %}
+
+          <details class="fvr-month">
+            <summary class="fvr-month-head">
+              <div class="fvr-left">
+                <span class="fvr-month-title">{{ month_label }}</span>
+                <span class="fvr-meta">Bets: {{ month_rows|length }}</span>
+              </div>
+
+              <div class="fvr-right">
+                <span class="fvr-pl">1u P/L: {{ "%.2f"|format(month_1u_pl) }}</span>
+                <span class="fvr-pl">|</span>
+                <span class="fvr-pl">Kelly P/L: {{ "%.2f"|format(month_kelly_pl) }}</span>
+              </div>
+            </summary>
+
+            <div class="fvr-table-wrap">
+              <table class="fvr-table">
+                <thead>
+                  <tr>
+                    <th>Competition</th>
+                    <th>Predictability</th>
+                    <th>Fixture</th>
+                    <th>Kickoff</th>
+                    <th>Market</th>
+                    <th>Bookmaker</th>
+                    <th class="fvr-right">Latest Odds</th>
+                    <th>Result</th>
+                    <th>Score</th>
+                    <th class="fvr-right">1u P/L</th>
+                    <th class="fvr-right">Kelly Stake</th>
+                    <th class="fvr-right">Kelly P/L</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {% for r in month_rows %}
+                    {% set result_label = (r.get("result_label") or r.get("result") or "Pending") %}
+                    {% set score = (r.get("score") or "") %}
+                    {% set one_unit_pl = r.get("one_unit_pl") %}
+                    {% set kelly_stake = r.get("kelly_stake_10") %}
+                    {% set kelly_pl = r.get("kelly_pl") %}
+
+                    <tr>
+                      <td>{{ (r.get("competition_country") or "") }} - {{ (r.get("competition_name") or "") }}</td>
+                      <td><span class="fvr-badge">{{ r.get("predictability") or "" }}</span></td>
+                      <td>{{ r.get("fixture_name") or "" }}</td>
+                      <td>{{ r.get("ko_human") or "" }}</td>
+                      <td>{{ market_name_mapping.get(r.get("market"), r.get("market")) }}</td>
+                      <td>{{ r.get("bookmaker") or "" }}</td>
+
+                      <td class="fvr-right">
+                        {% if r.get("latest_odds") is not none %}
+                          {{ r.get("latest_odds") }}
+                        {% endif %}
+                      </td>
+
+                      <td>{{ result_label|capitalize }}</td>
+                      <td>{{ score }}</td>
+
+                      <td class="fvr-right">
+                        {% if one_unit_pl is not none %}
+                          {{ "%.2f"|format(one_unit_pl) }}
+                        {% endif %}
+                      </td>
+
+                      <td class="fvr-right">
+                        {% if kelly_stake is not none %}
+                          {{ "%.2f"|format(kelly_stake) }}
+                        {% endif %}
+                      </td>
+
+                      <td class="fvr-right">
+                        {% if kelly_pl is not none %}
+                          {{ "%.2f"|format(kelly_pl) }}
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </details>
+        {% endfor %}
+      </div>
+    </details>
+  {% endfor %}
+
+</div>
+
+{% endblock %}

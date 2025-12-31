@@ -1,0 +1,193 @@
+/* static/css/filtered_value_bets_results.css */
+
+/* Page wrapper */
+.fvr-main {
+  max-width: 1650px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 18px 16px 28px;
+  box-sizing: border-box;
+}
+
+/* Header row */
+.fvr-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.fvr-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.fvr-total {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+/* Strategy details */
+.fvr-strategy {
+  margin-top: 18px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+/* Remove default summary styling + make it full width */
+.fvr-strategy > summary,
+.fvr-month > summary {
+  list-style: none;
+}
+
+.fvr-strategy > summary::-webkit-details-marker,
+.fvr-month > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Strategy summary bar */
+.fvr-strategy-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  background: #0b5ed7;
+  color: #fff;
+  box-sizing: border-box;
+}
+
+/* Left/right blocks inside strategy bar */
+.fvr-strategy-head .fvr-left {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.fvr-strategy-title {
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff; /* strategy name white */
+}
+
+.fvr-meta {
+  font-size: 12px;
+  opacity: 0.95;
+}
+
+.fvr-strategy-head .fvr-right {
+  font-size: 12px;
+  opacity: 0.95;
+  white-space: nowrap;
+}
+
+.fvr-pl {
+  font-size: 12px;
+  opacity: 0.95;
+}
+
+/* Body spacing */
+.fvr-strategy-body {
+  padding: 10px 12px 12px;
+  background: #fff;
+}
+
+/* Month block */
+.fvr-month {
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Month summary bar */
+.fvr-month-head {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  background: #f3f4f6;
+  color: #111;
+  box-sizing: border-box;
+}
+
+.fvr-month-head .fvr-left {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.fvr-month-title {
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.fvr-month-head .fvr-right {
+  font-size: 12px;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+/* Table wrapper */
+.fvr-table-wrap {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: #fafafa;
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+/* Table */
+table.fvr-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  min-width: 1100px; /* helps stop squashing */
+  white-space: nowrap;
+}
+
+.fvr-table thead th {
+  background: #f3f4f6;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 9px 8px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+}
+
+.fvr-table tbody td {
+  font-size: 13px;
+  padding: 9px 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.fvr-table tbody tr:hover td {
+  background: rgba(0,0,0,0.03);
+}
+
+/* Badges */
+.fvr-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(0,0,0,0.06);
+}
+
+/* Align helpers */
+.fvr-right { text-align: right; }
+.fvr-center { text-align: center; }

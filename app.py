@@ -13,6 +13,7 @@ import pandas as pd
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from filters.value_bets_strategies import VALUE_BET_STRATEGIES
+from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from google import genai
 from zoneinfo import ZoneInfo
@@ -64,6 +65,25 @@ SEASON_STATS_CACHE_TIME_FILE = os.path.join(DATA_DIR, "season_stats_cache_time.t
 SEASON_STATS_LAST25_CACHE_TIME_FILE = os.path.join(DATA_DIR, "season_stats_last25_time.txt")
 
 PREDICTABILITY_CACHE_FILE = os.path.join(DATA_DIR, "predictability_cache.json")
+
+ODDALERTS_VALUE_RESULTS_URL = "https://data.oddalerts.com/api/value/results"
+FILTERED_VALUE_BETS_RESULTS_FILE = os.path.join(DATA_DIR, "filtered_value_bets_results.json")
+
+# Append-only log of all bets that ever qualified (used by results page)
+FILTERED_VALUE_BETS_QUALIFIED_FILE = os.path.join(DATA_DIR, "filtered_value_bets_qualified.json")
+
+def load_json_file(filepath, default):
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return default
+
+def save_json_atomic(filepath, data):
+    tmp_path = filepath + ".tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+    os.replace(tmp_path, filepath)
 
 # ----------------------------------------------------
 # Debug paths (TEMP)
@@ -561,6 +581,9 @@ def refresh_value_bets_cache():
     print("[CACHE] Refreshing Value Bets Cache...")
     fetch_value_bets(force_refresh=True)
     print("[CACHE] Value Bets Cache Updated.")
+
+    # ✅ NEW: rebuild filtered active + qualified after value bets refresh
+    run_filtered_value_bets_matching()
 
 @app.route('/debug/value-bets-cache')
 def debug_value_bets_cache():
@@ -1832,8 +1855,7 @@ def value_bets():
 
     return render_template('value_bets.html', value_bets=table_data, market_name_mapping=MARKET_NAME_MAPPING)
 
-@app.route("/filtered-value-bets")
-def filtered_value_bets():
+def run_filtered_value_bets_matching():
     # ========= helpers =========
     def _to_float(x):
         try:
@@ -1906,7 +1928,7 @@ def filtered_value_bets():
             return False
 
         return True
-    
+
     def _kelly_stake_10(prob_pct, odds, bankroll=100.0):
         if prob_pct is None or prob_pct <= 0:
             return 0.0
@@ -1917,12 +1939,11 @@ def filtered_value_bets():
         q = 1.0 - p
         b = odds - 1.0
 
-        f = (b * p - q) / b  # full Kelly fraction
-        f = max(0.0, f)      # no negative stakes
+        f = (b * p - q) / b
+        f = max(0.0, f)
 
         stake = bankroll * f * 0.10
         return round(stake, 2)
-
 
     def save_json_atomic(filepath, data):
         tmp_path = filepath + ".tmp"
@@ -1939,7 +1960,7 @@ def filtered_value_bets():
 
     # ========= apply strategies =========
     results = []
-    seen = set()  # dedupe key: (fixture_id, market, strategy_name)
+    seen = set()
 
     for bet in all_bets:
         odds_list = bet.get("odds") or []
@@ -1981,7 +2002,10 @@ def filtered_value_bets():
                 continue
 
             if _match_strategy(bet, best, strat):
-                fixture_id = bet.get("fixture_id")
+                fixture_id = bet.get("id")
+                if fixture_id is None:
+                    continue
+
                 market = bet.get("market")
 
                 key = (fixture_id, market, strat_name)
@@ -1991,13 +2015,12 @@ def filtered_value_bets():
 
                 prob = _to_float(bet.get("probability"))
                 implied_odds = round(100.0 / prob, 2) if prob and prob > 0 else None
-                # Minimum odds required (matches your Google Sheets logic)
+
                 min_value = (strat.get("value") or {}).get("min", 0) or 0
                 min_required_odds = None
                 if prob and prob > 0:
                     probability_decimal = prob / 100.0
                     min_required_odds = round((1.0 / probability_decimal) * (1.0 + (min_value / 100.0)), 2)
-
 
                 comp = bet.get("competition") or {}
 
@@ -2006,17 +2029,17 @@ def filtered_value_bets():
                 opening_odds = _to_float(best.get("opening"))
                 value_pct = _to_float(best.get("value"))
 
-                # Stable key for joining to results later
                 bet_key = f"{fixture_id}:{market}:{strat_name}:{bookmaker_name}"
-
                 kelly_stake_10 = _kelly_stake_10(prob, latest_odds, bankroll=100.0)
 
                 results.append({
                     "bet_key": bet_key,
                     "matched_strategy": strat_name,
+
                     "fixture_id": fixture_id,
                     "fixture_name": _build_fixture_name(bet),
                     "ko_human": bet.get("ko_human"),
+                    "unix": bet.get("unix"),
 
                     "competition_country": comp.get("country"),
                     "competition_name": comp.get("name"),
@@ -2037,7 +2060,7 @@ def filtered_value_bets():
                     "value_percentage": value_pct,
                 })
 
-    # ========= write ACTIVE filtered results to JSON (overwrite safely) =========
+    # ========= write ACTIVE filtered results (snapshot, overwrite) =========
     active_payload = {
         "generated_at": datetime.utcnow().isoformat() + "Z",
         "count": len(results),
@@ -2045,15 +2068,50 @@ def filtered_value_bets():
     }
     save_json_atomic(FILTERED_VALUE_BETS_ACTIVE_FILE, active_payload)
 
+    # ========= append-only QUALIFIED log (never delete) =========
+    qualified_payload = load_json_file(FILTERED_VALUE_BETS_QUALIFIED_FILE, default={})
+    qualified_rows = qualified_payload.get("rows", []) or []
+
+    qualified_map = {row.get("bet_key"): row for row in qualified_rows if row.get("bet_key")}
+
+    newly_added = 0
+    for row in results:
+        bk = row.get("bet_key")
+        if not bk:
+            continue
+        if bk not in qualified_map:
+            qualified_map[bk] = row
+            newly_added += 1
+
+    new_qualified_rows = list(qualified_map.values())
+    new_qualified_rows.sort(key=lambda x: (x.get("unix") is not None, x.get("unix") or 0), reverse=False)
+
+    qualified_out = {
+        "updated_at": datetime.utcnow().isoformat() + "Z",
+        "count": len(new_qualified_rows),
+        "newly_added": newly_added,
+        "rows": new_qualified_rows,
+    }
+    save_json_atomic(FILTERED_VALUE_BETS_QUALIFIED_FILE, qualified_out)
+
     # ========= group for display =========
     grouped_results = {}
     for r in results:
         grouped_results.setdefault(r["matched_strategy"], []).append(r)
 
     for strat_name, rows in grouped_results.items():
-        rows.sort(key=lambda x: (x["value_percentage"] is not None, x["value_percentage"]), reverse=True)
+        rows.sort(
+            key=lambda x: (x["value_percentage"] is not None, x["value_percentage"]),
+            reverse=True
+        )
 
     sorted_strategies = sorted(grouped_results.items(), key=lambda x: x[0].lower())
+    return sorted_strategies
+
+
+@app.route("/filtered-value-bets")
+def filtered_value_bets():
+    sorted_strategies = run_filtered_value_bets_matching()
 
     return render_template(
         "filtered_value_bets.html",
@@ -2061,6 +2119,480 @@ def filtered_value_bets():
         market_name_mapping=MARKET_NAME_MAPPING
     )
 
+
+def fetch_all_value_results(api_token: str, timeout: int = 30, max_pages: int = 200) -> list:
+    """
+    Fetch ALL pages from /api/value/results and return a flat list of result rows.
+    Pagination is stored in payload["info"]["next_page_url"] and payload["info"]["has_more"].
+    """
+    if not api_token:
+        return []
+
+    url = f"{ODDALERTS_VALUE_RESULTS_URL}?api_token={api_token}"
+    out = []
+    pages = 0
+
+    while url and pages < max_pages:
+        pages += 1
+
+        try:
+            r = requests.get(url, timeout=timeout)
+            if r.status_code != 200:
+                break
+            payload = r.json() or {}
+        except Exception:
+            break
+
+        # Data is under top-level "data"
+        rows = payload.get("data") if isinstance(payload, dict) else None
+        if not isinstance(rows, list):
+            rows = []
+
+        out.extend(rows)
+
+        # Pagination is under "info"
+        info = payload.get("info") if isinstance(payload, dict) else {}
+        if not isinstance(info, dict):
+            info = {}
+
+        next_url = info.get("next_page_url")
+        has_more = info.get("has_more")
+
+        if has_more and isinstance(next_url, str) and next_url.strip():
+            url = next_url
+        else:
+            url = None
+
+    return out
+
+def index_value_results(rows: list) -> dict:
+    """
+    Build an index for quick matching:
+      key = (market, fixture_id)
+      value = {"result": bool|None, "score": str|None}
+    Expects rows shaped like:
+      {
+        "market": "home_win_probability",
+        "id": 420463716,          # fixture id
+        "result": {"result": true/false, "score": "2-0"}
+      }
+    """
+    idx = {}
+
+    if not isinstance(rows, list):
+        return idx
+
+    for r in rows:
+        if not isinstance(r, dict):
+            continue
+
+        market = r.get("market")
+        fixture_id = r.get("id")  # API uses "id" for fixture/game id
+
+        if not market or fixture_id is None:
+            continue
+
+        rr = r.get("result") or {}
+        if not isinstance(rr, dict):
+            rr = {}
+
+        idx[(str(market), int(fixture_id))] = {
+            "result": rr.get("result"),  # True/False/None
+            "score": rr.get("score"),    # "2-0"
+        }
+
+    return idx
+
+def update_filtered_value_bets_results(api_token: str):
+    """
+    Reads FILTERED_VALUE_BETS_QUALIFIED_FILE (append-only list of all qualified bets),
+    looks up results from OddAlerts /api/value/results with pagination,
+    and writes/updates FILTERED_VALUE_BETS_RESULTS_FILE with result status + score.
+    """
+
+    import json
+    import os
+    import time
+    import requests
+    from datetime import datetime
+
+    def _utc_now():
+        return datetime.utcnow().isoformat() + "Z"
+
+    def _to_int(x):
+        try:
+            return int(x)
+        except Exception:
+            return None
+
+    def _safe_load_json(path, default):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return default
+
+    def _save_json_atomic(path, data):
+        tmp = path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        os.replace(tmp, path)
+
+    # -------------------------
+    # Load QUALIFIED bets
+    # -------------------------
+    qualified_payload = _safe_load_json(FILTERED_VALUE_BETS_QUALIFIED_FILE, default={}) or {}
+    qualified_rows = qualified_payload.get("rows", []) or []
+
+    # Keep only rows with the required keys
+    wanted = []
+    for r in qualified_rows:
+        bet_key = r.get("bet_key")
+        fixture_id = _to_int(r.get("fixture_id"))
+        market = r.get("market")
+        if bet_key and fixture_id and market:
+            wanted.append((bet_key, fixture_id, market))
+
+    # Deduplicate by bet_key (one result per bet_key)
+    wanted_map = {}
+    for bet_key, fixture_id, market in wanted:
+        wanted_map[bet_key] = (fixture_id, market)
+
+    wanted_bets = list(wanted_map.items())  # [(bet_key, (fixture_id, market)), ...]
+
+    # -------------------------
+    # Load existing results file
+    # -------------------------
+    results_payload = _safe_load_json(FILTERED_VALUE_BETS_RESULTS_FILE, default={}) or {}
+    results_map = results_payload.get("results", {}) or {}
+
+    # -------------------------
+    # Build quick lookup: (fixture_id, market) -> [bet_key, ...]
+    # (a single game could have multiple strategies/books -> multiple bet_keys)
+    # -------------------------
+    target_lookup = {}
+    for bet_key, (fixture_id, market) in wanted_bets:
+        target_lookup.setdefault((fixture_id, market), []).append(bet_key)
+
+    # -------------------------
+    # Fetch API pages + match
+    # -------------------------
+    base_url = f"https://data.oddalerts.com/api/value/results?api_token={api_token}"
+
+    active_rows_count = len(wanted_bets)
+    api_rows_seen = 0
+    matched = 0
+    updated = 0
+
+    next_url = base_url
+    visited_pages = 0
+    max_pages_guard = 50  # safety
+
+    # Only bother looking for bets that aren't already settled
+    # (still allow re-checks, but this makes it faster)
+    unresolved_targets = set(target_lookup.keys())
+    for (fixture_id, market), bet_keys in list(target_lookup.items()):
+        # if ANY bet_key is still pending/missing, keep it in unresolved
+        # if ALL bet_keys are settled (win/loss/void), remove it
+        all_settled = True
+        for bk in bet_keys:
+            existing = results_map.get(bk)
+            if not isinstance(existing, dict):
+                all_settled = False
+                break
+            if existing.get("status") not in ("win", "loss", "void"):
+                all_settled = False
+                break
+        if all_settled:
+            unresolved_targets.discard((fixture_id, market))
+
+    session = requests.Session()
+
+    while next_url and visited_pages < max_pages_guard and unresolved_targets:
+        visited_pages += 1
+
+        try:
+            res = session.get(next_url, timeout=30)
+            if res.status_code != 200:
+                break
+            payload = res.json() or {}
+        except Exception:
+            break
+
+        info = payload.get("info") or {}
+        data_rows = payload.get("data") or []
+        api_rows_seen += len(data_rows)
+
+        # Match within this page
+        for api_row in data_rows:
+            api_id = _to_int(api_row.get("id"))
+            api_market = api_row.get("market")
+
+            if not api_id or not api_market:
+                continue
+
+            key = (api_id, api_market)
+            if key not in unresolved_targets:
+                continue
+
+            # We found a fixture_id+market match; grab result block
+            result_block = api_row.get("result") or {}
+            result_bool = result_block.get("result", None)
+            score = result_block.get("score", None)
+
+            # Translate to status
+            status = "pending"
+            if result_bool is True:
+                status = "win"
+            elif result_bool is False:
+                status = "loss"
+
+            bet_keys = target_lookup.get(key, [])
+            if bet_keys:
+                matched += len(bet_keys)
+
+            for bk in bet_keys:
+                prev = results_map.get(bk)
+                prev_status = prev.get("status") if isinstance(prev, dict) else None
+                prev_score = prev.get("score") if isinstance(prev, dict) else None
+
+                # Update if new or changed
+                if (prev_status != status) or (prev_score != score):
+                    results_map[bk] = {
+                        "status": status,
+                        "score": score,
+                        "fixture_id": api_id,
+                        "market": api_market,
+                        "updated_at": _utc_now(),
+                    }
+                    updated += 1
+                else:
+                    # Touch updated_at so you know it was checked
+                    if isinstance(prev, dict):
+                        prev["updated_at"] = _utc_now()
+                        results_map[bk] = prev
+
+            # If now all bet_keys for this (fixture_id,market) are settled, remove from unresolved
+            # (pending stays unresolved)
+            if status in ("win", "loss", "void"):
+                unresolved_targets.discard(key)
+
+        # next page
+        next_url = info.get("next_page_url")
+        # tiny pause to be polite
+        time.sleep(0.15)
+
+    out_payload = {
+        "updated_at": _utc_now(),
+        "results": results_map
+    }
+    _save_json_atomic(FILTERED_VALUE_BETS_RESULTS_FILE, out_payload)
+
+    return {
+        "active_rows": active_rows_count,
+        "api_rows": api_rows_seen,
+        "matched": matched,
+        "updated": updated
+    }
+
+@app.route("/debug/update-filtered-results")
+def debug_update_filtered_results():
+    api_token = API_TOKEN
+
+    summary = update_filtered_value_bets_results(api_token)
+    return summary
+
+@app.route("/debug/value-results-sample")
+def debug_value_results_sample():
+    rows = fetch_all_value_results(API_TOKEN)
+
+    sample = rows[:5] if isinstance(rows, list) else []
+    # Return keys from the first row to see actual field names
+    first_keys = list(sample[0].keys()) if sample and isinstance(sample[0], dict) else []
+
+    return {
+        "total_rows_returned": len(rows) if isinstance(rows, list) else 0,
+        "first_row_keys": first_keys,
+        "sample_rows": sample
+    }
+
+@app.route("/debug/value-results-pagination")
+def debug_value_results_pagination():
+    url = f"{ODDALERTS_VALUE_RESULTS_URL}?api_token={API_TOKEN}"
+    r = requests.get(url, timeout=30)
+    payload = r.json() if r.status_code == 200 else {}
+
+    return {
+        "status_code": r.status_code,
+        "top_level_keys": list(payload.keys()) if isinstance(payload, dict) else "payload_not_dict",
+        "next_page_url": payload.get("next_page_url") if isinstance(payload, dict) else None,
+        "links": payload.get("links") if isinstance(payload, dict) else None,
+        "meta": payload.get("meta") if isinstance(payload, dict) else None,
+    }
+@app.route("/filtered-value-bets-results")
+def filtered_value_bets_results_page():
+    # =========================
+    # Helpers
+    # =========================
+    def _to_float(x):
+        try:
+            return float(x)
+        except Exception:
+            return None
+
+    def _month_label_from_unix(unix_val):
+        if not unix_val:
+            return "Unknown"
+        try:
+            dt = datetime.utcfromtimestamp(int(unix_val))
+            return dt.strftime("%B %Y")  # e.g. "December 2025"
+        except Exception:
+            return "Unknown"
+
+    def _month_sort_key(month_label):
+        try:
+            return datetime.strptime(month_label, "%B %Y")
+        except Exception:
+            return datetime.min
+
+    def load_json_file(filepath, default=None):
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return default
+
+    # =========================
+    # Load QUALIFIED bets (append-only log)
+    # =========================
+    qualified_payload = load_json_file(FILTERED_VALUE_BETS_QUALIFIED_FILE, default={}) or {}
+    qualified_rows = qualified_payload.get("rows", []) or []
+
+    # =========================
+    # Load results map (bet_key -> status/score)
+    # =========================
+    results_payload = load_json_file(FILTERED_VALUE_BETS_RESULTS_FILE, default={}) or {}
+    results_map = results_payload.get("results", {}) or {}
+
+    # =========================
+    # Merge + compute P/L
+    # =========================
+    merged = []
+
+    for r in qualified_rows:
+        bet_key = r.get("bet_key")
+
+        latest_odds = _to_float(r.get("latest_odds"))
+        kelly_stake = _to_float(r.get("kelly_stake_10"))
+
+        res = results_map.get(bet_key) if bet_key else None
+
+        status = "pending"
+        score = None
+
+        pl_1u = None
+        pl_kelly = None
+
+        if isinstance(res, dict):
+            status = res.get("status") or "pending"
+            score = res.get("score")
+
+            # Only calculate P/L if settled
+            if status in ("win", "loss", "void") and latest_odds is not None:
+                if status == "win":
+                    pl_1u = round((1.0 * latest_odds) - 1.0, 2)
+                    if kelly_stake is not None:
+                        pl_kelly = round((kelly_stake * latest_odds) - kelly_stake, 2)
+                elif status == "loss":
+                    pl_1u = -1.0
+                    if kelly_stake is not None:
+                        pl_kelly = round(-kelly_stake, 2)
+                elif status == "void":
+                    pl_1u = 0.0
+                    if kelly_stake is not None:
+                        pl_kelly = 0.0
+
+        out = dict(r)
+        out["result_status"] = status
+        # ✅ aliases for templates that expect different keys
+        out["status"] = status
+        out["result"] = status
+        out["score"] = score
+        out["stake_1u"] = 1.0
+        out["stake_kelly"] = kelly_stake
+        out["pl_1u"] = pl_1u
+        out["pl_kelly"] = pl_kelly
+
+        # ✅ aliases for template compatibility
+        out["one_unit_pl"] = pl_1u
+        out["kelly_pl"] = pl_kelly
+
+        merged.append(out)
+
+    # =========================
+    # Group strategy -> month, with totals
+    # =========================
+    grouped = defaultdict(lambda: defaultdict(lambda: {
+        "rows": [],
+        "total_1u_pl": 0.0,
+        "total_kelly_pl": 0.0,
+        "count": 0,
+        "settled_count": 0
+    }))
+
+    strategy_totals = defaultdict(lambda: {
+        "total_1u_pl": 0.0,
+        "total_kelly_pl": 0.0,
+        "count": 0,
+        "settled_count": 0
+    })
+
+    for row in merged:
+        strat = row.get("matched_strategy") or "Unknown Strategy"
+        month = _month_label_from_unix(row.get("unix"))
+
+        pl1 = row.get("pl_1u")
+        plk = row.get("pl_kelly")
+
+        pl1_num = float(pl1) if pl1 is not None else 0.0
+        plk_num = float(plk) if plk is not None else 0.0
+
+        grouped[strat][month]["rows"].append(row)
+        grouped[strat][month]["total_1u_pl"] += pl1_num
+        grouped[strat][month]["total_kelly_pl"] += plk_num
+        grouped[strat][month]["count"] += 1
+        if row.get("result_status") != "pending":
+            grouped[strat][month]["settled_count"] += 1
+
+        strategy_totals[strat]["total_1u_pl"] += pl1_num
+        strategy_totals[strat]["total_kelly_pl"] += plk_num
+        strategy_totals[strat]["count"] += 1
+        if row.get("result_status") != "pending":
+            strategy_totals[strat]["settled_count"] += 1
+
+    # Sort months newest -> oldest (so Dec 2025 then Jan 2026, etc.)
+    sorted_grouped = []
+    for strat_name in sorted(grouped.keys(), key=lambda x: x.lower()):
+        months_dict = grouped[strat_name]
+
+        sorted_months = []
+        for month_label in sorted(months_dict.keys(), key=_month_sort_key, reverse=True):
+            months_dict[month_label]["rows"].sort(key=lambda x: x.get("unix") or 0)
+            sorted_months.append((month_label, months_dict[month_label]))
+
+        sorted_grouped.append((
+            strat_name,
+            {
+                "totals": strategy_totals[strat_name],
+                "months": sorted_months
+            }
+        ))
+
+    return render_template(
+        "filtered_value_bets_results.html",
+        grouped=sorted_grouped,
+        market_name_mapping=MARKET_NAME_MAPPING
+    )
 
 @app.template_filter("format_kickoff")
 def format_kickoff_filter(value):
@@ -5377,6 +5909,10 @@ def debug_settle_ai_bets_once():
     settled = refresh_ai_bets_results_once()
     return jsonify({"settled": settled})
 
+def update_filtered_value_bets_results_job():
+    print("[RESULTS] Updating filtered value bets results...")
+    update_filtered_value_bets_results(API_TOKEN)
+    print("[RESULTS] Filtered results updated.")
 
 
 # =========================
@@ -5392,14 +5928,21 @@ if os.environ.get("RUN_SCHEDULER") == "1":
     scheduler.add_job(
         refresh_fixtures_cache,
         "interval",
-        minutes=1
+        minutes=15
     )
 
     # 🔁 Refresh value bets cache regularly
     scheduler.add_job(
         refresh_value_bets_cache,
         "interval",
-        minutes=10
+        minutes=5
+    )
+
+    # ✅ NEW: Result qualified filtered bets regularly
+    scheduler.add_job(
+        update_filtered_value_bets_results_job,
+        "interval",
+        minutes=120
     )
 
     # 🔁 Regularly refresh AI bet results (settle finished games)
