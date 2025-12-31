@@ -1,9 +1,11 @@
 /* static/css/filtered_value_bets.css */
 
 .fv-main {
-  max-width: 1400px;
+  max-width: 1650px;          /* 👈 slightly constrained */
+  width: 100%;
   margin: 0 auto;
-  padding: 18px 16px 28px;
+  padding: 18px 16px 28px;    /* 👈 reduced side padding */
+  box-sizing: border-box;
 }
 
 .fv-header {
@@ -53,7 +55,7 @@
 
 .fv-table-wrap {
   width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;          /* 👈 force no scrollbar */
   border-radius: 10px;
   border: 1px solid rgba(0,0,0,0.10);
   background: #fafafa;
@@ -61,8 +63,9 @@
 
 table.fv-table {
   width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
-  min-width: 1050px;
+  table-layout: auto;
   background: #fff;
 }
 
@@ -70,7 +73,7 @@ table.fv-table {
   background: #f3f4f6;
   font-size: 12.5px;
   font-weight: 700;
-  padding: 10px;
+  padding: 9px 8px;            /* 👈 slightly tighter */
   text-align: center;
   border-bottom: 1px solid rgba(0,0,0,0.12);
   white-space: nowrap;
@@ -78,7 +81,7 @@ table.fv-table {
 
 .fv-table tbody td {
   font-size: 13px;
-  padding: 10px;
+  padding: 9px 8px;            /* 👈 slightly tighter */
   border-bottom: 1px solid rgba(0,0,0,0.08);
   white-space: nowrap;
   text-align: center;

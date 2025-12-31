@@ -1906,6 +1906,23 @@ def filtered_value_bets():
             return False
 
         return True
+    
+    def _kelly_stake_10(prob_pct, odds, bankroll=100.0):
+        if prob_pct is None or prob_pct <= 0:
+            return 0.0
+        if odds is None or odds <= 1:
+            return 0.0
+
+        p = prob_pct / 100.0
+        q = 1.0 - p
+        b = odds - 1.0
+
+        f = (b * p - q) / b  # full Kelly fraction
+        f = max(0.0, f)      # no negative stakes
+
+        stake = bankroll * f * 0.10
+        return round(stake, 2)
+
 
     def save_json_atomic(filepath, data):
         tmp_path = filepath + ".tmp"
@@ -1974,6 +1991,13 @@ def filtered_value_bets():
 
                 prob = _to_float(bet.get("probability"))
                 implied_odds = round(100.0 / prob, 2) if prob and prob > 0 else None
+                # Minimum odds required (matches your Google Sheets logic)
+                min_value = (strat.get("value") or {}).get("min", 0) or 0
+                min_required_odds = None
+                if prob and prob > 0:
+                    probability_decimal = prob / 100.0
+                    min_required_odds = round((1.0 / probability_decimal) * (1.0 + (min_value / 100.0)), 2)
+
 
                 comp = bet.get("competition") or {}
 
@@ -1984,6 +2008,8 @@ def filtered_value_bets():
 
                 # Stable key for joining to results later
                 bet_key = f"{fixture_id}:{market}:{strat_name}:{bookmaker_name}"
+
+                kelly_stake_10 = _kelly_stake_10(prob, latest_odds, bankroll=100.0)
 
                 results.append({
                     "bet_key": bet_key,
@@ -2002,6 +2028,8 @@ def filtered_value_bets():
                     "market": market,
                     "probability": round(prob, 2) if prob is not None else None,
                     "implied_odds": implied_odds,
+                    "min_required_odds": min_required_odds,
+                    "kelly_stake_10": kelly_stake_10,
 
                     "bookmaker": bookmaker_name,
                     "latest_odds": latest_odds,

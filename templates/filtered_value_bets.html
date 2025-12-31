@@ -40,6 +40,7 @@
       </div>
 
       <div class="fv-table-wrap">
+      <!-- DEBUG: {{ rows[0].keys() if rows and rows[0] is mapping else rows[0].__dict__.keys() if rows else "no rows" }} -->
         <table class="fv-table">
           <thead>
             <tr>
@@ -52,7 +53,9 @@
               <th class="fv-right">Implied Odds</th>
               <th>Bookmaker</th>
               <th class="fv-right">Latest Odds</th>
+              <th class="fv-center">Min Odds</th>
               <th class="fv-right">Value</th>
+              <th class="fv-center">Kelly 10%</th>
               <th class="fv-center">Progress</th>
             </tr>
           </thead>
@@ -87,12 +90,28 @@
                 <td>{{ r.bookmaker }}</td>
                 <td class="fv-right">{{ r.latest_odds }}</td>
 
+                <!-- Min Odds -->
+                <td class="fv-center">
+                  {% if r.min_required_odds is not none %}
+                    {{ r.min_required_odds }}
+                  {% endif %}
+                </td>
+
+                <!-- Value -->
                 <td class="fv-right">
                   {% if r.value_percentage is not none %}
                     {{ "%.2f"|format(r.value_percentage) }}%
                   {% endif %}
                 </td>
 
+                <!-- Kelly 10% -->
+                <td class="fv-center">
+                  {% if r.kelly_stake_10 is defined and r.kelly_stake_10 is not none %}
+                    {{ "%.2f"|format(r.kelly_stake_10) }}
+                  {% endif %}
+                </td>
+
+                <!-- Progress -->
                 <td class="fv-center">
                   {% if r.progress is not none %}
                     {{ r.progress }}%
