@@ -2165,6 +2165,19 @@ def fetch_all_value_results(api_token: str, timeout: int = 30, max_pages: int = 
 
     return out
 
+LONDON_TZ = ZoneInfo("Europe/London")
+
+def _ordinal(n: int) -> str:
+    if 11 <= (n % 100) <= 13:
+        return "th"
+    return {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+
+def format_day_time_from_unix(unix_ts: int) -> str:
+    dt = datetime.fromtimestamp(int(unix_ts), tz=LONDON_TZ)
+    day = dt.day
+    return f"{dt.strftime('%a')} {day}{_ordinal(day)}, {dt.strftime('%H:%M')}"
+
+
 def index_value_results(rows: list) -> dict:
     """
     Build an index for quick matching:
@@ -2444,7 +2457,7 @@ def filtered_value_bets_results_page():
         if not unix_val:
             return "Unknown"
         try:
-            dt = datetime.utcfromtimestamp(int(unix_val))
+            dt = datetime.fromtimestamp(int(unix_val), tz=LONDON_TZ)
             return dt.strftime("%B %Y")  # e.g. "December 2025"
         except Exception:
             return "Unknown"
@@ -2513,6 +2526,12 @@ def filtered_value_bets_results_page():
                         pl_kelly = 0.0
 
         out = dict(r)
+
+        u = out.get("unix")
+        out["kickoff"] = format_day_time_from_unix(u) if u else ""
+
+        print("DEBUG kickoff:", out.get("kickoff"), "unix:", out.get("unix"))
+
         out["result_status"] = status
         # ✅ aliases for templates that expect different keys
         out["status"] = status

@@ -80,7 +80,7 @@
                     <th>Competition</th>
                     <th>Predictability</th>
                     <th>Fixture</th>
-                    <th>Kickoff</th>
+                    <th>Date</th>
                     <th>Market</th>
                     <th>Bookmaker</th>
                     <th class="fvr-right">Latest Odds</th>
@@ -104,7 +104,7 @@
                       <td>{{ (r.get("competition_country") or "") }} - {{ (r.get("competition_name") or "") }}</td>
                       <td><span class="fvr-badge">{{ r.get("predictability") or "" }}</span></td>
                       <td>{{ r.get("fixture_name") or "" }}</td>
-                      <td>{{ r.get("ko_human") or "" }}</td>
+                      <td>{{ r.kickoff }}</td>
                       <td>{{ market_name_mapping.get(r.get("market"), r.get("market")) }}</td>
                       <td>{{ r.get("bookmaker") or "" }}</td>
 
