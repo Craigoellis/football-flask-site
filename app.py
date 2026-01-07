@@ -4499,13 +4499,6 @@ def api_generate_ai_bet():
             df_raw = pd.DataFrame(df_rows)
             X = build_features_for_prediction(df_raw)
 
-            # ✅ Ensure X matches the exact columns the model was trained on
-            if hasattr(_ai_bets_model, "feature_names_in_"):
-                X = X.reindex(columns=_ai_bets_model.feature_names_in_, fill_value=0.0)
-
-            if X.empty:
-                raise ValueError("Feature matrix is empty after build_features_for_prediction().")
-
             probs = _ai_bets_model.predict_proba(X)[:, 1]
             for b, p in zip(pool, probs):
                 b["ai_score"] = float(p)
@@ -4556,7 +4549,9 @@ def api_generate_ai_bet():
         home_id = bet["home_id"]
         away_id = bet["away_id"]
         unix_ts = bet["unix"]
-        ai_prob_pct = round(prob, 2)
+        ai_score = bet.get("ai_score")
+        ai_prob_pct = round(ai_score * 100, 2) if ai_score is not None else None
+
 
         # Confidence label
         if prob >= 70 and edge >= 5:
