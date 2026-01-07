@@ -4556,7 +4556,7 @@ def api_generate_ai_bet():
         home_id = bet["home_id"]
         away_id = bet["away_id"]
         unix_ts = bet["unix"]
-        ai_score = bet.get("ai_score")
+        ai_score = bet.get("ai_score", bet.get("model_prob"))
         ai_prob_pct = round(ai_score * 100, 2) if ai_score is not None else None
 
 
