@@ -5947,7 +5947,7 @@ if os.environ.get("RUN_SCHEDULER") == "1":
     scheduler.add_job(
         refresh_fixtures_cache,
         "interval",
-        minutes=15
+        minutes=30
     )
 
     # 🔁 Refresh value bets cache regularly
@@ -5957,11 +5957,17 @@ if os.environ.get("RUN_SCHEDULER") == "1":
         minutes=5
     )
 
-    # ✅ NEW: Result qualified filtered bets regularly
+    # ✅ Result qualified filtered bets regularly (safe + immediate first run)
     scheduler.add_job(
         update_filtered_value_bets_results_job,
         "interval",
-        minutes=120
+        minutes=120,
+        next_run_time=datetime.utcnow() + timedelta(minutes=2),
+        id="filtered_results_settle",
+        replace_existing=True,
+        max_instances=1,
+        coalesce=True,
+        misfire_grace_time=3600,
     )
 
     # 🔁 Regularly refresh AI bet results (settle finished games)
