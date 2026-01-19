@@ -1958,9 +1958,19 @@ def run_filtered_value_bets_matching():
     except Exception:
         all_bets = []
 
+    # ========= load QUALIFIED (so we can dedupe across runs) =========
+    qualified_payload = load_json_file(FILTERED_VALUE_BETS_QUALIFIED_FILE, default={})
+    qualified_rows = qualified_payload.get("rows", []) or []
+
+    # bookmaker-agnostic dedupe key: fixture_id + market + strategy
+    existing_base_keys = set(
+        f"{b.get('fixture_id')}:{b.get('market')}:{b.get('matched_strategy')}"
+        for b in qualified_rows
+        if b.get("fixture_id") and b.get("market") and b.get("matched_strategy")
+    )
+
     # ========= apply strategies =========
     results = []
-    seen = set()
 
     for bet in all_bets:
         odds_list = bet.get("odds") or []
@@ -2001,64 +2011,70 @@ def run_filtered_value_bets_matching():
             if best is None:
                 continue
 
-            if _match_strategy(bet, best, strat):
-                fixture_id = bet.get("id")
-                if fixture_id is None:
-                    continue
+            if not _match_strategy(bet, best, strat):
+                continue
 
-                market = bet.get("market")
+            fixture_id = bet.get("id")
+            if fixture_id is None:
+                continue
 
-                key = (fixture_id, market, strat_name)
-                if key in seen:
-                    continue
-                seen.add(key)
+            market = bet.get("market")
 
-                prob = _to_float(bet.get("probability"))
-                implied_odds = round(100.0 / prob, 2) if prob and prob > 0 else None
+            comp = bet.get("competition") or {}
 
-                min_value = (strat.get("value") or {}).get("min", 0) or 0
-                min_required_odds = None
-                if prob and prob > 0:
-                    probability_decimal = prob / 100.0
-                    min_required_odds = round((1.0 / probability_decimal) * (1.0 + (min_value / 100.0)), 2)
+            bookmaker_name = best.get("bookmaker_name")
+            latest_odds = _to_float(best.get("latest"))
+            opening_odds = _to_float(best.get("opening"))
+            value_pct = _to_float(best.get("value"))
 
-                comp = bet.get("competition") or {}
+            # keep full bet_key (with bookmaker) for traceability
+            bet_key = f"{fixture_id}:{market}:{strat_name}:{bookmaker_name}"
+            # dedupe key ignores bookmaker (only one entry per fixture+market+strategy)
+            base_key = f"{fixture_id}:{market}:{strat_name}"
 
-                bookmaker_name = best.get("bookmaker_name")
-                latest_odds = _to_float(best.get("latest"))
-                opening_odds = _to_float(best.get("opening"))
-                value_pct = _to_float(best.get("value"))
+            # skip duplicates (both across runs + within this run)
+            if base_key in existing_base_keys:
+                continue
+            existing_base_keys.add(base_key)
 
-                bet_key = f"{fixture_id}:{market}:{strat_name}:{bookmaker_name}"
-                kelly_stake_10 = _kelly_stake_10(prob, latest_odds, bankroll=100.0)
+            prob = _to_float(bet.get("probability"))
+            implied_odds = round(100.0 / prob, 2) if prob and prob > 0 else None
 
-                results.append({
-                    "bet_key": bet_key,
-                    "matched_strategy": strat_name,
+            min_value = (strat.get("value") or {}).get("min", 0) or 0
+            min_required_odds = None
+            if prob and prob > 0:
+                probability_decimal = prob / 100.0
+                min_required_odds = round((1.0 / probability_decimal) * (1.0 + (min_value / 100.0)), 2)
 
-                    "fixture_id": fixture_id,
-                    "fixture_name": _build_fixture_name(bet),
-                    "ko_human": bet.get("ko_human"),
-                    "unix": bet.get("unix"),
+            kelly_stake_10 = _kelly_stake_10(prob, latest_odds, bankroll=100.0)
 
-                    "competition_country": comp.get("country"),
-                    "competition_name": comp.get("name"),
-                    "predictability": comp.get("predictability"),
-                    "is_cup": comp.get("is_cup"),
-                    "is_friendly": comp.get("is_friendly"),
-                    "progress": comp.get("progress"),
+            results.append({
+                "bet_key": bet_key,
+                "matched_strategy": strat_name,
 
-                    "market": market,
-                    "probability": round(prob, 2) if prob is not None else None,
-                    "implied_odds": implied_odds,
-                    "min_required_odds": min_required_odds,
-                    "kelly_stake_10": kelly_stake_10,
+                "fixture_id": fixture_id,
+                "fixture_name": _build_fixture_name(bet),
+                "ko_human": bet.get("ko_human"),
+                "unix": bet.get("unix"),
 
-                    "bookmaker": bookmaker_name,
-                    "latest_odds": latest_odds,
-                    "opening_odds": opening_odds,
-                    "value_percentage": value_pct,
-                })
+                "competition_country": comp.get("country"),
+                "competition_name": comp.get("name"),
+                "predictability": comp.get("predictability"),
+                "is_cup": comp.get("is_cup"),
+                "is_friendly": comp.get("is_friendly"),
+                "progress": comp.get("progress"),
+
+                "market": market,
+                "probability": round(prob, 2) if prob is not None else None,
+                "implied_odds": implied_odds,
+                "min_required_odds": min_required_odds,
+                "kelly_stake_10": kelly_stake_10,
+
+                "bookmaker": bookmaker_name,
+                "latest_odds": latest_odds,
+                "opening_odds": opening_odds,
+                "value_percentage": value_pct,
+            })
 
     # ========= write ACTIVE filtered results (snapshot, overwrite) =========
     active_payload = {
@@ -2069,9 +2085,6 @@ def run_filtered_value_bets_matching():
     save_json_atomic(FILTERED_VALUE_BETS_ACTIVE_FILE, active_payload)
 
     # ========= append-only QUALIFIED log (never delete) =========
-    qualified_payload = load_json_file(FILTERED_VALUE_BETS_QUALIFIED_FILE, default={})
-    qualified_rows = qualified_payload.get("rows", []) or []
-
     qualified_map = {row.get("bet_key"): row for row in qualified_rows if row.get("bet_key")}
 
     newly_added = 0
@@ -2107,7 +2120,6 @@ def run_filtered_value_bets_matching():
 
     sorted_strategies = sorted(grouped_results.items(), key=lambda x: x[0].lower())
     return sorted_strategies
-
 
 @app.route("/filtered-value-bets")
 def filtered_value_bets():
