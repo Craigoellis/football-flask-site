@@ -37,3 +37,4 @@ models/*
 # Runtime cache files
 data/*_cache.json
 data/*_cache_time.txt
+models/ai_bets_logreg.pkl
