@@ -1969,6 +1969,9 @@ def run_filtered_value_bets_matching():
         if b.get("fixture_id") and b.get("market") and b.get("matched_strategy")
     )
 
+    # ✅ run-only dedupe for the live/front page
+    seen_this_run = set()
+
     # ========= apply strategies =========
     results = []
 
@@ -2032,10 +2035,10 @@ def run_filtered_value_bets_matching():
             # dedupe key ignores bookmaker (only one entry per fixture+market+strategy)
             base_key = f"{fixture_id}:{market}:{strat_name}"
 
-            # skip duplicates (both across runs + within this run)
-            if base_key in existing_base_keys:
+            # ✅ Only dedupe within this run (live/front page)
+            if base_key in seen_this_run:
                 continue
-            existing_base_keys.add(base_key)
+            seen_this_run.add(base_key)
 
             prob = _to_float(bet.get("probability"))
             implied_odds = round(100.0 / prob, 2) if prob and prob > 0 else None
@@ -2087,14 +2090,28 @@ def run_filtered_value_bets_matching():
     # ========= append-only QUALIFIED log (never delete) =========
     qualified_map = {row.get("bet_key"): row for row in qualified_rows if row.get("bet_key")}
 
+    qualified_base_keys = set(
+        f"{r.get('fixture_id')}:{r.get('market')}:{r.get('matched_strategy')}"
+        for r in qualified_rows
+        if r.get("fixture_id") and r.get("market") and r.get("matched_strategy")
+    )
+
     newly_added = 0
     for row in results:
         bk = row.get("bet_key")
         if not bk:
             continue
-        if bk not in qualified_map:
-            qualified_map[bk] = row
-            newly_added += 1
+
+        base_key = f"{row.get('fixture_id')}:{row.get('market')}:{row.get('matched_strategy')}"
+
+        # ✅ only store the first-ever occurrence (bookmaker-agnostic)
+        if base_key in qualified_base_keys:
+            continue
+
+        qualified_base_keys.add(base_key)
+        qualified_map[bk] = row
+        newly_added += 1
+
 
     new_qualified_rows = list(qualified_map.values())
     new_qualified_rows.sort(key=lambda x: (x.get("unix") is not None, x.get("unix") or 0), reverse=False)
