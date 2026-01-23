@@ -83,6 +83,7 @@
                     <th>Date</th>
                     <th>Market</th>
                     <th>Bookmaker</th>
+                    <th class="fvr-right">Opening Odds</th>
                     <th class="fvr-right">Latest Odds</th>
                     <th>Result</th>
                     <th>Score</th>
@@ -107,6 +108,12 @@
                       <td>{{ r.kickoff }}</td>
                       <td>{{ market_name_mapping.get(r.get("market"), r.get("market")) }}</td>
                       <td>{{ r.get("bookmaker") or "" }}</td>
+
+                      <td class="fvr-right">
+                        {% if r.get("opening_odds") is not none %}
+                          {{ r.get("opening_odds") }}
+                        {% endif %}
+                      </td>
 
                       <td class="fvr-right">
                         {% if r.get("latest_odds") is not none %}

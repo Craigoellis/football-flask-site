@@ -2525,6 +2525,7 @@ def filtered_value_bets_results_page():
         bet_key = r.get("bet_key")
 
         latest_odds = _to_float(r.get("latest_odds"))
+        opening_odds = _to_float(r.get("opening_odds"))
         kelly_stake = _to_float(r.get("kelly_stake_10"))
 
         res = results_map.get(bet_key) if bet_key else None
@@ -2564,6 +2565,7 @@ def filtered_value_bets_results_page():
         out["result_status"] = status
         # ✅ aliases for templates that expect different keys
         out["status"] = status
+        out["opening_odds"] = opening_odds
         out["result"] = status
         out["score"] = score
         out["stake_1u"] = 1.0
