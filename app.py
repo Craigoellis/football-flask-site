@@ -1977,10 +1977,11 @@ def run_filtered_value_bets_matching():
 
     # bookmaker-agnostic dedupe key: fixture_id + market + strategy
     existing_base_keys = set(
-        f"{b.get('fixture_id')}:{b.get('market')}:{b.get('matched_strategy')}"
+        f"{b.get('fixture_id')}:{b.get('market')}:{canonical_strategy_name(b.get('matched_strategy'))}"
         for b in qualified_rows
         if b.get("fixture_id") and b.get("market") and b.get("matched_strategy")
     )
+
 
     # ✅ run-only dedupe for the live/front page
     seen_this_run = set()
@@ -1994,7 +1995,7 @@ def run_filtered_value_bets_matching():
             continue
 
         for strat in VALUE_BET_STRATEGIES:
-            strat_name = strat.get("name", "Unnamed Strategy")
+            strat_name = canonical_strategy_name(strat.get("name", "Unnamed Strategy"))
 
             strat_books = strat.get("bookmakers") or []
             strat_books = [b.lower() for b in strat_books if b]
@@ -2104,10 +2105,12 @@ def run_filtered_value_bets_matching():
     qualified_map = {row.get("bet_key"): row for row in qualified_rows if row.get("bet_key")}
 
     qualified_base_keys = set(
-        f"{r.get('fixture_id')}:{r.get('market')}:{r.get('matched_strategy')}"
+        f"{r.get('fixture_id')}:{r.get('market')}:{canonical_strategy_name(r.get('matched_strategy'))}"
         for r in qualified_rows
         if r.get("fixture_id") and r.get("market") and r.get("matched_strategy")
     )
+
+
 
     newly_added = 0
     for row in results:
@@ -2115,7 +2118,8 @@ def run_filtered_value_bets_matching():
         if not bk:
             continue
 
-        base_key = f"{row.get('fixture_id')}:{row.get('market')}:{row.get('matched_strategy')}"
+        base_key = f"{row.get('fixture_id')}:{row.get('market')}:{canonical_strategy_name(row.get('matched_strategy'))}"
+
 
         # ✅ only store the first-ever occurrence (bookmaker-agnostic)
         if base_key in qualified_base_keys:
@@ -2140,7 +2144,9 @@ def run_filtered_value_bets_matching():
     # ========= group for display =========
     grouped_results = {}
     for r in results:
-        grouped_results.setdefault(r["matched_strategy"], []).append(r)
+        strat_disp = canonical_strategy_name(r.get("matched_strategy"))
+        grouped_results.setdefault(strat_disp, []).append(r)
+
 
     for strat_name, rows in grouped_results.items():
         rows.sort(
@@ -2150,6 +2156,17 @@ def run_filtered_value_bets_matching():
 
     sorted_strategies = sorted(grouped_results.items(), key=lambda x: x[0].lower())
     return sorted_strategies
+
+# Strategy name aliases (for renames without breaking stored history)
+STRATEGY_NAME_ALIASES = {
+    "Home Win V1": "Home Win V1 (League Only)",
+}
+
+def canonical_strategy_name(name: str) -> str:
+    if not name:
+        return name
+    return STRATEGY_NAME_ALIASES.get(name, name)
+
 
 @app.route("/filtered-value-bets")
 def filtered_value_bets():
