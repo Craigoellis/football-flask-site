@@ -25,34 +25,63 @@ def backup(path):
                 dst.write(src.read())
 
 def migrate_qualified():
-    qualified = load_json(QUALIFIED_FILE, [])
-    if not isinstance(qualified, list):
-        raise ValueError(f"{QUALIFIED_FILE} should be a list")
+    qualified = load_json(QUALIFIED_FILE, None)
 
-    changed = 0
-    for item in qualified:
-        if not isinstance(item, dict):
-            continue
+    # Case A: qualified is a LIST of dict items
+    if isinstance(qualified, list):
+        changed = 0
+        for item in qualified:
+            if not isinstance(item, dict):
+                continue
 
-        if item.get("matched_strategy") == OLD_NAME:
-            item["matched_strategy"] = NEW_NAME
-            changed += 1
+            if item.get("matched_strategy") == OLD_NAME:
+                item["matched_strategy"] = NEW_NAME
+                changed += 1
+            if item.get("strategy_name") == OLD_NAME:
+                item["strategy_name"] = NEW_NAME
+                changed += 1
 
-        if item.get("strategy_name") == OLD_NAME:
-            item["strategy_name"] = NEW_NAME
-            changed += 1
+            bk = item.get("bet_key")
+            if isinstance(bk, str) and f":{OLD_NAME}:" in bk:
+                parts = bk.split(":", 3)
+                if len(parts) == 4:
+                    fixture_id, market, strat, bookmaker = parts
+                    if strat == OLD_NAME:
+                        item["bet_key"] = f"{fixture_id}:{market}:{NEW_NAME}:{bookmaker}"
+                        changed += 1
 
-        bk = item.get("bet_key")
-        if isinstance(bk, str) and f":{OLD_NAME}:" in bk:
-            parts = bk.split(":", 3)
-            if len(parts) == 4:
-                fixture_id, market, strat, bookmaker = parts
-                if strat == OLD_NAME:
-                    item["bet_key"] = f"{fixture_id}:{market}:{NEW_NAME}:{bookmaker}"
-                    changed += 1
+        save_json(QUALIFIED_FILE, qualified)
+        return changed, len(qualified)
 
-    save_json(QUALIFIED_FILE, qualified)
-    return changed, len(qualified)
+    # Case B: qualified is a DICT keyed by bet_key -> payload
+    if isinstance(qualified, dict):
+        changed = 0
+        new_qualified = {}
+
+        for bet_key, payload in qualified.items():
+            new_key = bet_key
+
+            if isinstance(bet_key, str) and f":{OLD_NAME}:" in bet_key:
+                parts = bet_key.split(":", 3)
+                if len(parts) == 4:
+                    fixture_id, market, strat, bookmaker = parts
+                    if strat == OLD_NAME:
+                        new_key = f"{fixture_id}:{market}:{NEW_NAME}:{bookmaker}"
+                        changed += 1
+
+            if isinstance(payload, dict):
+                if payload.get("matched_strategy") == OLD_NAME:
+                    payload["matched_strategy"] = NEW_NAME
+                if payload.get("strategy_name") == OLD_NAME:
+                    payload["strategy_name"] = NEW_NAME
+
+            if new_key not in new_qualified:
+                new_qualified[new_key] = payload
+
+        save_json(QUALIFIED_FILE, new_qualified)
+        return changed, len(new_qualified)
+
+    raise ValueError(f"{QUALIFIED_FILE} should be a list or dict")
 
 def migrate_results():
     results = load_json(RESULTS_FILE, {})
