@@ -1903,12 +1903,25 @@ def run_filtered_value_bets_matching():
 
         s_is_cup = strategy.get("is_cup", None)
         s_is_friendly = strategy.get("is_friendly", None)
-        b_is_cup = comp.get("is_cup", None)
-        b_is_friendly = comp.get("is_friendly", None)
+        s_is_league = strategy.get("is_league", None)
 
-        if s_is_cup is not None and b_is_cup is not None and b_is_cup != s_is_cup:
+        # Treat missing flags as False (so league can be derived consistently)
+        b_is_cup = bool(comp.get("is_cup", False))
+        b_is_friendly = bool(comp.get("is_friendly", False))
+
+        # Derived: league = not cup AND not friendly
+        b_is_league = (not b_is_cup) and (not b_is_friendly)
+
+        # Cup filter
+        if s_is_cup is not None and b_is_cup != s_is_cup:
             return False
-        if s_is_friendly is not None and b_is_friendly is not None and b_is_friendly != s_is_friendly:
+
+        # Friendly filter
+        if s_is_friendly is not None and b_is_friendly != s_is_friendly:
+            return False
+
+        # League filter (derived)
+        if s_is_league is not None and b_is_league != s_is_league:
             return False
 
         progress = _to_float(comp.get("progress"))
