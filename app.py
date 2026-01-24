@@ -2110,8 +2110,6 @@ def run_filtered_value_bets_matching():
         if r.get("fixture_id") and r.get("market") and r.get("matched_strategy")
     )
 
-
-
     newly_added = 0
     for row in results:
         bk = row.get("bet_key")
@@ -2628,7 +2626,7 @@ def filtered_value_bets_results_page():
     })
 
     for row in merged:
-        strat = row.get("matched_strategy") or "Unknown Strategy"
+        strat = canonical_strategy_name(row.get("matched_strategy")) or "Unknown Strategy"
         month = _month_label_from_unix(row.get("unix"))
 
         pl1 = row.get("pl_1u")
