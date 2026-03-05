@@ -4235,7 +4235,7 @@ def send_ai_bets_csv_email(bets):
 
     # 4) Send via Gmail SMTP
     try:
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=8) as server:
             server.starttls()
             server.login(EMAIL_ADDRESS, EMAIL_APP_PASSWORD)
             server.send_message(msg)
