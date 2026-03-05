@@ -4784,7 +4784,7 @@ Away goals profile:
 
         # Call Gemini once per bet
         response = gemini_client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="models/gemini-2.5-flash",
             contents=prompt
         )
 
@@ -5531,7 +5531,7 @@ Away goals profile:
 """
 
         response = gemini_client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="models/gemini-2.5-flash",
             contents=prompt
         )
 
